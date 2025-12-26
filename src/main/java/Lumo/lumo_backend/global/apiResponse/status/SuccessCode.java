@@ -10,8 +10,20 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum SuccessCode implements BaseCode {
 
-    // test 예시 입니다.
-    TEST_SUCCESS (HttpStatus.OK, "TEST2000", "테스트 성공 입니다.");
+    // 성공 응답 작성 예시 입니다.
+    TEST_SUCCESS (HttpStatus.OK, "TEST2000", "테스트 성공 입니다."),
+
+    // 이어서 작성해주시기 바랍니다
+
+
+    ///  USER
+    USER_TEST_SUCCESS (HttpStatus.OK, "USER2000", "테스트 성공 입니다."),
+
+
+    ///  ALARM
+    ALARM_TEST_SUCCESS (HttpStatus.OK, "ALARM2000", "테스트 성공 입니다."),
+
+    ;
 
     private final HttpStatus status;
     private final String code;
