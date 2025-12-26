@@ -13,6 +13,12 @@ public class User {
     @Column(nullable = false, length = 50)
     private String username;
 
+    @Column(nullable = false, length = 50)
+    private String email;
+
+    @Column
+    private Login login;
+
     private Integer mcnScsRate; // 미션 성공률, double 이 아닌 정수로만
 
     private Integer consecutiveScsCnt; // 연속 성공수
