@@ -16,9 +16,6 @@ Service 로직에서 보통 비즈니스 로직을 다루니, Service 코드를 
 
 
 ```java
-import UMC_8th.With_Run.common.apiResponse.status.ErrorCode;
-import UMC_8th.With_Run.common.exception.handler.UserHandler;
-
 public class UserService {
     if(true) { // 무조건 에러가 났다고 했을 때
         throw new UserHandler(ErrorCode.WRONG_USER);
@@ -26,6 +23,8 @@ public class UserService {
 } 
 ```
 저는 이 때 각 Handler를 만들어 놓았고, 해당 오류에 대한 에러 코드를 넘겨주기만 하면 되요!
+
+추가적인 Handler가 필요한 경우, 지금 작성된 Handler과 동일 방식대로 핸들러를 작성하시면 됩니다.
 
 
 그래서 Controller 에서는
