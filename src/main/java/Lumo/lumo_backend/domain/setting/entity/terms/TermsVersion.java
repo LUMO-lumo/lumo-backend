@@ -4,7 +4,7 @@ package Lumo.lumo_backend.domain.setting.entity.terms;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 /**
  * 약관 버전 엔티티
@@ -34,13 +34,10 @@ public class TermsVersion {
     private String content;
 
     @Column(nullable = false)
-    private Instant effectiveAt;
+    private LocalDateTime effectiveAt;
 
     @Column(nullable = false)
-    private Instant expiredAt;
-
-    @Column(nullable = false)
-    private Instant createdAt;
+    private LocalDateTime expiredAt;
 
     @Column(nullable = false)
     private boolean active;
