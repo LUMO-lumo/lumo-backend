@@ -44,6 +44,8 @@ public class Member {
 
     private Integer consecutiveSuccessCnt = 0; // 초기값 = 0
 
+    private Boolean isProUpgraded = false;
+
     @OneToMany
     private List<Alarm> alarmList = new ArrayList<>();
 
