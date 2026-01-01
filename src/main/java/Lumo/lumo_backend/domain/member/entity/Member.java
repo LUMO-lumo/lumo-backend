@@ -2,6 +2,7 @@ package Lumo.lumo_backend.domain.member.entity;
 
 import Lumo.lumo_backend.domain.alarm.entity.Alarm;
 import Lumo.lumo_backend.domain.todo.entity.ToDo;
+import Lumo.lumo_backend.global.BaseEntity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AccessLevel;
@@ -19,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Table(name = "member")
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
