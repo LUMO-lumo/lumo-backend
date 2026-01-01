@@ -17,7 +17,7 @@ public enum ErrorCode implements BaseErrorCode {
     // 여기서부터 이어서 작성해주시기 바랍니다.
 
     /// USER
-    USER_TEST_EXCEPTION (HttpStatus.BAD_REQUEST, "USER1234", "테스트 사용자 API 예외 입니다."),
+    MEMBER_TEST_EXCEPTION (HttpStatus.BAD_REQUEST, "MEMBER1234", "테스트 사용자 API 예외 입니다."),
 
 
     /// ALARM

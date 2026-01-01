@@ -17,7 +17,7 @@ public enum SuccessCode implements BaseCode {
 
 
     ///  USER
-    USER_TEST_SUCCESS (HttpStatus.OK, "USER2000", "테스트 성공 입니다."),
+    MEMBER_TEST_SUCCESS (HttpStatus.OK, "MEMBER2000", "테스트 성공 입니다."),
 
 
     ///  ALARM

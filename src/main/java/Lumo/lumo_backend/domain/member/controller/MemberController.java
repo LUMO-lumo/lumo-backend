@@ -1,6 +1,6 @@
 package Lumo.lumo_backend.domain.member.controller;
 
-import Lumo.lumo_backend.domain.member.dto.UserRequestDTO;
+import Lumo.lumo_backend.domain.member.dto.MemberRequestDTO;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +29,7 @@ public class MemberController {
     }
 
     @PostMapping("/signin")
-    public APIResponse<Object> signIn(@RequestBody UserRequestDTO.SignInRequestDTO dto){
+    public APIResponse<Object> signIn(@RequestBody MemberRequestDTO.SignInRequestDTO dto){
         return null; // bool 값 리턴,
     }
 
