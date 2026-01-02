@@ -1,10 +1,12 @@
 package Lumo.lumo_backend.domain.routine.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import Lumo.lumo_backend.domain.member.entity.Member;
+import Lumo.lumo_backend.domain.subroutine.Subroutine;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -16,6 +18,12 @@ public class Routine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String title;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
+    @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Subroutine> subroutineList = new ArrayList<>();
 }
