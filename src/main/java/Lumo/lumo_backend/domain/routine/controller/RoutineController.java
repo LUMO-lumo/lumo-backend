@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class RoutineController {
 
+    @PostMapping
+    public APIResponse<Object> createRoutine (@RequestParam("userId") Long userId,  @RequestParam("title") String title){
+        return APIResponse.onSuccess();
+    }
 
     @GetMapping
     public APIResponse<Object> getRoutine (@RequestParam("userId") Long userId){
