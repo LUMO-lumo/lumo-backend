@@ -27,4 +27,9 @@ public class Routine {
 
     @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Subroutine> subroutineList = new ArrayList<>();
+
+    public Routine(String title, Member member){
+        this.title = title;
+        this.member = member;
+    }
 }

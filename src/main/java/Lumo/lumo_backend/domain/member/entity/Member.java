@@ -60,4 +60,9 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Routine> routineList = new ArrayList<>();
+
+
+    public void addRoutine (Routine routine){
+        this.routineList.add(routine);
+    }
 }

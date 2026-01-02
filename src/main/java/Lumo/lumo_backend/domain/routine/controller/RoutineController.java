@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class RoutineController {
 
-    private RoutineService routineService;
+    private final RoutineService routineService;
 
     @PostMapping
     public APIResponse<Object> createRoutine (@RequestParam("memberId") Long memberId, @RequestParam("title") String title){
