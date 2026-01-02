@@ -1,5 +1,6 @@
 package Lumo.lumo_backend.domain.routine.controller;
 
+import Lumo.lumo_backend.domain.routine.service.RoutineService;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,24 +12,30 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class RoutineController {
 
+    private RoutineService routineService;
+
     @PostMapping
     public APIResponse<Object> createRoutine (@RequestParam("userId") Long userId,  @RequestParam("title") String title){
-        return APIResponse.onSuccess();
+        routineService.createRoutine(userId, title);
+        return APIResponse.onSuccess(null, );
     }
 
     @GetMapping
     public APIResponse<Object> getRoutine (@RequestParam("userId") Long userId){
-        return APIResponse.onSuccess();
+        routineService.getRoutine(userId);
+        return APIResponse.onSuccess(null, );
     }
 
     @DeleteMapping
     public APIResponse<Object> deleteRoutine(@RequestParam("routineId") Long routineId){
-        return APIResponse.onSuccess();
+        routineService.deleteRoutine(routineId);
+        return APIResponse.onSuccess(null, );
     }
 
     @PatchMapping
     public APIResponse<Object> renameRoutine(@RequestParam("routineId") Long routineId, @RequestParam("title") String title) {
-        return APIResponse.onSuccess();
+        routineService.renameRoutine(routineId, title);
+        return APIResponse.onSuccess(null, );
     }
 
 }
