@@ -1,6 +1,8 @@
 package Lumo.lumo_backend.domain.member.entity;
 
 import Lumo.lumo_backend.domain.alarm.entity.Alarm;
+import Lumo.lumo_backend.domain.routine.entity.Routine;
+import Lumo.lumo_backend.domain.setting.entity.memberSetting.MemberSetting;
 import Lumo.lumo_backend.domain.todo.entity.ToDo;
 import Lumo.lumo_backend.global.BaseEntity.BaseEntity;
 import jakarta.persistence.*;
@@ -47,13 +49,15 @@ public class Member extends BaseEntity {
 
     private Boolean isProUpgraded = false;
 
-    @OneToMany
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Alarm> alarmList = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ToDo> toDoList = new ArrayList<>();
 
-    /*@OneToOne
-    private Setting setting;*/
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "member", orphanRemoval = true)
+    private MemberSetting setting;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Routine> routineList = new ArrayList<>();
 }
