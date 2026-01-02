@@ -1,12 +1,14 @@
 package Lumo.lumo_backend.domain.routine.controller;
 
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
 @RequestMapping("/api/routine")
+@RequiredArgsConstructor
 public class RoutineController {
 
 

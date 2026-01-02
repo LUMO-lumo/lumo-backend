@@ -20,7 +20,7 @@ public class Subroutine {
 
     private Integer successCount = 0; // 연속 성공 횟수
 
-    private Boolean isSuccess; //
+    private Boolean isSuccess;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routine_id")
