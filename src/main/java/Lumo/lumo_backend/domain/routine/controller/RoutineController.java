@@ -15,14 +15,14 @@ public class RoutineController {
     private RoutineService routineService;
 
     @PostMapping
-    public APIResponse<Object> createRoutine (@RequestParam("userId") Long userId,  @RequestParam("title") String title){
-        routineService.createRoutine(userId, title);
+    public APIResponse<Object> createRoutine (@RequestParam("memberId") Long memberId, @RequestParam("title") String title){
+        routineService.createRoutine(memberId, title);
         return APIResponse.onSuccess(null, );
     }
 
     @GetMapping
-    public APIResponse<Object> getRoutine (@RequestParam("userId") Long userId){
-        routineService.getRoutine(userId);
+    public APIResponse<Object> getRoutine (@RequestParam("memberId") Long memberId){
+        routineService.getRoutine(memberId);
         return APIResponse.onSuccess(null, );
     }
 
