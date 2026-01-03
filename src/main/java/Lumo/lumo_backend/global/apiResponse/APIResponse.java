@@ -23,8 +23,8 @@ public class APIResponse<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T result;
 
-    public static <T> APIResponse<T> onSuccess(T result, BaseCode status) {
-        return new APIResponse<>(true, status.getCode(), status.getMessage(), result);
+    public static <T> APIResponse<T> onSuccess(T result, BaseCode code) {
+        return new APIResponse<>(true, code.getCode(), code.getMessage(), result);
     }
 
     public static <T> APIResponse<T> onFailure(String code, String message, T data) {
