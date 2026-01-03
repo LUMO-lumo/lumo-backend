@@ -1,7 +1,7 @@
 package Lumo.lumo_backend.domain.routine.entity;
 
 import Lumo.lumo_backend.domain.member.entity.Member;
-import Lumo.lumo_backend.domain.subroutine.Subroutine;
+import Lumo.lumo_backend.domain.subroutine.entity.Subroutine;
 import jakarta.persistence.*;
 import lombok.*;
 

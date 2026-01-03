@@ -1,4 +1,4 @@
-package Lumo.lumo_backend.domain.subroutine;
+package Lumo.lumo_backend.domain.subroutine.entity;
 
 import Lumo.lumo_backend.domain.routine.entity.Routine;
 import jakarta.persistence.*;
