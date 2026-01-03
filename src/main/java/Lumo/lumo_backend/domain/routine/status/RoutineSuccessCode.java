@@ -16,7 +16,7 @@ public enum RoutineSuccessCode implements BaseCode {
     CREATE_ROUTINE_SUCCESS(HttpStatus.OK, "ROUTINE2000", "루틴 생성에 성공했습니다."),
     GET_ROUTINE_SUCCESS(HttpStatus.OK, "ROUTINE2001", "루틴 조회에 성공했습니다."),
     DELETE_ROUTINE_SUCCESS(HttpStatus.OK, "ROUTINE2002", "루틴 삭제에 성공했습니다."),
-    RENAME_ROUTINE_SUCCESS(HttpStatus.OK, "ROUTINE2003", "루틴 이름 변경에 성공했습니다."),
+    RENAME_ROUTINE_SUCCESS(HttpStatus.OK, "ROUTINE2003", "루틴 이름 변경에 성공했습니다.")
 
     ;
 

@@ -1,6 +1,7 @@
 package Lumo.lumo_backend.domain.routine.controller;
 
 import Lumo.lumo_backend.domain.routine.service.RoutineService;
+import Lumo.lumo_backend.domain.routine.status.RoutineSuccessCode;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,25 +18,25 @@ public class RoutineController {
     @PostMapping
     public APIResponse<Object> createRoutine (@RequestParam("memberId") Long memberId, @RequestParam("title") String title){
         routineService.createRoutine(memberId, title);
-        return APIResponse.onSuccess(null, );
+        return APIResponse.onSuccess(null, RoutineSuccessCode.CREATE_ROUTINE_SUCCESS); // 루틴 첫 생성 시에는 서브루틴이 없으므로 null 반환
     }
 
     @GetMapping
     public APIResponse<Object> getRoutine (@RequestParam("memberId") Long memberId){
         routineService.getRoutine(memberId);
-        return APIResponse.onSuccess(null, );
+        return APIResponse.onSuccess(null, RoutineSuccessCode.GET_ROUTINE_SUCCESS);
     }
 
     @DeleteMapping
     public APIResponse<Object> deleteRoutine(@RequestParam("routineId") Long routineId){
         routineService.deleteRoutine(routineId);
-        return APIResponse.onSuccess(null, );
+        return APIResponse.onSuccess(null, RoutineSuccessCode.DELETE_ROUTINE_SUCCESS);
     }
 
     @PatchMapping
     public APIResponse<Object> renameRoutine(@RequestParam("routineId") Long routineId, @RequestParam("title") String title) {
         routineService.renameRoutine(routineId, title);
-        return APIResponse.onSuccess(null, );
+        return APIResponse.onSuccess(null, RoutineSuccessCode.RENAME_ROUTINE_SUCCESS);
     }
 
 }
