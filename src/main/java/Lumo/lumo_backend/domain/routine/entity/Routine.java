@@ -33,4 +33,8 @@ public class Routine extends BaseEntity {
         this.title = title;
         this.member = member;
     }
+
+    public void renameRoutine(String title){
+        this.title = title;
+    }
 }

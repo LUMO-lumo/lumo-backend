@@ -27,29 +27,29 @@ public class RoutineService {
     private final RoutineRepository routineRepository;
 
     @Transactional
-    public void createRoutine (Long memberId, String title){
+    public void createRoutine(Long memberId, String title) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorCode.MEMBER_TEST_EXCEPTION));
         Routine routine = new Routine(title, member);
         routineRepository.save(routine);
     }
 
-    public List<RoutineRespDTO.GetRoutineDTO> getRoutine (Long memberId){
+    public List<RoutineRespDTO.GetRoutineDTO> getRoutine(Long memberId) {
 
         List<Routine> routineList = routineRepository.findAllById(memberId);
 
         return routineList.stream()
                 .map(routine ->
-                    RoutineRespDTO.GetRoutineDTO.builder()
-                            .routineTitle(routine.getTitle())
-                            .subroutineList(SubroutineConverter.toSubroutineDTO(routine))
-                            .build()
+                        RoutineRespDTO.GetRoutineDTO.builder()
+                                .routineTitle(routine.getTitle())
+                                .subroutineList(SubroutineConverter.toSubroutineDTO(routine))
+                                .build()
                 )
                 .toList();
     }
 
 
     @Transactional
-    public void deleteRoutine(Member member, Long routineId){
+    public void deleteRoutine(Member member, Long routineId) {
         Member reqMember = memberRepository.findById(member.getId()).orElseThrow(() -> new GeneralException(MemberErrorCode.CANT_FOUND_MEMBER));
         Routine routine = routineRepository.findByIdAndMember_Id(routineId, reqMember.getId()).orElseThrow(() -> new RoutineException(RoutineErrorCode.ROUTINE_NOT_FOUND));
 
@@ -58,8 +58,11 @@ public class RoutineService {
     }
 
     @Transactional
-    public void renameRoutine( Long routineId,  String title) {
-        return;
+    public void renameRoutine(Member member, Long routineId, String title) {
+        Member reqMember = memberRepository.findById(member.getId()).orElseThrow(() -> new GeneralException(MemberErrorCode.CANT_FOUND_MEMBER));
+        Routine routine = routineRepository.findByIdAndMember_Id(routineId, reqMember.getId()).orElseThrow(() -> new RoutineException(RoutineErrorCode.ROUTINE_NOT_FOUND));
+
+        routine.renameRoutine(title);
     }
 
 }

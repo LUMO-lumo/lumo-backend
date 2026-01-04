@@ -39,8 +39,8 @@ public class RoutineController {
     }
 
     @PatchMapping
-    public APIResponse<Object> renameRoutine(@RequestParam("routineId") Long routineId, @RequestParam("title") String title) {
-        routineService.renameRoutine(routineId, title);
+    public APIResponse<Object> renameRoutine(@AuthenticationPrincipal Member member, @RequestParam("routineId") Long routineId, @RequestParam("title") String title) {
+        routineService.renameRoutine(member, routineId, title);
         return APIResponse.onSuccess(null, RoutineSuccessCode.RENAME_ROUTINE_SUCCESS);
     }
 
