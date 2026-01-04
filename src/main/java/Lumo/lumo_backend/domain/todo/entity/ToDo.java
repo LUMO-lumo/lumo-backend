@@ -1,6 +1,7 @@
 package Lumo.lumo_backend.domain.todo.entity;
 
 import Lumo.lumo_backend.domain.member.entity.Member;
+import Lumo.lumo_backend.global.BaseEntity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,7 +24,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Table(name = "to_do")
-public class ToDo {
+public class ToDo extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
