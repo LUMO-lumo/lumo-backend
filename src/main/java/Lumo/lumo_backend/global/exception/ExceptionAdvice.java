@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +36,13 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
                 .orElseThrow(() -> new RuntimeException("Constraint violation exception 추출 도중 에러 발생"));
 
         return handleExceptionInternalConstraint(ex, ErrorCode.valueOf(errorMessage), HttpHeaders.EMPTY, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        ErrorCode errorCode = ErrorCode.INVALID_JSON;
+        APIResponse<Object> body = APIResponse.onFailure(errorCode.getCode(), errorCode.getMessage(), null);
+        return super.handleExceptionInternal(ex, body, headers, status, request);
     }
 
     @Override
