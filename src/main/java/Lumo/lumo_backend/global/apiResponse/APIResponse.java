@@ -20,7 +20,7 @@ public class APIResponse<T> {
 
     private String message;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+//    @JsonInclude(JsonInclude.Include.NON_NULL)
     private T result;
 
     public static <T> APIResponse<T> onSuccess(T result, BaseCode code) {
