@@ -21,9 +21,9 @@ public class RoutineController {
     private final RoutineService routineService;
 
     @PostMapping
-    public APIResponse<Object> createRoutine (@RequestParam("memberId") Long memberId, @RequestParam("title") String title){
-        routineService.createRoutine(memberId, title);
-        return APIResponse.onSuccess(null, RoutineSuccessCode.CREATE_ROUTINE_SUCCESS); // 루틴 첫 생성 시에는 서브루틴이 없으므로 null 반환
+    public APIResponse<RoutineRespDTO.CreateRoutineDTO> createRoutine (@RequestParam("memberId") Long memberId, @RequestParam("title") String title){
+        RoutineRespDTO.CreateRoutineDTO routine = routineService.createRoutine(memberId, title);
+        return APIResponse.onSuccess(routine, RoutineSuccessCode.CREATE_ROUTINE_SUCCESS); // 루틴 첫 생성 시에는 서브루틴이 없으므로 null 반환
     }
 
     @GetMapping

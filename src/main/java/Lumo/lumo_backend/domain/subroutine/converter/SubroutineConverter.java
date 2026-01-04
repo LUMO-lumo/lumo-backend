@@ -13,6 +13,7 @@ public class SubroutineConverter {
         List<SubroutineRespDTO.GetSubroutineDTO> collect = routine.getSubroutineList().stream()
                 .map(subroutine ->
                     SubroutineRespDTO.GetSubroutineDTO.builder()
+                            .subroutineId(subroutine.getId())
                             .title(subroutine.getTitle())
                             .successCount(subroutine.getSuccessCount())
                             .isSuccess(subroutine.getIsSuccess())

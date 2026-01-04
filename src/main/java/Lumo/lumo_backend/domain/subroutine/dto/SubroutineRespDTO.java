@@ -12,6 +12,7 @@ public class SubroutineRespDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GetSubroutineDTO{
+        private Long subroutineId;
         private String title; // 각 서브루틴 제목
         private Integer successCount = 0; // 연속 성공 횟수
         private Boolean isSuccess;

@@ -14,7 +14,16 @@ public class RoutineRespDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class CreateRoutineDTO {
+        private Long id;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class GetRoutineDTO {
+        private Long routineId;
         private String routineTitle;
         private List<SubroutineRespDTO.GetSubroutineDTO>  subroutineList;
     }

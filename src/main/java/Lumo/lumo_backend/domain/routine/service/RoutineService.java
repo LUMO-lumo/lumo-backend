@@ -27,10 +27,10 @@ public class RoutineService {
     private final RoutineRepository routineRepository;
 
     @Transactional
-    public void createRoutine(Long memberId, String title) {
+    public RoutineRespDTO.CreateRoutineDTO createRoutine(Long memberId, String title) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorCode.MEMBER_TEST_EXCEPTION));
         Routine routine = new Routine(title, member);
-        routineRepository.save(routine);
+        return RoutineRespDTO.CreateRoutineDTO.builder().id(routineRepository.save(routine).getId()).build();
     }
 
     public List<RoutineRespDTO.GetRoutineDTO> getRoutine(Long memberId) {
@@ -40,6 +40,7 @@ public class RoutineService {
         return routineList.stream()
                 .map(routine ->
                         RoutineRespDTO.GetRoutineDTO.builder()
+                                .routineId(routine.getId())
                                 .routineTitle(routine.getTitle())
                                 .subroutineList(SubroutineConverter.toSubroutineDTO(routine))
                                 .build()
