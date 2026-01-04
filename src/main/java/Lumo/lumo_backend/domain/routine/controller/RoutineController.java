@@ -1,11 +1,13 @@
 package Lumo.lumo_backend.domain.routine.controller;
 
+import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.routine.dto.RoutineRespDTO;
 import Lumo.lumo_backend.domain.routine.service.RoutineService;
 import Lumo.lumo_backend.domain.routine.status.RoutineSuccessCode;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,8 +33,8 @@ public class RoutineController {
     }
 
     @DeleteMapping
-    public APIResponse<Object> deleteRoutine(@RequestParam("routineId") Long routineId){
-        routineService.deleteRoutine(routineId);
+    public APIResponse<Object> deleteRoutine(@AuthenticationPrincipal Member member, @RequestParam("routineId") Long routineId){
+        routineService.deleteRoutine(member, routineId);
         return APIResponse.onSuccess(null, RoutineSuccessCode.DELETE_ROUTINE_SUCCESS);
     }
 

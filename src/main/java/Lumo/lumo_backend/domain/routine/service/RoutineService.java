@@ -4,7 +4,9 @@ import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.member.repository.MemberRepository;
 import Lumo.lumo_backend.domain.routine.dto.RoutineRespDTO;
 import Lumo.lumo_backend.domain.routine.entity.Routine;
+import Lumo.lumo_backend.domain.routine.exception.RoutineException;
 import Lumo.lumo_backend.domain.routine.repository.RoutineRepository;
+import Lumo.lumo_backend.domain.routine.status.RoutineErrorCode;
 import Lumo.lumo_backend.domain.subroutine.converter.SubroutineConverter;
 import Lumo.lumo_backend.global.apiResponse.status.ErrorCode;
 import Lumo.lumo_backend.global.exception.GeneralException;
@@ -45,10 +47,16 @@ public class RoutineService {
     }
 
 
-    public void deleteRoutine(Long routineId){
-        return;
+    @Transactional
+    public void deleteRoutine(Member member, Long routineId){
+        Member reqMember = memberRepository.findById(member.getId()).orElseThrow(() -> new GeneralException(ErrorCode.MEMBER_TEST_EXCEPTION));
+        Routine routine = routineRepository.findByIdAndMember_Id(routineId, reqMember.getId()).orElseThrow(() -> new RoutineException(RoutineErrorCode.ROUTINE_NOT_FOUND));
+
+        ///  deleteById(routineId) vs delete(Routine) ?
+        routineRepository.deleteById(routine.getId());
     }
 
+    @Transactional
     public void renameRoutine( Long routineId,  String title) {
         return;
     }

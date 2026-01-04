@@ -15,6 +15,7 @@ public enum RoutineErrorCode implements BaseErrorCode {
     TEST_EXCEPTION (HttpStatus.BAD_REQUEST, "TEST4000", "테스트 예외 입니다."),
 
     // 여기서부터 이어서 작성해주시기 바랍니다.
+    ROUTINE_NOT_FOUND(HttpStatus.BAD_REQUEST, "RT4000", "알 수 없는 루틴입니다.")
     ;
 
 
