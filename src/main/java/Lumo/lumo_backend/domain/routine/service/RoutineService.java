@@ -2,6 +2,7 @@ package Lumo.lumo_backend.domain.routine.service;
 
 import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.member.repository.MemberRepository;
+import Lumo.lumo_backend.domain.member.status.MemberErrorCode;
 import Lumo.lumo_backend.domain.routine.dto.RoutineRespDTO;
 import Lumo.lumo_backend.domain.routine.entity.Routine;
 import Lumo.lumo_backend.domain.routine.exception.RoutineException;
@@ -49,7 +50,7 @@ public class RoutineService {
 
     @Transactional
     public void deleteRoutine(Member member, Long routineId){
-        Member reqMember = memberRepository.findById(member.getId()).orElseThrow(() -> new GeneralException(ErrorCode.MEMBER_TEST_EXCEPTION));
+        Member reqMember = memberRepository.findById(member.getId()).orElseThrow(() -> new GeneralException(MemberErrorCode.CANT_FOUND_MEMBER));
         Routine routine = routineRepository.findByIdAndMember_Id(routineId, reqMember.getId()).orElseThrow(() -> new RoutineException(RoutineErrorCode.ROUTINE_NOT_FOUND));
 
         ///  deleteById(routineId) vs delete(Routine) ?
