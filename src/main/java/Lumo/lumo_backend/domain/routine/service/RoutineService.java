@@ -2,9 +2,10 @@ package Lumo.lumo_backend.domain.routine.service;
 
 import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.member.repository.MemberRepository;
-import Lumo.lumo_backend.domain.routine.dto.RoutineRequestDTO;
+import Lumo.lumo_backend.domain.routine.dto.RoutineRespDTO;
 import Lumo.lumo_backend.domain.routine.entity.Routine;
 import Lumo.lumo_backend.domain.routine.repository.RoutineRepository;
+import Lumo.lumo_backend.domain.subroutine.converter.SubroutineConverter;
 import Lumo.lumo_backend.global.apiResponse.status.ErrorCode;
 import Lumo.lumo_backend.global.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -30,17 +30,18 @@ public class RoutineService {
         routineRepository.save(routine);
     }
 
-    public RoutineRequestDTO.GetRoutineReqDTO getRoutine (Long memberId){
+    public List<RoutineRespDTO.GetRoutineDTO> getRoutine (Long memberId){
 
         List<Routine> routineList = routineRepository.findAllById(memberId);
 
-        List<Object> collect = routineList.stream()
-                .map(routine -> {
-
-                })
-                .collect(Collectors.toList());
-
-        return null;
+        return routineList.stream()
+                .map(routine ->
+                    RoutineRespDTO.GetRoutineDTO.builder()
+                            .routineTitle(routine.getTitle())
+                            .subroutineList(SubroutineConverter.toSubroutineDTO(routine))
+                            .build()
+                )
+                .toList();
     }
 
 

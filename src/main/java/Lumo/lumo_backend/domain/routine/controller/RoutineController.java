@@ -1,11 +1,14 @@
 package Lumo.lumo_backend.domain.routine.controller;
 
+import Lumo.lumo_backend.domain.routine.dto.RoutineRespDTO;
 import Lumo.lumo_backend.domain.routine.service.RoutineService;
 import Lumo.lumo_backend.domain.routine.status.RoutineSuccessCode;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -22,9 +25,9 @@ public class RoutineController {
     }
 
     @GetMapping
-    public APIResponse<Object> getRoutine (@RequestParam("memberId") Long memberId){
-        routineService.getRoutine(memberId);
-        return APIResponse.onSuccess(null, RoutineSuccessCode.GET_ROUTINE_SUCCESS);
+    public APIResponse<List<RoutineRespDTO.GetRoutineDTO>> getRoutine (@RequestParam("memberId") Long memberId){
+        List<RoutineRespDTO.GetRoutineDTO> routineList = routineService.getRoutine(memberId);
+        return APIResponse.onSuccess(routineList, RoutineSuccessCode.GET_ROUTINE_SUCCESS);
     }
 
     @DeleteMapping
