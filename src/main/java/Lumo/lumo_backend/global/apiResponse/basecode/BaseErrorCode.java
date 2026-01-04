@@ -9,4 +9,8 @@ public interface BaseErrorCode {
 
     ErrorReasonDTO getReasonHttpStatus();
 
+    String getCode ();
+
+    String getMessage();
+
 }

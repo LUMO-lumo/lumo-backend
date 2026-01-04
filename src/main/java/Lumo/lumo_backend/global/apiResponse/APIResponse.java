@@ -1,5 +1,6 @@
 package Lumo.lumo_backend.global.apiResponse;
 
+import Lumo.lumo_backend.global.apiResponse.basecode.BaseCode;
 import Lumo.lumo_backend.global.apiResponse.status.SuccessCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,11 +20,11 @@ public class APIResponse<T> {
 
     private String message;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+//    @JsonInclude(JsonInclude.Include.NON_NULL)
     private T result;
 
-    public static <T> APIResponse<T> onSuccess(T result, SuccessCode status) {
-        return new APIResponse<>(true, status.getCode(), status.getMessage(), result);
+    public static <T> APIResponse<T> onSuccess(T result, BaseCode code) {
+        return new APIResponse<>(true, code.getCode(), code.getMessage(), result);
     }
 
     public static <T> APIResponse<T> onFailure(String code, String message, T data) {
