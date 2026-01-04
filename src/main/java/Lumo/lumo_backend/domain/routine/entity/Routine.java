@@ -2,6 +2,7 @@ package Lumo.lumo_backend.domain.routine.entity;
 
 import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.subroutine.entity.Subroutine;
+import Lumo.lumo_backend.global.BaseEntity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,7 +14,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Routine {
+public class Routine extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
