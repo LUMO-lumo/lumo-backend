@@ -1,4 +1,4 @@
-package Lumo.lumo_backend.global.apiResponse.status;
+package Lumo.lumo_backend.domain.routine.status;
 
 
 import Lumo.lumo_backend.global.apiResponse.basecode.BaseErrorCode;
@@ -9,28 +9,13 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum ErrorCode implements BaseErrorCode {
+public enum RoutineErrorCode implements BaseErrorCode {
 
     // 예외 작성 예시 입니다.
     TEST_EXCEPTION (HttpStatus.BAD_REQUEST, "TEST4000", "테스트 예외 입니다."),
 
     // 여기서부터 이어서 작성해주시기 바랍니다.
-    BAD_REQUEST(HttpStatus.BAD_REQUEST,
-            "COMMON400_1",
-            "잘못된 요청입니다."),
-
-    /// USER
-    MEMBER_TEST_EXCEPTION (HttpStatus.BAD_REQUEST, "MEMBER1234", "테스트 사용자 API 예외 입니다."),
-
-
-    /// ALARM
-    ALARM_TEST_EXCEPTION (HttpStatus.BAD_REQUEST, "ALARM1234", "테스트 알람 API 예외 입니다."),
-
-
-    /// SERVER
-    INTERNAL_SERVER_ERROR (HttpStatus.INTERNAL_SERVER_ERROR, "SERVER5000", "서버 에러 입니다. 관리자에게 문의 부탁 드립니다")
-
-
+    ROUTINE_NOT_FOUND(HttpStatus.BAD_REQUEST, "RT4000", "알 수 없는 루틴입니다.")
     ;
 
 

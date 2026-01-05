@@ -1,5 +1,6 @@
 package Lumo.lumo_backend.domain.encouragement.entity;
 
+import Lumo.lumo_backend.global.BaseEntity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,7 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Table(name = "encouragement")
-public class Encouragement {
+public class Encouragement extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

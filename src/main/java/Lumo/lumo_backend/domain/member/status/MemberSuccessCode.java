@@ -1,4 +1,4 @@
-package Lumo.lumo_backend.global.apiResponse.status;
+package Lumo.lumo_backend.domain.member.status;
 
 import Lumo.lumo_backend.global.apiResponse.basecode.BaseCode;
 import Lumo.lumo_backend.global.apiResponse.dto.ReasonDTO;
@@ -8,22 +8,10 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum SuccessCode implements BaseCode {
+public enum MemberSuccessCode implements BaseCode {
 
     // 성공 응답 작성 예시 입니다.
     TEST_SUCCESS (HttpStatus.OK, "TEST2000", "테스트 성공 입니다."),
-
-    // 이어서 작성해주시기 바랍니다
-    OK(HttpStatus.OK,
-            "COMMON200",
-            "요청이 성공적으로 처리되었습니다."),
-
-    ///  USER
-    MEMBER_TEST_SUCCESS (HttpStatus.OK, "MEMBER2000", "테스트 성공 입니다."),
-
-
-    ///  ALARM
-    ALARM_TEST_SUCCESS (HttpStatus.OK, "ALARM2000", "테스트 성공 입니다."),
 
     ;
 
