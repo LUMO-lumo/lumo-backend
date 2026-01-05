@@ -3,6 +3,7 @@ package Lumo.lumo_backend.domain.todo.controller;
 import Lumo.lumo_backend.domain.todo.dto.request.CreateToDoRequestDTO;
 import Lumo.lumo_backend.domain.todo.dto.response.ToDoResponseDTO;
 import Lumo.lumo_backend.domain.todo.service.ToDoService;
+import Lumo.lumo_backend.domain.todo.status.ToDoSuccessCode;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
 import Lumo.lumo_backend.global.apiResponse.status.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/to-do")
 @RequiredArgsConstructor
-public class ToDoController{
+public class ToDoController {
 
     private final ToDoService toDoService;
 
@@ -28,7 +29,7 @@ public class ToDoController{
             @RequestBody @Valid CreateToDoRequestDTO createToDoRequestDTO
     ) {
         ToDoResponseDTO toDoResponseDTO = toDoService.create(memberId, createToDoRequestDTO);
-        return APIResponse.onSuccess(toDoResponseDTO, SuccessCode.OK);
+        return APIResponse.onSuccess(toDoResponseDTO, ToDoSuccessCode.CREATE_TODO_SUCCESS);
     }
 
 }

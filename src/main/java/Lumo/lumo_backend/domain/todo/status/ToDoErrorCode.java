@@ -1,4 +1,4 @@
-package Lumo.lumo_backend.domain.todo.exception.code;
+package Lumo.lumo_backend.domain.todo.status;
 
 import Lumo.lumo_backend.global.apiResponse.basecode.BaseErrorCode;
 import Lumo.lumo_backend.global.apiResponse.dto.ErrorReasonDTO;
@@ -14,6 +14,7 @@ public enum ToDoErrorCode implements BaseErrorCode {
             "TODO_404_1",
             "해당 할 일을 찾을 수 없습니다."),
     ;
+    NOT_FOUND(HttpStatus.NOT_FOUND, "TODO_404_1", "해당 할 일을 찾을 수 없습니다."),
 
     private final HttpStatus httpStatus;
     private final String code;
