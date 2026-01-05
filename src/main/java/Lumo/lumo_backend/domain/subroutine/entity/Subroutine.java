@@ -21,9 +21,13 @@ public class Subroutine extends BaseEntity {
 
     private Integer successCount = 0; // 연속 성공 횟수
 
-    private Boolean isSuccess;
+    private Boolean isSuccess = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routine_id")
     private Routine routine;
+
+    public Subroutine(String title){
+        this.title = title;
+    }
 }
