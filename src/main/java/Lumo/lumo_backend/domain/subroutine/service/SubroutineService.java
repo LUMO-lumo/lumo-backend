@@ -9,7 +9,9 @@ import Lumo.lumo_backend.domain.routine.exception.RoutineException;
 import Lumo.lumo_backend.domain.routine.repository.RoutineRepository;
 import Lumo.lumo_backend.domain.routine.status.RoutineErrorCode;
 import Lumo.lumo_backend.domain.subroutine.entity.Subroutine;
+import Lumo.lumo_backend.domain.subroutine.exception.SubroutineException;
 import Lumo.lumo_backend.domain.subroutine.repository.SubroutineRepository;
+import Lumo.lumo_backend.domain.subroutine.status.SubroutineErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @RequiredArgsConstructor
 public class SubroutineService {
+
+    /*
+    *
+    * 관리하고자 하는 서브루틴을 보유하고 있는 사용자 인지에 대한 검증이 필요!
+    *
+    * */
 
     private final RoutineRepository routineRepository;
     private final MemberRepository memberRepository;
@@ -33,4 +41,23 @@ public class SubroutineService {
 
         return savedSubroutine.getId();
     }
+
+    @Transactional
+    public void deleteSubroutine (Member member, Long subroutineId){
+        Member member1 = memberRepository.findById(member.getId()).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
+        subroutineRepository.deleteById(subroutineId); ///  deleteById vs delete?
+    }
+
+    @Transactional
+    public void renameSubroutine(Member member, Long subroutineId, String title) {
+        Subroutine subroutine = subroutineRepository.findById(subroutineId).orElseThrow(() -> new SubroutineException(SubroutineErrorCode.SUBROUTINE_NOT_FOUND));
+        subroutine.renameSubroutine(title);
+    }
+
+    @Transactional
+    public void checkSubroutine ( Member member,  Long subroutineId) {
+        Subroutine subroutine = subroutineRepository.findById(subroutineId).orElseThrow(() -> new SubroutineException(SubroutineErrorCode.SUBROUTINE_NOT_FOUND));
+        subroutine.checkSubroutine();
+    }
+
 }

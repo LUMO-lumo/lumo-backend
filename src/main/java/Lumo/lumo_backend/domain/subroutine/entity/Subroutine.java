@@ -30,4 +30,12 @@ public class Subroutine extends BaseEntity {
     public Subroutine(String title){
         this.title = title;
     }
+
+    public void renameSubroutine (String title){
+        this.title = title;
+    }
+
+    public void checkSubroutine (){
+        this.isSuccess = !this.isSuccess;
+    }
 }
