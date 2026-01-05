@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,6 +39,13 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     }
 
     @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        ErrorCode errorCode = ErrorCode.INVALID_JSON;
+        APIResponse<Object> body = APIResponse.onFailure(errorCode.getCode(), errorCode.getMessage(), null);
+        return super.handleExceptionInternal(ex, body, headers, status, request);
+    }
+
+    @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         Map<String, String> errors = new HashMap<>();
 
@@ -58,7 +66,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = GeneralException.class)
-    public ResponseEntity<Object> onThrowExcpetion(GeneralException generalEx, HttpServletRequest request) {
+    public ResponseEntity<Object> onThrowException(GeneralException generalEx, HttpServletRequest request) {
         ErrorReasonDTO reasonHttpStatus = generalEx.getReasonHttpStatus();
 
         log.error("Exception occurred! : {}", reasonHttpStatus.getMessage());
