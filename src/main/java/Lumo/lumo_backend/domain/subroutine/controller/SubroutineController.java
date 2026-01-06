@@ -40,7 +40,7 @@ public class SubroutineController {
         return APIResponse.onSuccess(null, RoutineSuccessCode.RENAME_ROUTINE_SUCCESS);
     }
 
-    @PostMapping
+    @PostMapping("/check")
     public APIResponse<Object> checkSubroutine (@AuthenticationPrincipal Member member, @RequestParam ("id") Long subroutineId) {
         subroutineService.checkSubroutine(member, subroutineId);
         return APIResponse.onSuccess(null, RoutineSuccessCode.RENAME_ROUTINE_SUCCESS);

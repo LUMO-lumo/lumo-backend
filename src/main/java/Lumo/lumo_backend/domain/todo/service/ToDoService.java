@@ -2,8 +2,8 @@ package Lumo.lumo_backend.domain.todo.service;
 
 import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.member.exception.MemberException;
-import Lumo.lumo_backend.domain.member.exception.code.MemberErrorCode;
 import Lumo.lumo_backend.domain.member.repository.MemberRepository;
+import Lumo.lumo_backend.domain.member.status.MemberErrorCode;
 import Lumo.lumo_backend.domain.todo.dto.request.CreateToDoRequestDTO;
 import Lumo.lumo_backend.domain.todo.dto.response.ToDoResponseDTO;
 import Lumo.lumo_backend.domain.todo.entity.ToDo;
@@ -22,7 +22,7 @@ public class ToDoService {
     @Transactional
     public ToDoResponseDTO create(Long memberId, CreateToDoRequestDTO createToDoRequestDTO) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
 
         ToDo toDo = ToDo.builder()
                 .member(member)
