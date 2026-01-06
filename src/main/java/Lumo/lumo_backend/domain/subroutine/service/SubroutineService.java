@@ -58,6 +58,7 @@ public class SubroutineService {
     public void checkSubroutine ( Member member,  Long subroutineId) {
         Subroutine subroutine = subroutineRepository.findById(subroutineId).orElseThrow(() -> new SubroutineException(SubroutineErrorCode.SUBROUTINE_NOT_FOUND));
         subroutine.checkSubroutine();
+        subroutine.increateCnt();
     }
 
 }
