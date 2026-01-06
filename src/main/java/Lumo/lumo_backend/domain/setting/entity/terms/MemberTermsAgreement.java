@@ -5,7 +5,7 @@ import Lumo.lumo_backend.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 /**
  * 약관 버전 엔티티
@@ -39,5 +39,5 @@ public class MemberTermsAgreement {
     private boolean active;
 
     @Column(nullable = false)
-    private Instant signAt;
+    private LocalDateTime signAt;
 }
