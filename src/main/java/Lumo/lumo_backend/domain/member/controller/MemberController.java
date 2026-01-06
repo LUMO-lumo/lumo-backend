@@ -44,5 +44,11 @@ public class MemberController {
         return APIResponse.onSuccess(memberService.checkEmailDuplicate(email), MemberSuccessCode.EMAIL_DUPLICATE_CHECK_SUCCESS);
     }
 
+    @PostMapping("/verfication-code")
+        public APIResponse<Object> requestVerificationCode(@RequestParam("email") String email){
+        memberService.requestVerificationCode(email);
+        return null;
+    }
+
 
 }
