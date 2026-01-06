@@ -22,16 +22,28 @@ public enum AlarmSuccessCode implements BaseCode {
     ALARM_ENABLED(HttpStatus.OK, "ALARM_2012", "알람이 활성화되었습니다."),
     ALARM_DISABLED(HttpStatus.OK, "ALARM_2013", "알람이 비활성화되었습니다."),
 
-    // 반복 요일 설정
+    // 반복 요일 & 스누즈 설정
     REPEAT_DAYS_RETRIEVED(HttpStatus.OK, "ALARM_2021", "반복 요일 조회에 성공했습니다."),
     REPEAT_DAYS_UPDATED(HttpStatus.OK, "ALARM_2022", "반복 요일이 성공적으로 설정되었습니다."),
+    SNOOZE_RETRIEVED(HttpStatus.OK, "ALARM_2023", "스누즈 설정 조회에 성공했습니다."),
+    SNOOZE_UPDATED(HttpStatus.OK, "ALARM_2024", "스누즈 설정이 성공적으로 수정되었습니다."),
+    SNOOZE_TOGGLED(HttpStatus.OK, "ALARM_2025", "스누즈 ON/OFF가 변경되었습니다."),
 
     // 알람 로그
     ALARM_LOG_RETRIEVED(HttpStatus.OK, "ALARM_2031", "알람 기록 조회에 성공했습니다."),
     ALARM_TRIGGERED(HttpStatus.OK, "ALARM_2032", "알람 울림이 기록되었습니다."),
-    ALARM_DISMISSED(HttpStatus.OK, "ALARM_2033", "알람 해제가 기록되었습니다.");
+    ALARM_DISMISSED(HttpStatus.OK, "ALARM_2033", "알람 해제가 기록되었습니다."),
 
-
+    // 미션 설정
+    MISSION_RETRIEVED(HttpStatus.OK, "ALARM_2041", "미션 설정 조회에 성공했습니다."),
+    MISSION_UPDATED(HttpStatus.OK, "ALARM_2042", "미션 설정이 성공적으로 수정되었습니다."),
+    MISSION_CONTENT_RETRIEVED(HttpStatus.OK, "ALARM_2043", "미션 문제 조회에 성공했습니다."),
+    MISSION_CONTENT_CREATED(HttpStatus.CREATED, "ALARM_2044", "미션 문제가 등록되었습니다."),
+    MISSION_CONTENT_DELETED(HttpStatus.OK, "ALARM_2045", "미션 문제가 삭제되었습니다."),
+    MISSION_STARTED(HttpStatus.OK, "ALARM_2046", "미션이 시작되었습니다."),
+    MISSION_SUBMITTED(HttpStatus.OK, "ALARM_2047", "미션 답안이 제출되었습니다."),
+    MISSION_WALK_UPDATED(HttpStatus.OK, "ALARM_2048", "걷기 미션 진행률이 업데이트되었습니다."),
+    MISSION_HISTORY_RETRIEVED(HttpStatus.OK, "ALARM_2049", "미션 기록 조회에 성공했습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
