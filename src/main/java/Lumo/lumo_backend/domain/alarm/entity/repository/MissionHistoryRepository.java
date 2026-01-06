@@ -12,5 +12,5 @@ public interface MissionHistoryRepository extends JpaRepository<MissionHistory, 
 
     List<MissionHistory> findByAlarmOrderByCompletedAtDesc(Alarm alarm);
 
-    List<MissionHistory> findByAlarm_Member_MemberIdOrderByCompletedAtDesc(Long memberId);
+    List<MissionHistory> findByAlarm_Member_IdOrderByCompletedAtDesc(Long memberId);
 }
