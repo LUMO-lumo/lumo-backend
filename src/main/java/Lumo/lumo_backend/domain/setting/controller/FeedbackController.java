@@ -23,7 +23,7 @@ public class FeedbackController {
     }
 
     @PatchMapping("/{feedbackId}")
-    public APIResponse<Object> patchFeedback() {
+    public APIResponse<Object> updateFeedback() {
         return null;
     }
 
