@@ -15,7 +15,7 @@ public class AdminInquiryController {
     }
 
     @PatchMapping("/{inquiryId}")
-    public APIResponse<Object> patchAdminInquiry() {
+    public APIResponse<Object> updateAdminInquiry() {
         return null;
     }
 

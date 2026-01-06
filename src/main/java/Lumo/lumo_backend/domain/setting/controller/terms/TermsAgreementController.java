@@ -19,7 +19,7 @@ public class TermsAgreementController {
     }
 
     @PostMapping
-    public APIResponse<Object> submitTermsAgreement() {
+    public APIResponse<Object> createTermsAgreement() {
         return null;
     }
 
