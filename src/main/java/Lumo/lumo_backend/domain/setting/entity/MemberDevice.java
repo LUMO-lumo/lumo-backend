@@ -4,8 +4,6 @@ import Lumo.lumo_backend.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
-
 /**
  * 사용자 기기 엔티티
  */

@@ -19,6 +19,10 @@ public enum ErrorCode implements BaseErrorCode {
             "COMMON400_1",
             "잘못된 요청입니다."),
 
+    INVALID_JSON(HttpStatus.BAD_REQUEST,
+            "COMMON400_2",
+            "JSON 형식이 올바르지 않습니다."),
+
     /// USER
     MEMBER_TEST_EXCEPTION (HttpStatus.BAD_REQUEST, "MEMBER1234", "테스트 사용자 API 예외 입니다."),
 
