@@ -6,20 +6,21 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
-@RequestMapping("/api/admin/inquiries")
+@RequestMapping("/api/inquiries")
 public class InquiryController {
 
     @GetMapping("/{inquiryId}")
     public APIResponse<Object> getInquiry() {
         return null;
     }
+
     @PostMapping
     public APIResponse<Object> createInquiry() {
         return null;
     }
 
     @PatchMapping("/{inquiryId}")
-    public APIResponse<Object> patchInquiry() {
+    public APIResponse<Object> updateInquiry() {
         return null;
     }
 

@@ -15,7 +15,7 @@ public class AdminNoticeController {
     }
 
     @PatchMapping("/{noticeId}")
-    public APIResponse<Object> patchNotice() {
+    public APIResponse<Object> updateNotice() {
         return null;
     }
 
