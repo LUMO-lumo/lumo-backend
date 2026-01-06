@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface AlarmLogRepository extends JpaRepository<AlarmLog, Long> {
 
-    List<AlarmLog> findByAlarm_IdOrderByTriggeredAtDesc(Long memberId);
+    List<AlarmLog> findByAlarm_Member_IdOrderByTriggeredAtDesc(Long memberId);
 
     List<AlarmLog> findByAlarmOrderByTriggeredAtDesc(Alarm alarm);
 }
