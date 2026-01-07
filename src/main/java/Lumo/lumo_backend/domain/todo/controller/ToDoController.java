@@ -34,6 +34,7 @@ public class ToDoController {
         return APIResponse.onSuccess(toDoResponseDTO, ToDoSuccessCode.CREATE_TODO_SUCCESS);
     }
 
+    @Operation(summary = "할 일 수정")
     @PatchMapping("/{toDoId}")
     public APIResponse<ToDoResponseDTO> update(
             @RequestHeader Long memberId, // 수정 필요
