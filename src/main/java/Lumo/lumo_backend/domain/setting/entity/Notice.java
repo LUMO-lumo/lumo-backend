@@ -3,7 +3,7 @@ package Lumo.lumo_backend.domain.setting.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 
 /**
@@ -29,13 +29,7 @@ public class Notice {
     private String content;
 
     @Column(nullable = false)
-    private Instant createdAt;
-
-    @Column(nullable = false)
-    private Instant UpdatedAt;
-
-    @Column(nullable = false)
-    private Instant DeletedAt;
+    private LocalDate DeletedAt;
 
     @Column(nullable = false)
     private boolean active;

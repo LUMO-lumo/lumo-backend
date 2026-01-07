@@ -4,7 +4,6 @@ import Lumo.lumo_backend.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
 
 
 /**
@@ -33,6 +32,4 @@ public class Inquiry {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private Instant createdAt;
 }

@@ -4,7 +4,6 @@ import Lumo.lumo_backend.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
 
 /**
  * 사용자 피드백 엔티티
@@ -21,8 +20,8 @@ public class Feedback {
     @Column(name = "feedback_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @Column(nullable = false, length = 100)
@@ -31,6 +30,9 @@ public class Feedback {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private Instant createdAt;
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
 }

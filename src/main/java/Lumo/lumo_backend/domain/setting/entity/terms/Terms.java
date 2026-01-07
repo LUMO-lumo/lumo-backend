@@ -3,7 +3,6 @@ package Lumo.lumo_backend.domain.setting.entity.terms;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
 
 /**
  * 약관 엔티티
@@ -31,8 +30,6 @@ public class Terms {
     @Column(nullable = false)
     private boolean required;
 
-    @Column(nullable = false)
-    private Instant createdAt;
 
 
 }
