@@ -9,6 +9,7 @@ import Lumo.lumo_backend.global.apiResponse.APIResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,5 +44,15 @@ public class ToDoController {
     ) {
         ToDoResponseDTO toDoResponseDTO = toDoService.update(memberId, toDoId, toDoUpdateRequestDTO);
         return APIResponse.onSuccess(toDoResponseDTO, ToDoSuccessCode.UPDATE_TODO_SUCCESS);
+    }
+
+    @Operation(summary = "할 일 삭제")
+    @DeleteMapping("/{toDoId}")
+    public APIResponse<Long> delete(
+            @RequestHeader Long memberId, // 수정 필요
+            @PathVariable Long toDoId
+    ) {
+        toDoService.delete(memberId, toDoId);
+        return APIResponse.onSuccess(null, ToDoSuccessCode.DELETE_TODO_SUCCESS);
     }
 }

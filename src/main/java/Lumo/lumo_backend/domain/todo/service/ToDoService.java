@@ -51,4 +51,16 @@ public class ToDoService {
 
         return ToDoResponseDTO.from(toDo);
     }
+
+    @Transactional
+    public void delete(Long memberId, Long toDoId) {
+        ToDo toDo = toDoRepository.findById(toDoId)
+                .orElseThrow(() -> new ToDoException(ToDoErrorCode.NOT_FOUND));
+
+        if (!toDo.isOwnedBy(memberId)) {
+            throw new ToDoException(ToDoErrorCode.ACCESS_DENIED);
+        }
+
+        toDoRepository.delete(toDo); //hard delete
+    }
 }

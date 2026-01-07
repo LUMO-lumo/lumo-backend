@@ -1,6 +1,7 @@
 package Lumo.lumo_backend.domain.todo.controller;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -14,6 +15,7 @@ import Lumo.lumo_backend.domain.todo.dto.response.ToDoResponseDTO;
 import Lumo.lumo_backend.domain.todo.exception.ToDoException;
 import Lumo.lumo_backend.domain.todo.service.ToDoService;
 import Lumo.lumo_backend.domain.todo.status.ToDoErrorCode;
+import Lumo.lumo_backend.domain.todo.status.ToDoSuccessCode;
 import Lumo.lumo_backend.global.exception.ExceptionAdvice;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
@@ -27,6 +29,7 @@ import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @WebMvcTest(ToDoController.class)
 @Import(ExceptionAdvice.class)
@@ -132,7 +135,7 @@ class ToDoControllerTest {
         ToDoResponseDTO response = new ToDoResponseDTO(toDoId, newContent, eventDate);
         given(toDoService.update(memberId, toDoId, request)).willReturn(response);
 
-        mockMvc.perform(patch("/api/to-do/{toDoId}",toDoId)
+        mockMvc.perform(patch("/api/to-do/{toDoId}", toDoId)
                         .header("memberId", memberId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -181,5 +184,49 @@ class ToDoControllerTest {
                 .andExpect(jsonPath("$.code").value(ToDoErrorCode.ACCESS_DENIED.getCode()))
                 .andExpect(jsonPath("$.message").value(ToDoErrorCode.ACCESS_DENIED.getMessage()));
 
+    }
+
+    @Test
+    @DisplayName("할 일 삭제")
+    void delete() throws Exception {
+        Long memberId = 1L;
+        Long toDoId = 1L;
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/to-do/{doDoId}", toDoId)
+                        .header("memberId", memberId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ToDoSuccessCode.DELETE_TODO_SUCCESS.getCode()))
+                .andExpect(jsonPath("$.message").value(ToDoSuccessCode.DELETE_TODO_SUCCESS.getMessage()));
+
+    }
+
+    @Test
+    @DisplayName("할 일 삭제-TODO_NOTFOUND")
+    void deleteToDoNOTFOUND() throws Exception {
+        Long memberId = 1L;
+        Long toDoId = 0L;
+        willThrow(new ToDoException(ToDoErrorCode.NOT_FOUND))
+                .given(toDoService).delete(memberId,toDoId);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/to-do/{doDoId}", toDoId)
+                        .header("memberId", memberId))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value(ToDoErrorCode.NOT_FOUND.getCode()))
+                .andExpect(jsonPath("$.message").value(ToDoErrorCode.NOT_FOUND.getMessage()));
+    }
+
+    @Test
+    @DisplayName("할 일 삭제-TODO_ACCESS_DENIED")
+    void deleteToDoNACCESS_DENIED() throws Exception {
+        Long memberId = 2L;
+        Long toDoId = 1L;
+        willThrow(new ToDoException(ToDoErrorCode.ACCESS_DENIED))
+                .given(toDoService).delete(memberId,toDoId);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/to-do/{doDoId}", toDoId)
+                        .header("memberId", memberId))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value(ToDoErrorCode.ACCESS_DENIED.getCode()))
+                .andExpect(jsonPath("$.message").value(ToDoErrorCode.ACCESS_DENIED.getMessage()));
     }
 }
