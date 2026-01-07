@@ -13,6 +13,7 @@ import Lumo.lumo_backend.domain.todo.exception.ToDoException;
 import Lumo.lumo_backend.domain.todo.repository.ToDoRepository;
 import Lumo.lumo_backend.domain.todo.status.ToDoErrorCode;
 import java.time.LocalDate;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
+@Transactional
 class ToDoServiceTest {
 
     @Autowired
@@ -29,7 +31,6 @@ class ToDoServiceTest {
 
     @Test
     @DisplayName("할 일 생성")
-    @Transactional
     void create() {
         Long memberId = 1L;
         LocalDate eventDate = LocalDate.of(2020, 1, 1);
@@ -48,7 +49,6 @@ class ToDoServiceTest {
 
     @Test
     @DisplayName("할 일 생성-사용자 NOT FOUND")
-    @Transactional
     void create_MemberNotFound() {
         Long memberId = 0L;
         LocalDate eventDate = LocalDate.of(2020, 1, 1);
@@ -61,7 +61,6 @@ class ToDoServiceTest {
 
     @Test
     @DisplayName("할 일 수정")
-    @Transactional
     void update() {
         Long memberId = 1L;
         LocalDate eventDate = LocalDate.of(2020, 1, 1);
@@ -81,8 +80,7 @@ class ToDoServiceTest {
 
     @Test
     @DisplayName("할 일 수정-할 일 NOT FOUND")
-    @Transactional
-    void update_ToDoNOTFOUND(){
+    void update_ToDoNOTFOUND() {
         Long memberId = 1L;
         String newContent = "분리수거하기";
         ToDoUpdateRequestDTO toDoUpdateRequestDTO = new ToDoUpdateRequestDTO(newContent);
@@ -92,8 +90,7 @@ class ToDoServiceTest {
 
     @Test
     @DisplayName("할 일 수정-ACCESS_DENIED")
-    @Transactional
-    void update_ACCESS_DENIED(){
+    void update_ACCESS_DENIED() {
         Long memberId = 1L;
         LocalDate eventDate = LocalDate.of(2020, 1, 1);
         String content = "쓰레기 버리기";
@@ -106,6 +103,46 @@ class ToDoServiceTest {
 
         Throwable throwable = catchThrowable(() -> toDoService.update(2L, created.id(), toDoUpdateRequestDTO));
 
+        assertThat(throwable).isInstanceOf(ToDoException.class)
+                .hasMessage(ToDoErrorCode.ACCESS_DENIED.getMessage());
+    }
+
+    @Test
+    @DisplayName("할 일 삭제")
+    void delete() {
+        Long memberId = 1L;
+        LocalDate eventDate = LocalDate.of(2020, 1, 1);
+        String content = "쓰레기 버리기";
+
+        ToDoCreateRequestDTO toDoCreateRequestDTO = new ToDoCreateRequestDTO(eventDate, content);
+        ToDoResponseDTO created = toDoService.create(memberId, toDoCreateRequestDTO);
+
+        toDoService.delete(memberId, created.id());
+
+        Optional<ToDo> toDo = toDoRepository.findById(created.id());
+        assertThat(toDo).isEmpty();
+    }
+
+    @Test
+    @DisplayName("할 일 삭제 TODO NOT FOUND")
+    void deleteToDoNOTFOUND() {
+        Throwable throwable = catchThrowable(() -> toDoService.delete(1L, 0L));
+
+        assertThat(throwable).isInstanceOf(ToDoException.class)
+                .hasMessage(ToDoErrorCode.NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("할 일 삭제 ACCESS DENIED")
+    void delete_AccessDenied() {
+        Long memberId = 1L;
+        LocalDate eventDate = LocalDate.of(2020, 1, 1);
+        String content = "쓰레기 버리기";
+
+        ToDoCreateRequestDTO toDoCreateRequestDTO = new ToDoCreateRequestDTO(eventDate, content);
+        ToDoResponseDTO created = toDoService.create(memberId, toDoCreateRequestDTO);
+
+        Throwable throwable = catchThrowable(() -> toDoService.delete(2L, created.id()));
         assertThat(throwable).isInstanceOf(ToDoException.class)
                 .hasMessage(ToDoErrorCode.ACCESS_DENIED.getMessage());
     }
