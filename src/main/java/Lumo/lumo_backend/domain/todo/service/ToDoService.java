@@ -4,10 +4,13 @@ import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.member.exception.MemberException;
 import Lumo.lumo_backend.domain.member.repository.MemberRepository;
 import Lumo.lumo_backend.domain.member.status.MemberErrorCode;
-import Lumo.lumo_backend.domain.todo.dto.request.CreateToDoRequestDTO;
+import Lumo.lumo_backend.domain.todo.dto.request.ToDoCreateRequestDTO;
+import Lumo.lumo_backend.domain.todo.dto.request.ToDoUpdateRequestDTO;
 import Lumo.lumo_backend.domain.todo.dto.response.ToDoResponseDTO;
 import Lumo.lumo_backend.domain.todo.entity.ToDo;
+import Lumo.lumo_backend.domain.todo.exception.ToDoException;
 import Lumo.lumo_backend.domain.todo.repository.ToDoRepository;
+import Lumo.lumo_backend.domain.todo.status.ToDoErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,17 +23,32 @@ public class ToDoService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public ToDoResponseDTO create(Long memberId, CreateToDoRequestDTO createToDoRequestDTO) {
+    public ToDoResponseDTO create(Long memberId, ToDoCreateRequestDTO toDoCreateRequestDTO) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
 
         ToDo toDo = ToDo.builder()
                 .member(member)
-                .eventDate(createToDoRequestDTO.eventDate())
-                .content(createToDoRequestDTO.content())
+                .eventDate(toDoCreateRequestDTO.eventDate())
+                .content(toDoCreateRequestDTO.content())
                 .build();
 
         ToDo savedToDo = toDoRepository.save(toDo);
         return ToDoResponseDTO.from(savedToDo);
+    }
+
+    @Transactional
+    public ToDoResponseDTO update(Long memberId, Long toDoId, ToDoUpdateRequestDTO toDoUpdateRequestDTO) {
+        ToDo toDo = toDoRepository.findById(toDoId)
+                .orElseThrow(() -> new ToDoException(ToDoErrorCode.NOT_FOUND));
+
+        if (!toDo.isOwnedBy(memberId)) {
+            throw new ToDoException(ToDoErrorCode.ACCESS_DENIED);
+        }
+
+        String content = toDoUpdateRequestDTO.content();
+        toDo.update(content);
+
+        return ToDoResponseDTO.from(toDo);
     }
 }
