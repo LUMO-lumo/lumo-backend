@@ -11,7 +11,9 @@ import Lumo.lumo_backend.domain.member.exception.MemberException;
 import Lumo.lumo_backend.domain.member.status.MemberErrorCode;
 import Lumo.lumo_backend.domain.todo.dto.request.ToDoCreateRequestDTO;
 import Lumo.lumo_backend.domain.todo.dto.request.ToDoUpdateRequestDTO;
+import Lumo.lumo_backend.domain.todo.dto.response.ToDoListResponseDTO;
 import Lumo.lumo_backend.domain.todo.dto.response.ToDoResponseDTO;
+import Lumo.lumo_backend.domain.todo.entity.ToDo;
 import Lumo.lumo_backend.domain.todo.exception.ToDoException;
 import Lumo.lumo_backend.domain.todo.service.ToDoService;
 import Lumo.lumo_backend.domain.todo.status.ToDoErrorCode;
@@ -19,6 +21,8 @@ import Lumo.lumo_backend.domain.todo.status.ToDoSuccessCode;
 import Lumo.lumo_backend.global.exception.ExceptionAdvice;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -206,7 +210,7 @@ class ToDoControllerTest {
         Long memberId = 1L;
         Long toDoId = 0L;
         willThrow(new ToDoException(ToDoErrorCode.NOT_FOUND))
-                .given(toDoService).delete(memberId,toDoId);
+                .given(toDoService).delete(memberId, toDoId);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/to-do/{doDoId}", toDoId)
                         .header("memberId", memberId))
@@ -221,12 +225,40 @@ class ToDoControllerTest {
         Long memberId = 2L;
         Long toDoId = 1L;
         willThrow(new ToDoException(ToDoErrorCode.ACCESS_DENIED))
-                .given(toDoService).delete(memberId,toDoId);
+                .given(toDoService).delete(memberId, toDoId);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/to-do/{doDoId}", toDoId)
                         .header("memberId", memberId))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value(ToDoErrorCode.ACCESS_DENIED.getCode()))
                 .andExpect(jsonPath("$.message").value(ToDoErrorCode.ACCESS_DENIED.getMessage()));
+    }
+
+    @Test
+    @DisplayName("일별 할 일 목록 조회")
+    void findToDoListByEventDate() throws Exception {
+        Long memberId = 1L;
+        LocalDate eventDate = LocalDate.of(2020, 1, 1);
+
+        List<ToDo> toDoList=new ArrayList<>();
+        long toDoId = 1L;
+        String content = "쓰레기 버리기";
+        toDoList.add(ToDo.builder()
+                .id(toDoId)
+                .content(content)
+                .eventDate(eventDate)
+                .build());
+        given(toDoService.findToDoListByEventDate(memberId, eventDate))
+                .willReturn(ToDoListResponseDTO.from(toDoList));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/to-do")
+                        .param("eventDate", eventDate.toString())
+                        .header("memberId", memberId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(ToDoSuccessCode.GET_TODO_SUCCESS.getCode()))
+                .andExpect(jsonPath("$.message").value(ToDoSuccessCode.GET_TODO_SUCCESS.getMessage()))
+                .andExpect(jsonPath("$.result.toDoList[0].id").value(toDoId))
+                .andExpect(jsonPath("$.result.toDoList[0].content").value(content))
+                .andExpect(jsonPath("$.result.toDoList[0].eventDate").value(eventDate.toString()));
     }
 }
