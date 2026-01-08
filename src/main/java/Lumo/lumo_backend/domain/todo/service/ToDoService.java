@@ -65,6 +65,7 @@ public class ToDoService {
         toDoRepository.delete(toDo); //hard delete
     }
 
+    @Transactional(readOnly = true)
     public ToDoListResponseDTO findToDoListByEventDate(Long memberId, LocalDate eventDate) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
