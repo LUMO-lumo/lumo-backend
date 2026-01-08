@@ -45,7 +45,7 @@ public class MemberService {
             code = generateVerificationCode();
             helper = new MimeMessageHelper(msg, true, "utf-8");
             helper.setTo(email);
-            helper.setSubject("더미톡 인증 이메일 알림.");
+            helper.setSubject("Lumo 인증 이메일 알림.");
             helper.setText("<!DOCTYPE html>\n" +
                     "<html lang=\"ko\">\n" +
                     "<head>\n" +
@@ -136,7 +136,7 @@ public class MemberService {
                     "        <h2>더미톡 이메일 인증</h2>\n" +
                     "    </div>\n" +
                     "    <div class=\"content\">\n" +
-                    "        <p>안녕하세요, 더미톡입니다. 이메일 주소 인증을 위해 아래 코드를 사용해 주세요.</p>\n" +
+                    "        <p>안녕하세요, Lumo입니다. 이메일 주소 인증을 위해 아래 코드를 사용해 주세요.</p>\n" +
                     "        <div class=\"verification-code-container\">\n" +
                     "            <span class=\"verification-code\">  " + code + "  </span>\n" +
                     "        </div>\n" +
@@ -144,8 +144,8 @@ public class MemberService {
                     "        <p class=\"instruction\">코드를 복사하여 앱에 붙여넣어 주세요.</p>\n" +
                     "    </div>\n" +
                     "    <div class=\"footer\">\n" +
-                    "        <p>이 메일은 발신 전용입니다. 문의사항은 고객센터를 이용해 주세요.</p>\n" +
-                    "        <p>&copy; 2025 DummyTalk. All Rights Reserved.</p>\n" +
+                    "        <p>이 메일은 발신 전용입니다. 문의사항은 관리자 이메일로 문의 부탁 드립니다.</p>\n" +
+                    "        <p>&copy; 2026 Lumo. All Rights Reserved.</p>\n" +
                     "    </div>\n" +
                     "</div>\n" +
                     "</body>\n" +
