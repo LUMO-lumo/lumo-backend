@@ -7,12 +7,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import Lumo.lumo_backend.domain.member.exception.MemberException;
 import Lumo.lumo_backend.domain.todo.dto.request.ToDoCreateRequestDTO;
 import Lumo.lumo_backend.domain.todo.dto.request.ToDoUpdateRequestDTO;
+import Lumo.lumo_backend.domain.todo.dto.response.ToDoListResponseDTO;
 import Lumo.lumo_backend.domain.todo.dto.response.ToDoResponseDTO;
 import Lumo.lumo_backend.domain.todo.entity.ToDo;
 import Lumo.lumo_backend.domain.todo.exception.ToDoException;
 import Lumo.lumo_backend.domain.todo.repository.ToDoRepository;
 import Lumo.lumo_backend.domain.todo.status.ToDoErrorCode;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -145,5 +147,28 @@ class ToDoServiceTest {
         Throwable throwable = catchThrowable(() -> toDoService.delete(2L, created.id()));
         assertThat(throwable).isInstanceOf(ToDoException.class)
                 .hasMessage(ToDoErrorCode.ACCESS_DENIED.getMessage());
+    }
+
+    @Test
+    @DisplayName("일별 할 일 조회")
+    void findToDoListByEventDate() {
+        Long memberId = 1L;
+        LocalDate eventDate = LocalDate.of(2020, 1, 1);
+        String content = "쓰레기 버리기";
+
+        ToDoCreateRequestDTO toDoCreateRequestDTO = new ToDoCreateRequestDTO(eventDate, content);
+        ToDoResponseDTO created = toDoService.create(memberId, toDoCreateRequestDTO);
+
+        String content2 = "회의";
+
+        ToDoCreateRequestDTO toDoCreateRequestDTO2 = new ToDoCreateRequestDTO(eventDate, content2);
+        ToDoResponseDTO created2 = toDoService.create(memberId, toDoCreateRequestDTO2);
+
+        ToDoListResponseDTO toDoListResponseDTO = toDoService.findToDoListByEventDate(memberId, eventDate);
+        List<ToDoResponseDTO> toDoDTOList = toDoListResponseDTO.toDoList();
+        assertEquals(2,toDoDTOList.size());
+        for (ToDoResponseDTO toDoResponseDTO : toDoDTOList) {
+            assertEquals(eventDate, toDoResponseDTO.eventDate());
+        }
     }
 }

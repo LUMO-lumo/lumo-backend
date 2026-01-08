@@ -2,20 +2,24 @@ package Lumo.lumo_backend.domain.todo.controller;
 
 import Lumo.lumo_backend.domain.todo.dto.request.ToDoCreateRequestDTO;
 import Lumo.lumo_backend.domain.todo.dto.request.ToDoUpdateRequestDTO;
+import Lumo.lumo_backend.domain.todo.dto.response.ToDoListResponseDTO;
 import Lumo.lumo_backend.domain.todo.dto.response.ToDoResponseDTO;
 import Lumo.lumo_backend.domain.todo.service.ToDoService;
 import Lumo.lumo_backend.domain.todo.status.ToDoSuccessCode;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -54,5 +58,15 @@ public class ToDoController {
     ) {
         toDoService.delete(memberId, toDoId);
         return APIResponse.onSuccess(null, ToDoSuccessCode.DELETE_TODO_SUCCESS);
+    }
+
+    @Operation(summary = "일별 할 일 목록 조회")
+    @GetMapping
+    public APIResponse<ToDoListResponseDTO> findToDoListByEventDate(
+            @RequestHeader Long memberId,
+            @RequestParam LocalDate eventDate
+    ){
+        ToDoListResponseDTO toDoList = toDoService.findToDoListByEventDate(memberId, eventDate);
+        return APIResponse.onSuccess(toDoList, ToDoSuccessCode.GET_TODO_SUCCESS);
     }
 }
