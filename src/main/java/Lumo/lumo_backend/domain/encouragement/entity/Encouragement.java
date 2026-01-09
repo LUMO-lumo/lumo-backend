@@ -26,7 +26,7 @@ public class Encouragement extends BaseEntity {
     @Column(name = "encouragement_id")
     private Long id;
 
-    @Column(name = "content", nullable = false)
+    @Column(name = "content", nullable = false, unique = true)
     private String content;
 
 }
