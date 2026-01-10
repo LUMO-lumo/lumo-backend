@@ -114,6 +114,23 @@ public class Alarm {
     @Builder.Default
     private List<AlarmLog> alarmLogs = new ArrayList<>();
 
+
+
+    /**
+     * 사운드 타입 설정 (편의 메서드)
+     */
+    public void setSoundType(AlarmSound alarmSound) {
+        this.soundType = alarmSound.name();
+    }
+
+    /**
+     * 사운드 타입 조회 (편의 메서드)
+     */
+    public AlarmSound getAlarmSound() {
+        return soundType != null ? AlarmSound.valueOf(soundType) : null;
+    }
+
+
     /**
      * 미션 수행 기록 (1:N)
      */
