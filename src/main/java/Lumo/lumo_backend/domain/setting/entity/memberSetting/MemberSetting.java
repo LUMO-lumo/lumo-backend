@@ -2,6 +2,7 @@ package Lumo.lumo_backend.domain.setting.entity.memberSetting;
 
 
 import Lumo.lumo_backend.domain.member.entity.Member;
+import Lumo.lumo_backend.global.BaseEntity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +15,7 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Table(name = "member_setting")
-public class MemberSetting {
+public class MemberSetting extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
