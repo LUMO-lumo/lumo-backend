@@ -34,6 +34,10 @@ public class Routine extends BaseEntity {
         this.member = member;
     }
 
+    public void addSubroutine (Subroutine subroutine){
+        this.subroutineList.add(subroutine);
+    }
+
     public void renameRoutine(String title){
         this.title = title;
     }

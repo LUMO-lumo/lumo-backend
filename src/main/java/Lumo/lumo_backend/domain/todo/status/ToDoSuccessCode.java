@@ -1,20 +1,19 @@
-package Lumo.lumo_backend.domain.member.status;
+package Lumo.lumo_backend.domain.todo.status;
 
 import Lumo.lumo_backend.global.apiResponse.basecode.BaseCode;
 import Lumo.lumo_backend.global.apiResponse.dto.ReasonDTO;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Getter
-@AllArgsConstructor
-public enum MemberSuccessCode implements BaseCode {
+@RequiredArgsConstructor
+public enum ToDoSuccessCode implements BaseCode {
 
-    // 성공 응답 작성 예시 입니다.
-    TEST_SUCCESS (HttpStatus.OK, "TEST2000", "테스트 성공 입니다."),
-
-    EMAIL_DUPLICATE_CHECK_SUCCESS (HttpStatus.OK, "MEMBER2001", "이메일 중복 검사 성공 입니다."),
-
+    CREATE_TODO_SUCCESS(HttpStatus.OK, "TODO_200_1", "할 일 생성에 성공했습니다."),
+    UPDATE_TODO_SUCCESS(HttpStatus.OK, "TODO_200_2", "할 일 수정에 성공했습니다."),
+    DELETE_TODO_SUCCESS(HttpStatus.OK, "TODO_200_3", "할 일 삭제에 성공했습니다."),
+    GET_TODO_SUCCESS(HttpStatus.OK, "TODO_200_4", "할 일 조회에 성공했습니다.")
     ;
 
     private final HttpStatus status;
