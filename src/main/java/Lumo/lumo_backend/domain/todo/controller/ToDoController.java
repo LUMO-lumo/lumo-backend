@@ -52,7 +52,7 @@ public class ToDoController {
 
     @Operation(summary = "할 일 삭제")
     @DeleteMapping("/{toDoId}")
-    public APIResponse<Long> delete(
+    public APIResponse<Void> delete(
             @RequestHeader Long memberId, // 수정 필요
             @PathVariable Long toDoId
     ) {
