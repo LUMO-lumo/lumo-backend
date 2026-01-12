@@ -1,5 +1,7 @@
 package Lumo.lumo_backend.domain.encouragement.controller;
 
+import Lumo.lumo_backend.domain.encouragement.dto.EncouragementResponseDTO;
+import Lumo.lumo_backend.domain.encouragement.entity.Encouragement;
 import Lumo.lumo_backend.domain.encouragement.repository.EncouragementRepository;
 import Lumo.lumo_backend.domain.encouragement.status.EncouragementSuccessCode;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
@@ -18,10 +20,11 @@ public class EncouragementController {
 
     @Operation(summary = "오늘의 한마디 조회")
     @GetMapping
-    public APIResponse<String> getRandom(){
+    public APIResponse<EncouragementResponseDTO> getRandom(){
 
-        return APIResponse.onSuccess(encouragementRepository.findRandomOne().getContent(),
-                EncouragementSuccessCode.GET_ENCOURAGEMENT_SUCCESS);
+        Encouragement encouragement = encouragementRepository.findRandomOne();
+
+        return APIResponse.onSuccess(EncouragementResponseDTO.from(encouragement), EncouragementSuccessCode.GET_ENCOURAGEMENT_SUCCESS);
     }
 
 }
