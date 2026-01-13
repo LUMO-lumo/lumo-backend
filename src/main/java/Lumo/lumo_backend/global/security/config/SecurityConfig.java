@@ -1,4 +1,4 @@
-package Lumo.lumo_backend.global.security;
+package Lumo.lumo_backend.global.security.config;
 
 import Lumo.lumo_backend.global.security.filter.JWTAuthenticationFilter;
 import Lumo.lumo_backend.global.security.jwt.JWTProvider;
