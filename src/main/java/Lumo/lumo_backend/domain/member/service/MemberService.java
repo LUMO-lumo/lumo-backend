@@ -10,12 +10,14 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ import java.util.Random;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final RedisTemplate redisTemplate;
     private final JavaMailSender mailSender;
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final int CODE_LENGTH = 4;
@@ -155,7 +158,9 @@ public class MemberService {
             e.printStackTrace();
             throw new MemberException(MemberErrorCode.CANT_SEND_EMAIL);
         }
+        redisTemplate.opsForValue().set(email, code, 180, TimeUnit.SECONDS); // 3분으로 설정
 
+        log.info("saved code -> {}", (String) redisTemplate.opsForValue().get(email));
     }
 
     public static String generateVerificationCode() {
