@@ -22,7 +22,7 @@ public class MemberSetting extends BaseEntity {
     @Column(name = "member_setting_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "member_id", nullable = false, unique = true)
     private Member member;
 
@@ -54,4 +54,34 @@ public class MemberSetting extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(length = 500)
     private BriefingVoiceDefaultType briefingVoiceDefaultType;
+
+
+    public void update(
+            Theme theme,
+            Language language,
+            boolean batterySaving,
+            AlarmOffMissionDefaultType alarmOffMissionDefaultType,
+            AlarmOffMissionDefaultLevel alarmOffMissionDefaultLevel,
+            Integer alarmOffMissionDefaultDuration,
+            String briefingSentence,
+            BriefingVoiceDefaultType briefingVoiceDefaultType
+
+    ) {
+        this.theme = theme;
+        this.language = language;
+        this.batterySaving = batterySaving;
+        this.alarmOffMissionDefaultType = alarmOffMissionDefaultType;
+        this.alarmOffMissionDefaultLevel = alarmOffMissionDefaultLevel;
+        this.alarmOffMissionDefaultDuration = alarmOffMissionDefaultDuration;
+        this.briefingSentence = briefingSentence;
+        this.briefingVoiceDefaultType = briefingVoiceDefaultType;
+    }
+
+    public static MemberSetting createDefault(Member member) {
+        return MemberSetting.builder()
+                .member(member)
+                .theme(Theme.LIGHT)
+                .language(Language.KO)
+                .build();
+    }
 }
