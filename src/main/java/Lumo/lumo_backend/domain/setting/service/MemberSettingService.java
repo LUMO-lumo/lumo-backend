@@ -1,14 +1,21 @@
 package Lumo.lumo_backend.domain.setting.service;
 
 import Lumo.lumo_backend.domain.member.entity.Member;
+import Lumo.lumo_backend.domain.member.exception.MemberException;
 import Lumo.lumo_backend.domain.member.repository.MemberRepository;
+import Lumo.lumo_backend.domain.member.status.MemberErrorCode;
 import Lumo.lumo_backend.domain.setting.dto.MemberSettingResponseDTO;
 import Lumo.lumo_backend.domain.setting.dto.MemberSettingUpdateRequestDTO;
 import Lumo.lumo_backend.domain.setting.entity.memberSetting.MemberSetting;
+import Lumo.lumo_backend.domain.setting.exception.MemberSettingException;
 import Lumo.lumo_backend.domain.setting.repository.MemberSettingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static Lumo.lumo_backend.domain.member.status.MemberErrorCode.CANT_FOUND_MEMBER;
+import static Lumo.lumo_backend.domain.setting.status.MemberSettingErrorCode.SETTING_NOT_FOUND;
+import static Lumo.lumo_backend.domain.setting.status.MemberSettingErrorCode.SETTING_UPDATE_FAILED;
 
 @Service
 @RequiredArgsConstructor
@@ -20,25 +27,50 @@ public class MemberSettingService {
 
     @Transactional(readOnly = true)
     public MemberSettingResponseDTO get(Long memberId) {
-        Member member = memberRepository.findById(memberId).orElseThrow();
+
+        // member, memberSetting 획득
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(CANT_FOUND_MEMBER));
         MemberSetting memberSetting = member.getSetting();
+
+        // 유효성 검사
+        if (memberSetting == null) {
+            throw new MemberSettingException(SETTING_NOT_FOUND);
+        }
 
         return MemberSettingResponseDTO.from(memberSetting);
     }
 
     public void update(Long memberId, MemberSettingUpdateRequestDTO request) {
-        Member member = memberRepository.findById(memberId).orElseThrow();
+
+        // member, memberSetting 획득
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(CANT_FOUND_MEMBER));
         MemberSetting memberSetting = member.getSetting();
-        memberSetting.update(
-                request.getTheme(),
-                request.getLanguage(),
-                request.isBatterySaving(),
-                request.getAlarmOffMissionDefaultType(),
-                request.getAlarmOffMissionDefaultLevel(),
-                request.getAlarmOffMissionDefaultDuration(),
-                request.getBriefingSentence(),
-                request.getBriefingVoiceDefaultType()
-        );
+
+        // 유효성 검사
+        if (memberSetting == null) {
+            throw new MemberSettingException(SETTING_NOT_FOUND);
+        }
+
+
+
+        // memberSetting 업데이트
+        try {
+            memberSetting.update(
+                    request.getTheme(),
+                    request.getLanguage(),
+                    request.isBatterySaving(),
+                    request.getAlarmOffMissionDefaultType(),
+                    request.getAlarmOffMissionDefaultLevel(),
+                    request.getAlarmOffMissionDefaultDuration(),
+                    request.getBriefingSentence(),
+                    request.getBriefingVoiceDefaultType()
+            );
+        } catch (Exception e) {
+            throw new MemberSettingException(SETTING_UPDATE_FAILED);
+        }
+
     }
 }
 
