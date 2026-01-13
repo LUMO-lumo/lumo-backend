@@ -1,5 +1,6 @@
 package Lumo.lumo_backend.global.security.filter;
 
+import Lumo.lumo_backend.global.security.jwt.JWTProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +17,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
-
+    private final JWTProvider jwtProvider;
 
     private String resolveToken(HttpServletRequest request){
         String bearerToken = request.getHeader("Authorization");
