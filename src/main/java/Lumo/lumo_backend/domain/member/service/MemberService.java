@@ -1,5 +1,6 @@
 package Lumo.lumo_backend.domain.member.service;
 
+import Lumo.lumo_backend.domain.member.dto.MemberRequestDTO;
 import Lumo.lumo_backend.domain.member.dto.MemberRespDTO;
 import Lumo.lumo_backend.domain.member.entity.Login;
 import Lumo.lumo_backend.domain.member.entity.Member;
@@ -10,12 +11,14 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +26,7 @@ import java.util.Random;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final RedisTemplate redisTemplate;
     private final JavaMailSender mailSender;
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final int CODE_LENGTH = 4;
@@ -41,11 +45,14 @@ public class MemberService {
         MimeMessage msg = mailSender.createMimeMessage();
         MimeMessageHelper helper;
         String code;
+
+        /// try 에서 발송 성공 응답 반환 까지 시간이 걸림, 비동기 처리가 필요
+
         try {
             code = generateVerificationCode();
             helper = new MimeMessageHelper(msg, true, "utf-8");
             helper.setTo(email);
-            helper.setSubject("더미톡 인증 이메일 알림.");
+            helper.setSubject("Lumo 인증 이메일 알림.");
             helper.setText("<!DOCTYPE html>\n" +
                     "<html lang=\"ko\">\n" +
                     "<head>\n" +
@@ -133,10 +140,10 @@ public class MemberService {
                     "    <div class=\"header\">\n" +
                     "        \n" +
                     "        <div class=\"logo\"></div>\n" +
-                    "        <h2>더미톡 이메일 인증</h2>\n" +
+                    "        <h2>Lumo 이메일 인증</h2>\n" +
                     "    </div>\n" +
                     "    <div class=\"content\">\n" +
-                    "        <p>안녕하세요, 더미톡입니다. 이메일 주소 인증을 위해 아래 코드를 사용해 주세요.</p>\n" +
+                    "        <p>안녕하세요, Lumo입니다. 이메일 주소 인증을 위해 아래 코드를 사용해 주세요.</p>\n" +
                     "        <div class=\"verification-code-container\">\n" +
                     "            <span class=\"verification-code\">  " + code + "  </span>\n" +
                     "        </div>\n" +
@@ -144,8 +151,8 @@ public class MemberService {
                     "        <p class=\"instruction\">코드를 복사하여 앱에 붙여넣어 주세요.</p>\n" +
                     "    </div>\n" +
                     "    <div class=\"footer\">\n" +
-                    "        <p>이 메일은 발신 전용입니다. 문의사항은 고객센터를 이용해 주세요.</p>\n" +
-                    "        <p>&copy; 2025 DummyTalk. All Rights Reserved.</p>\n" +
+                    "        <p>이 메일은 발신 전용입니다. 문의사항은 관리자 이메일로 문의 부탁 드립니다.</p>\n" +
+                    "        <p>&copy; 2026 Lumo. All Rights Reserved.</p>\n" +
                     "    </div>\n" +
                     "</div>\n" +
                     "</body>\n" +
@@ -155,7 +162,9 @@ public class MemberService {
             e.printStackTrace();
             throw new MemberException(MemberErrorCode.CANT_SEND_EMAIL);
         }
+        redisTemplate.opsForValue().set(email, code, 180, TimeUnit.SECONDS); // 3분으로 설정
 
+        log.info("saved code -> {}", (String) redisTemplate.opsForValue().get(email));
     }
 
     public static String generateVerificationCode() {
@@ -169,6 +178,32 @@ public class MemberService {
         }
 
         return code.toString();
+    }
+
+
+    public void verifyCode (String code){
+        String savedCode = (String) redisTemplate.opsForValue().get(code);
+
+        if (savedCode == null){
+            throw new MemberException(MemberErrorCode.WRONG_CODE);
+        }
+    }
+
+    public void signIn (MemberRequestDTO.SignInRequestDTO dto){
+        Optional<Member> byEmail = memberRepository.findByEmail(dto.getEmail());
+
+        if(byEmail.isPresent()) {
+            throw new MemberException(MemberErrorCode.EXIST_MEMBER);
+        }
+
+        Member newMember = Member.builder()
+                .login(Login.NORMAL)
+                .email(dto.getEmail())
+                .username("test_username") /// username 사용할 일이 아마 마이 페이지에서가 전부인 거 같은데,
+                .password(dto.getPassword()) /// password 암호화 하여 저장해야 함
+                .build();
+
+        memberRepository.save(newMember);
     }
 
 
