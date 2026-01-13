@@ -15,4 +15,12 @@ public class MemberRespDTO {
     public static class CheckDuplicateRespDTO {
         private Login login;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class VerifyCodeRespDTO {
+        private Boolean isSuccess;
+    }
 }

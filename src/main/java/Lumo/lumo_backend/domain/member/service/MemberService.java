@@ -136,7 +136,7 @@ public class MemberService {
                     "    <div class=\"header\">\n" +
                     "        \n" +
                     "        <div class=\"logo\"></div>\n" +
-                    "        <h2>더미톡 이메일 인증</h2>\n" +
+                    "        <h2>Lumo 이메일 인증</h2>\n" +
                     "    </div>\n" +
                     "    <div class=\"content\">\n" +
                     "        <p>안녕하세요, Lumo입니다. 이메일 주소 인증을 위해 아래 코드를 사용해 주세요.</p>\n" +
@@ -174,6 +174,15 @@ public class MemberService {
         }
 
         return code.toString();
+    }
+
+
+    public void verifyCode (String code){
+        String savedCode = (String) redisTemplate.opsForValue().get(code);
+
+        if (savedCode == null){
+            throw new MemberException(MemberErrorCode.WRONG_CODE);
+        }
     }
 
 
