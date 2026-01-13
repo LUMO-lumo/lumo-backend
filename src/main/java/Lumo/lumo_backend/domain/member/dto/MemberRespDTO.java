@@ -12,7 +12,7 @@ public class MemberRespDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CheckDuplicateRespDTO {
+    public static class GetLoginDTO {
         private Login login;
     }
 

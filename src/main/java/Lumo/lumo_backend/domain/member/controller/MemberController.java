@@ -26,7 +26,7 @@ public class MemberController {
     ///  자동 로그인, 이메일 기억하기 기능도 추가가 필요!
 
     @GetMapping("/login")
-    public APIResponse<Object> getLoginMethod(@AuthenticationPrincipal Member member) {
+    public APIResponse<MemberRespDTO.GetLoginDTO> getLoginMethod(@AuthenticationPrincipal Member member) {
         return APIResponse.onSuccess(memberService.getLogin(member), MemberSuccessCode.GET_LOGIN_SUCCESS); // 로그인 방식 리턴
     }
 
@@ -41,8 +41,9 @@ public class MemberController {
     }
 
     @GetMapping("/email-duplicate")
-    public APIResponse<Object> checkEmailDuplicate(@RequestParam("email") String email) {
-        return APIResponse.onSuccess(memberService.checkEmailDuplicate(email), MemberSuccessCode.EMAIL_DUPLICATE_CHECK_SUCCESS);
+    public APIResponse<MemberRespDTO.SimpleAPIRespDTO> checkEmailDuplicate(@RequestParam("email") String email) {
+        MemberRespDTO.SimpleAPIRespDTO dto = MemberRespDTO.SimpleAPIRespDTO.builder().isSuccess(memberService.checkEmailDuplicate(email)).build();
+        return APIResponse.onSuccess(dto, MemberSuccessCode.EMAIL_DUPLICATE_CHECK_SUCCESS);
     }
 
     @PostMapping("/request-code")
