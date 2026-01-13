@@ -3,6 +3,7 @@ package Lumo.lumo_backend.domain.member.entity;
 import Lumo.lumo_backend.domain.alarm.entity.Alarm;
 import Lumo.lumo_backend.domain.routine.entity.Routine;
 import Lumo.lumo_backend.domain.setting.entity.Feedback;
+import Lumo.lumo_backend.domain.setting.entity.MemberStat;
 import Lumo.lumo_backend.domain.setting.entity.memberSetting.MemberSetting;
 import Lumo.lumo_backend.domain.todo.entity.ToDo;
 import Lumo.lumo_backend.global.BaseEntity.BaseEntity;
@@ -56,8 +57,11 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ToDo> toDoList = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "member", orphanRemoval = true)
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL,  orphanRemoval = true)
     private MemberSetting setting;
+
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL,  orphanRemoval = true)
+    private MemberStat stat;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Routine> routineList = new ArrayList<>();
@@ -68,4 +72,22 @@ public class Member extends BaseEntity {
     public void addRoutine (Routine routine){
         this.routineList.add(routine);
     }
+
+    public static Member create(String email, String username, String password, Login login) {
+        Member member = Member.builder()
+                .email(email)
+                .username(username)
+                .password(password)
+                .login(login)
+                .build();
+
+        MemberSetting setting = MemberSetting.createDefault(member);
+        MemberStat stat = MemberStat.createDefault(member);
+
+        member.setting = setting;
+        member.stat = stat;
+
+        return member;
+    }
+
 }

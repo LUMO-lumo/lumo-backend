@@ -17,16 +17,25 @@ public class TestMemberInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (memberRepository.existsByEmail("test@test.com")) return;
+        String TEST_EMAIL = "test@test.com";
+        String TEST_USERNAME = "testuser";
+        String TEST_PASSWORD = "password";
+        Login TEST_LOGIN = Login.NORMAL;
 
-        Member member = Member.builder()
-                .login(Login.NORMAL)
-                .email("test@test.com")
-                .username("testuser")
-                .password("password")
-                .isProUpgraded(false)
-                // missionSuccessRate, consecutiveSuccessCnt는 엔티티 기본값 사용
-                .build();
+        if (memberRepository.existsByEmail(TEST_EMAIL)) return;
+
+//        Member member = Member.builder()
+//                .login(Login.NORMAL)
+//                .email("test@test.com")
+//                .username("testuser")
+//                .password("password")
+//                .isProUpgraded(false)
+//                // missionSuccessRate, consecutiveSuccessCnt는 엔티티 기본값 사용
+//                .build();
+
+
+        Member member = Member.create(TEST_EMAIL, TEST_USERNAME, TEST_PASSWORD, TEST_LOGIN);
+        memberRepository.save(member);
 
         memberRepository.save(member);
     }
