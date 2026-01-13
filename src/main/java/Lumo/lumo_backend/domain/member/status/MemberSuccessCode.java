@@ -17,6 +17,7 @@ public enum MemberSuccessCode implements BaseCode {
     VERIFY_CODE_SUCCESS (HttpStatus.OK, "MEMBER2002", "인증 코드 검증 성공 입니다."),
     SIGN_IN_SUCCESS (HttpStatus.OK, "MEMBER2003", "회원가입 로직 성공 입니다."),
     REQ_CODE_SUCCESS (HttpStatus.OK, "MEMBER2004", "인증 코드 발송 성공 입니다."),
+    GET_LOGIN_SUCCESS (HttpStatus.OK, "MEMBER2005", "로그인 방식 조회 성공입니다.")
 
     ;
 

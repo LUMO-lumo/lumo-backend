@@ -31,6 +31,16 @@ public class MemberService {
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final int CODE_LENGTH = 4;
 
+    public MemberRespDTO.CheckDuplicateRespDTO getLogin (Member member){
+        Optional<Member> byEmail = memberRepository.findByEmail(member.getEmail());
+        if (byEmail.isPresent()){
+            return MemberRespDTO.CheckDuplicateRespDTO.builder().login(byEmail.get().getLogin()).build();
+        }
+        else{
+            return MemberRespDTO.CheckDuplicateRespDTO.builder().login(Login.NULL).build();
+        }
+    }
+
     public MemberRespDTO.CheckDuplicateRespDTO checkEmailDuplicate (String email){
         Optional<Member> byEmail = memberRepository.findByEmail(email);
         if (byEmail.isPresent()){

@@ -2,11 +2,14 @@ package Lumo.lumo_backend.domain.member.controller;
 
 import Lumo.lumo_backend.domain.member.dto.MemberRequestDTO;
 import Lumo.lumo_backend.domain.member.dto.MemberRespDTO;
+import Lumo.lumo_backend.domain.member.entity.Login;
+import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.member.service.MemberService;
 import Lumo.lumo_backend.domain.member.status.MemberSuccessCode;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import static Lumo.lumo_backend.domain.member.status.MemberSuccessCode.VERIFY_CODE_SUCCESS;
@@ -23,8 +26,8 @@ public class MemberController {
     ///  자동 로그인, 이메일 기억하기 기능도 추가가 필요!
 
     @GetMapping("/login")
-    public APIResponse<Object> getLoginMethod() {
-        return null; // 로그인 방식 리턴
+    public APIResponse<Object> getLoginMethod(@AuthenticationPrincipal Member member) {
+        return APIResponse.onSuccess(memberService.getLogin(member), MemberSuccessCode.GET_LOGIN_SUCCESS); // 로그인 방식 리턴
     }
 
     @PostMapping("/logout")
