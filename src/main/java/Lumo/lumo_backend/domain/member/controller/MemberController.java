@@ -30,6 +30,11 @@ public class MemberController {
         return APIResponse.onSuccess(memberService.getLogin(member), MemberSuccessCode.GET_LOGIN_SUCCESS); // 로그인 방식 리턴
     }
 
+    @PostMapping("/login")
+    public APIResponse<String> reqLogin (){
+        return null;
+    }
+
     @PostMapping("/logout")
     public APIResponse<Object> logout() {
         return null; // bool 값 리턴
