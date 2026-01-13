@@ -43,9 +43,9 @@ public class MemberController {
     }
 
     @PostMapping("/request-code")
-    public APIResponse<Object> requestVerificationCode(@RequestParam("email") String email) {
+    public APIResponse<MemberRespDTO.SimpleAPIRespDTO> requestVerificationCode(@RequestParam("email") String email) {
         memberService.requestVerificationCode(email);
-        return null;
+        return APIResponse.onSuccess(MemberRespDTO.SimpleAPIRespDTO.builder().isSuccess(true).build(), MemberSuccessCode.REQ_CODE_SUCCESS); // bool 값 리턴,;
     }
 
     @PostMapping("/verify-code")

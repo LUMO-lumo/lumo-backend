@@ -7,7 +7,6 @@ import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.member.exception.MemberException;
 import Lumo.lumo_backend.domain.member.repository.MemberRepository;
 import Lumo.lumo_backend.domain.member.status.MemberErrorCode;
-import Lumo.lumo_backend.domain.setting.entity.memberSetting.MemberSetting;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -47,6 +45,9 @@ public class MemberService {
         MimeMessage msg = mailSender.createMimeMessage();
         MimeMessageHelper helper;
         String code;
+
+        /// try 에서 발송 성공 응답 반환 까지 시간이 걸림, 비동기 처리가 필요
+
         try {
             code = generateVerificationCode();
             helper = new MimeMessageHelper(msg, true, "utf-8");
@@ -198,8 +199,8 @@ public class MemberService {
         Member newMember = Member.builder()
                 .login(Login.NORMAL)
                 .email(dto.getEmail())
-                .username("test_username") // username 사용할 일이 아마 마이 페이지에서가 전부인 거 같은데,
-                .password(dto.getPassword()) // password 암호화 하여 저장해야 함
+                .username("test_username") /// username 사용할 일이 아마 마이 페이지에서가 전부인 거 같은데,
+                .password(dto.getPassword()) /// password 암호화 하여 저장해야 함
                 .build();
 
         memberRepository.save(newMember);
