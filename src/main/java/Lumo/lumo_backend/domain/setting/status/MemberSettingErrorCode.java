@@ -13,18 +13,18 @@ public enum MemberSettingErrorCode implements BaseErrorCode {
 
 
     // 예외 작성 예시 입니다.
-    TEST_EXCEPTION (HttpStatus.BAD_REQUEST, "TEST4000", "테스트 예외 입니다."),
+    TEST_EXCEPTION (HttpStatus.BAD_REQUEST, "TEST_4000", "테스트 예외 입니다."),
 
     // 여기서부터 이어서 작성해주시기 바랍니다.
-//    INVALID_THEME(HttpStatus.BAD_REQUEST, "SETTING4000","지원하지 않는 테마입니다."),
-//    INVALID_LANGUAGE(HttpStatus.BAD_REQUEST, "SETTING4001","지원하지 않는 언어입니다."),
-//    INVALID_BRIEFING_VOICE(HttpStatus.BAD_REQUEST, "SETTING4002","지원하지 않는 브리핑 목소리입니다."),
-//    INVALID_MISSION_LEVEL(HttpStatus.BAD_REQUEST, "SETTING4003","지원하지 않는 미션 레벨입니다."),
+//    INVALID_THEME(HttpStatus.BAD_REQUEST, "SETTING_4000","지원하지 않는 테마입니다."),
+//    INVALID_LANGUAGE(HttpStatus.BAD_REQUEST, "SETTING_4001","지원하지 않는 언어입니다."),
+//    INVALID_BRIEFING_VOICE(HttpStatus.BAD_REQUEST, "SETTING_4002","지원하지 않는 브리핑 목소리입니다."),
+//    INVALID_MISSION_LEVEL(HttpStatus.BAD_REQUEST, "SETTING_4003","지원하지 않는 미션 레벨입니다."),
 
-    UNAUTHORIZED_SETTING_ACCESS(HttpStatus.FORBIDDEN, "SETTING4031","권한이 부족합니다."),
+    UNAUTHORIZED_SETTING_ACCESS(HttpStatus.FORBIDDEN, "SETTING_4031","사용자 설정 접근에 대한 권한이 부족합니다."),
 
-    SETTING_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "SETTING5000", "사용자의 설정이 존재하지 않습니다."),
-    SETTING_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "SETTING5001","업데이트에 실패하였습니다."),
+    SETTING_NOT_FOUND(HttpStatus.INTERNAL_SERVER_ERROR, "SETTING_5000", "사용자 설정이 존재하지 않습니다."),
+    SETTING_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "SETTING_5001","사용자 설정 업데이트에 실패하였습니다."),
     ;
 
 

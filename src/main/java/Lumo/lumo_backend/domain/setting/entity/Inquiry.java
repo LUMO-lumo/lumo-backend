@@ -33,4 +33,11 @@ public class Inquiry extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "inquiry_id", nullable = true)
+    private Inquiry prevInquiry;
+
+    @Column(nullable = false)
+    private boolean firstUpdate;
+
 }
