@@ -20,7 +20,7 @@ public class MemberRespDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class VerifyCodeRespDTO {
+    public static class SimpleAPIRespDTO {
         private Boolean isSuccess;
     }
 }

@@ -37,11 +37,6 @@ public class MemberController {
         return null; // bool 값 리턴, SOFT DELETE
     }
 
-    @PostMapping("/signin")
-    public APIResponse<Object> signIn(@RequestBody MemberRequestDTO.SignInRequestDTO dto) {
-        return null; // bool 값 리턴,
-    }
-
     @GetMapping("/email-duplicate")
     public APIResponse<Object> checkEmailDuplicate(@RequestParam("email") String email) {
         return APIResponse.onSuccess(memberService.checkEmailDuplicate(email), MemberSuccessCode.EMAIL_DUPLICATE_CHECK_SUCCESS);
@@ -56,8 +51,13 @@ public class MemberController {
     @PostMapping("/verify-code")
     public APIResponse<Object> verifyCode(@RequestParam("code") String code) {
         memberService.verifyCode(code);
-        return APIResponse.onSuccess(MemberRespDTO.VerifyCodeRespDTO.builder().isSuccess(true).build(), VERIFY_CODE_SUCCESS);
+        return APIResponse.onSuccess(MemberRespDTO.SimpleAPIRespDTO.builder().isSuccess(true).build(), VERIFY_CODE_SUCCESS);
     }
 
+    @PostMapping("/signin")
+    public APIResponse<MemberRespDTO.SimpleAPIRespDTO> signIn(@RequestBody MemberRequestDTO.SignInRequestDTO dto) {
+        memberService.signIn(dto);
+        return APIResponse.onSuccess(MemberRespDTO.SimpleAPIRespDTO.builder().isSuccess(true).build(), MemberSuccessCode.SIGN_IN_SUCCESS); // bool 값 리턴,
+    }
 
 }

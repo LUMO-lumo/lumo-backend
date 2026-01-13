@@ -1,11 +1,13 @@
 package Lumo.lumo_backend.domain.member.service;
 
+import Lumo.lumo_backend.domain.member.dto.MemberRequestDTO;
 import Lumo.lumo_backend.domain.member.dto.MemberRespDTO;
 import Lumo.lumo_backend.domain.member.entity.Login;
 import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.member.exception.MemberException;
 import Lumo.lumo_backend.domain.member.repository.MemberRepository;
 import Lumo.lumo_backend.domain.member.status.MemberErrorCode;
+import Lumo.lumo_backend.domain.setting.entity.memberSetting.MemberSetting;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -183,6 +186,23 @@ public class MemberService {
         if (savedCode == null){
             throw new MemberException(MemberErrorCode.WRONG_CODE);
         }
+    }
+
+    public void signIn (MemberRequestDTO.SignInRequestDTO dto){
+        Optional<Member> byEmail = memberRepository.findByEmail(dto.getEmail());
+
+        if(byEmail.isPresent()) {
+            throw new MemberException(MemberErrorCode.EXIST_MEMBER);
+        }
+
+        Member newMember = Member.builder()
+                .login(Login.NORMAL)
+                .email(dto.getEmail())
+                .username("test_username") // username 사용할 일이 아마 마이 페이지에서가 전부인 거 같은데,
+                .password(dto.getPassword()) // password 암호화 하여 저장해야 함
+                .build();
+
+        memberRepository.save(newMember);
     }
 
 
