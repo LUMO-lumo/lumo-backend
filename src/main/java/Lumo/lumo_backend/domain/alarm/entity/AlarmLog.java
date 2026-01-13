@@ -47,7 +47,7 @@ public class AlarmLog {
      * 알람 해제 방식 (MISSION/SNOOZE/MANUAL)
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "dismiss_type", length = 20)
+    @Column(name = "dismiss_type", columnDefinition = "ENUM('MANUAL','MISSION','SNOOZE')")
     private DismissType dismissType;
 
     /**

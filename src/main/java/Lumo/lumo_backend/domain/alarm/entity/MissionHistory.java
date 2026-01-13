@@ -36,7 +36,7 @@ public class MissionHistory {
      * 수행한 미션 유형
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "mission_type", length = 20, nullable = false)
+    @Column(name = "mission_type", columnDefinition = "ENUM('MATH','NONE','OX_QUIZ','TYPING','WALK')", nullable = false)
     private MissionType missionType;
 
     /**
