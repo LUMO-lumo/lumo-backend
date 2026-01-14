@@ -1,6 +1,6 @@
 logging:
   level:
-    org.hibernate.SQL: DEBUG
+    show_sql: DEBUG
 
 spring:
   application:
