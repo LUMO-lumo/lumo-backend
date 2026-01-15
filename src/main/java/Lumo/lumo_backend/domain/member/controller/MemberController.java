@@ -1,8 +1,7 @@
 package Lumo.lumo_backend.domain.member.controller;
 
-import Lumo.lumo_backend.domain.member.dto.MemberRequestDTO;
+import Lumo.lumo_backend.domain.member.dto.MemberReqDTO;
 import Lumo.lumo_backend.domain.member.dto.MemberRespDTO;
-import Lumo.lumo_backend.domain.member.entity.Login;
 import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.member.service.MemberService;
 import Lumo.lumo_backend.domain.member.status.MemberSuccessCode;
@@ -64,7 +63,7 @@ public class MemberController {
     }
 
     @PostMapping("/signin")
-    public APIResponse<MemberRespDTO.SimpleAPIRespDTO> signIn(@RequestBody MemberRequestDTO.SignInRequestDTO dto) {
+    public APIResponse<MemberRespDTO.SimpleAPIRespDTO> signIn(@RequestBody MemberReqDTO.SignInRequestDTO dto) {
         memberService.signIn(dto);
         return APIResponse.onSuccess(MemberRespDTO.SimpleAPIRespDTO.builder().isSuccess(true).build(), MemberSuccessCode.SIGN_IN_SUCCESS); // bool 값 리턴,
     }

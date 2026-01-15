@@ -1,12 +1,14 @@
 package Lumo.lumo_backend.domain.member.service;
 
-import Lumo.lumo_backend.domain.member.dto.MemberRequestDTO;
+import Lumo.lumo_backend.domain.member.dto.MemberReqDTO;
 import Lumo.lumo_backend.domain.member.dto.MemberRespDTO;
 import Lumo.lumo_backend.domain.member.entity.Login;
 import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.member.exception.MemberException;
 import Lumo.lumo_backend.domain.member.repository.MemberRepository;
 import Lumo.lumo_backend.domain.member.status.MemberErrorCode;
+import Lumo.lumo_backend.global.security.jwt.JWT;
+import Lumo.lumo_backend.global.security.jwt.JWTProvider;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +16,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +35,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final RedisTemplate redisTemplate;
     private final JavaMailSender mailSender;
+    private final JWTProvider jwtProvider;
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final int CODE_LENGTH = 4;
 
@@ -199,7 +207,7 @@ public class MemberService {
         }
     }
 
-    public void signIn (MemberRequestDTO.SignInRequestDTO dto){
+    public void signIn (MemberReqDTO.SignInRequestDTO dto){
         Optional<Member> byEmail = memberRepository.findByEmail(dto.getEmail());
 
         if(byEmail.isPresent()) {
@@ -214,6 +222,16 @@ public class MemberService {
                 .build();
 
         memberRepository.save(newMember);
+    }
+
+    public JWT login (MemberReqDTO.LoginReqDTO dto){
+        Member member = memberRepository.findByEmailAndPassword(dto.getEmail(), dto.getPassword()).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
+
+        List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(member.getRole().toString()));
+        Authentication authentication = new UsernamePasswordAuthenticationToken(member.getEmail(), member.getPassword(), authorities);
+        JWT jwt = jwtProvider.generateToken(authentication);
+
+        return jwt;
     }
 
 
