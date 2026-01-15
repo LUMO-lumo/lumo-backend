@@ -27,10 +27,11 @@ spring:
     port: 587
     username: ${MAIL_SENDER_USERNAME}
     password: ${MAIL_SENDER_PASSWORD}
-#  data:
-#    redis:
-#      host: ${REDIS_HOST}
-#      port: 6379
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
 
   sql:
     init:
