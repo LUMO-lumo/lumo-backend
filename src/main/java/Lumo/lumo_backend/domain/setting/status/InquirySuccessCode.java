@@ -10,10 +10,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum InquirySuccessCode implements BaseCode {
 
-    // 성공 응답 작성 예시 입니다.
-    TEST_SUCCESS (HttpStatus.OK, "TEST_2000", "테스트 성공 입니다."),
-
-    SETTING_UPDATE_SUCCESS(HttpStatus.OK, "SETTING_2000", "설정 업데이트에 성공하였습니다."),
+    INQUIRY_CREATE_SUCCESS(HttpStatus.OK, "INQUIRY2001", "문의 생성에 성공하였습니다."),
+    INQUIRY_UPDATE_SUCCESS(HttpStatus.OK, "INQUIRY2002", "문의 수정에 성공하였습니다."),
     ;
 
     private final HttpStatus status;

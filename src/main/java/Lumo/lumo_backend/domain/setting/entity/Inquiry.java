@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 
-
 /**
  * 사용자 문의사항 엔티티
  */
@@ -23,7 +22,7 @@ public class Inquiry extends BaseEntity {
     @Column(name = "inquiry_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
@@ -34,10 +33,9 @@ public class Inquiry extends BaseEntity {
     private String content;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "inquiry_id", nullable = true)
-    private Inquiry prevInquiry;
+    @JoinColumn(name = "parent_inquiry_id")
+    private Inquiry parentInquiry;
 
-    @Column(nullable = false)
-    private boolean firstUpdate;
-
+    @OneToOne(mappedBy = "parentInquiry")
+    private Inquiry childInquiry;
 }
