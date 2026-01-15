@@ -33,6 +33,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         /// jwtProvider 에서 인증 조회 + 토큰 검증이 필요!
         if(accessToken != null && jwtProvider.validateToken(accessToken)){
+            // 비었거나, 올바르지 않거나
             Authentication authentication = jwtProvider.getAuthentication(accessToken);
             if (authentication != null) {
                 SecurityContextHolder.getContext().setAuthentication(authentication);

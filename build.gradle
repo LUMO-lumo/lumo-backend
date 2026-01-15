@@ -25,6 +25,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	// jwt
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.12.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.5' // Jackson JSON 파서
+
 	runtimeOnly 'com.mysql:mysql-connector-j'
     implementation 'org.springframework.boot:spring-boot-starter'
     compileOnly 'org.projectlombok:lombok'
