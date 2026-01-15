@@ -3,9 +3,9 @@ package Lumo.lumo_backend.domain.setting.service;
 
 import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.member.repository.MemberRepository;
-import Lumo.lumo_backend.domain.setting.dto.FeedbackCreateRequest;
-import Lumo.lumo_backend.domain.setting.dto.FeedbackResponse;
-import Lumo.lumo_backend.domain.setting.dto.FeedbackUpdateRequest;
+import Lumo.lumo_backend.domain.setting.dto.FeedbackCreateRequestDTO;
+import Lumo.lumo_backend.domain.setting.dto.FeedbackResponseDTO;
+import Lumo.lumo_backend.domain.setting.dto.FeedbackUpdateRequestDTO;
 import Lumo.lumo_backend.domain.setting.entity.Feedback;
 import Lumo.lumo_backend.domain.setting.repository.FeedbackRepository;
 import lombok.*;
@@ -21,7 +21,7 @@ public class FeedbackService {
     private final FeedbackRepository feedbackRepository;
     private final MemberRepository memberRepository;
 
-    public Long create(Long memberId, FeedbackCreateRequest request) {
+    public Long create(Long memberId, FeedbackCreateRequestDTO request) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow();
 
@@ -35,20 +35,16 @@ public class FeedbackService {
     }
 
     @Transactional(readOnly = true)
-    public FeedbackResponse get(Long feedbackId) {
+    public FeedbackResponseDTO get(Long feedbackId) {
         Feedback feedback = feedbackRepository.findById(feedbackId)
                 .orElseThrow();
-        return FeedbackResponse.from(feedback);
+        return FeedbackResponseDTO.from(feedback);
     }
 
-    public void update(Long feedbackId, FeedbackUpdateRequest request) {
+    public void update(Long feedbackId, FeedbackUpdateRequestDTO request) {
         Feedback feedback = feedbackRepository.findById(feedbackId)
                 .orElseThrow();
-
-        feedback.update(
-                request.getTitle(),
-                request.getContent()
-        );
+        feedback.update(request.getTitle(), request.getContent());
     }
 
     public void delete(Long feedbackId) {

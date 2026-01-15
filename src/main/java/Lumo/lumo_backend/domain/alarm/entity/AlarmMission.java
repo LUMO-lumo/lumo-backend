@@ -36,7 +36,7 @@ public class AlarmMission {
      * 미션 유형 (NONE/MATH/OX_QUIZ/TYPING/WALK)
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "mission_type", length = 20, nullable = false)
+    @Column(name = "mission_type", columnDefinition = "ENUM('MATH','NONE','OX_QUIZ','TYPING','WALK')", nullable = false)
     @Builder.Default
     private MissionType missionType = MissionType.NONE;
 
@@ -45,7 +45,7 @@ public class AlarmMission {
      * - WALK 타입은 난이도 없음
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "difficulty", length = 20)
+    @Column(name = "difficulty", columnDefinition = "ENUM('EASY','HARD','MEDIUM')")
     private Difficulty difficulty;
 
     /**

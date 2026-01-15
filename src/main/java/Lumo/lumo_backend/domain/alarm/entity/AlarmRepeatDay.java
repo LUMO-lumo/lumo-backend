@@ -36,6 +36,6 @@ public class AlarmRepeatDay {
      * 반복 요일 (MON~SUN)
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "day_of_week", length = 10, nullable = false)
+    @Column(name = "day_of_week", columnDefinition = "ENUM('FRI','MON','SAT','SUN','THU','TUE','WED')", nullable = false)
     private DayOfWeek dayOfWeek;
 }
