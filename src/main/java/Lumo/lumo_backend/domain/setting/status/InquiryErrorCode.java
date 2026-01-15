@@ -10,14 +10,9 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum InquiryErrorCode implements BaseErrorCode {
 
-
-    // 예외 작성 예시 입니다.
-    TEST_EXCEPTION (HttpStatus.BAD_REQUEST, "TEST_4000", "테스트 예외 입니다."),
-
-    // 여기서부터 이어서 작성해주시기 바랍니다.
-    UNAUTHORIZED_SETTING_ACCESS(HttpStatus.FORBIDDEN, "SETTING_4031","사용자 설정 접근에 대한 권한이 부족합니다."),
+    INQUIRY_NOT_FOUND(HttpStatus.NOT_FOUND,"INQUIRY_404_1", "문의사항을 찾지 못했습니다."),
+    INQUIRY_ACCESS_DENIED(HttpStatus.BAD_REQUEST,"INQUIRY_404_1", "해당 문의사항에 접근 권한이 없습니다.")
     ;
-
 
     private final HttpStatus httpStatus;
     private final String code;
@@ -42,4 +37,3 @@ public enum InquiryErrorCode implements BaseErrorCode {
                 .build();
     }
 }
-

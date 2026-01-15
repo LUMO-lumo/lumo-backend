@@ -3,6 +3,7 @@ package Lumo.lumo_backend.domain.setting.entity;
 import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.global.BaseEntity.BaseEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 
@@ -38,4 +39,13 @@ public class Inquiry extends BaseEntity {
 
     @OneToOne(mappedBy = "parentInquiry")
     private Inquiry childInquiry;
+
+    public boolean isOwnedBy(Long memberId) {
+        return this.member.getId().equals(memberId);
+    }
+
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }
