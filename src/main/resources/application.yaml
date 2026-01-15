@@ -22,7 +22,11 @@ spring:
         hbm2ddl:
           auto: update
         default_batch_fetch_size: 1000
-
+  mail:
+    host: ${MAIL_SENDER_HOST}
+    port: 587
+    username: ${MAIL_SENDER_USERNAME}
+    password: ${MAIL_SENDER_PASSWORD}
 #  data:
 #    redis:
 #      host: ${REDIS_HOST}
@@ -31,3 +35,8 @@ spring:
   sql:
     init:
       mode: never
+
+
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
