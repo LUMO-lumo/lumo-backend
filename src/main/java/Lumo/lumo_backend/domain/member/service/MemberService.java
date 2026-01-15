@@ -4,6 +4,7 @@ import Lumo.lumo_backend.domain.member.dto.MemberReqDTO;
 import Lumo.lumo_backend.domain.member.dto.MemberRespDTO;
 import Lumo.lumo_backend.domain.member.entity.Login;
 import Lumo.lumo_backend.domain.member.entity.Member;
+import Lumo.lumo_backend.domain.member.entity.MemberRole;
 import Lumo.lumo_backend.domain.member.exception.MemberException;
 import Lumo.lumo_backend.domain.member.repository.MemberRepository;
 import Lumo.lumo_backend.domain.member.status.MemberErrorCode;
@@ -219,6 +220,7 @@ public class MemberService {
                 .email(dto.getEmail())
                 .username("test_username") /// username 사용할 일이 아마 마이 페이지에서가 전부인 거 같은데,
                 .password(dto.getPassword()) /// password 암호화 하여 저장해야 함
+                .role(MemberRole.USER)
                 .build();
 
         memberRepository.save(newMember);

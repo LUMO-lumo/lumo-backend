@@ -31,7 +31,6 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private Login login;
 
-    @NonNull
     @Enumerated(value = EnumType.STRING)
     private MemberRole role = MemberRole.USER;
 

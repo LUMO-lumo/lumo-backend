@@ -53,7 +53,7 @@ public class JWTProvider {
         String accessToken = createNewToken(username, authorities, accessTokenExpire);
 
         Date refreshTokenExpire = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
-        String refreshToken = createNewToken(username, null, refreshTokenExpire);
+        String refreshToken = createNewToken(username, authorities, refreshTokenExpire);
 
         return JWT.builder()
                 .grantType("Bearer")
@@ -64,7 +64,8 @@ public class JWTProvider {
 
     public String createNewToken(String email, String authorities, Date expireDate){
         return Jwts.builder()
-                .claim("username", email)
+//                .claim("username", email)
+                .subject(email) // 표준 필드로 수정
                 .claim("auth", authorities != null ? authorities : "ROLE_USER") // authorities 있는 경우 Member 필드의 Role 반환
                 .expiration(expireDate)
                 .signWith(key)
@@ -98,17 +99,25 @@ public class JWTProvider {
     public Authentication getAuthentication(String accessToken) {
         Claims claims = parseClaims(accessToken);
 
-        Object authClaimObject = claims.get("auth") == null ? claims.get("auth") : "";
+        Object authClaimObject = claims.get("auth") != null ? claims.get("auth") : "";
+
+        log.info("authClaimObject: {}, ", authClaimObject.toString());
+
+
         String authoritiesString = (authClaimObject != null) ? authClaimObject.toString() : "";
+
+        log.info("authoritiesString: {}", authoritiesString);
 
         if (authoritiesString.isEmpty() || claims.get("auth") == null) {
             ///  GenerationException 으로 수정하기
             throw new RuntimeException("권한 정보가 없는 이상한 토큰입니다");
         }
 
-        log.info("[JWTProvider - getAuthentication()] email: {}", claims.get("username", String.class));
+        // 표준 필드로 변경
+//        log.info("[JWTProvider - getAuthentication()] email: {}", claims.get("username", String.class));
+        log.info("[JWTProvider - getAuthentication()] email: {}", claims.getSubject());
 
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(claims.get("username", String.class));
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(claims.getSubject());
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 

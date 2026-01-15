@@ -7,6 +7,7 @@ import Lumo.lumo_backend.domain.member.service.MemberService;
 import Lumo.lumo_backend.domain.member.status.MemberSuccessCode;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
 import Lumo.lumo_backend.global.security.jwt.JWT;
+import Lumo.lumo_backend.global.security.userDetails.CustomUserDetails;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,8 +30,8 @@ public class MemberController {
     ///  자동 로그인, 이메일 기억하기 기능도 추가가 필요!
 
     @GetMapping("/login")
-    public APIResponse<MemberRespDTO.GetLoginDTO> getLoginMethod(@AuthenticationPrincipal Member member) {
-        return APIResponse.onSuccess(memberService.getLogin(member), MemberSuccessCode.GET_LOGIN_SUCCESS); // 로그인 방식 리턴
+    public APIResponse<MemberRespDTO.GetLoginDTO> getLoginMethod(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return APIResponse.onSuccess(memberService.getLogin(userDetails.getMember()), MemberSuccessCode.GET_LOGIN_SUCCESS); // 로그인 방식 리턴
     }
 
     @PostMapping("/login")
