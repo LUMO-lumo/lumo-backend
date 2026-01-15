@@ -8,25 +8,69 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import io.jsonwebtoken.*;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Base64;
+import java.util.Date;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class JWTProvider {
 
+    // 일단 1시간으로 세팅
+    private static final Long ACCESS_TOKEN_EXPIRE_TIME = (long) 1000 * 60 * 60;
+    private static final Long REFRESH_TOKEN_EXPIRE_TIME = (long) 1000 * 60 * 60;
+
     private final Key key;
     private final CustomUserDetailsService customUserDetailsService;
+
 
     public JWTProvider(@Value("${jwt.secret.key}") String key, CustomUserDetailsService customUserDetailsService) {
         byte[] encodeKey = Base64.getEncoder().encode(key.getBytes());
         this.key = Keys.hmacShaKeyFor(encodeKey);
         this.customUserDetailsService = customUserDetailsService; // 커스텀 UserDetailsService 를 통한 DB 조회
     }
+
+    /**
+     * 실질적인 JWT 반환 메서드!
+     * Service -> login 메서드에서 사용
+     * */
+    public JWT generateToken (Authentication authentication){
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        String username = authentication.getName();
+
+        long now = (new Date()).getTime();
+
+        Date accessTokenExpire = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+        String accessToken = createNewToken(username, authorities, accessTokenExpire);
+
+        Date refreshTokenExpire = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
+        String refreshToken = createNewToken(username, null, refreshTokenExpire);
+
+        return JWT.builder()
+                .grantType("Bearer")
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    public String createNewToken(String email, String authorities, Date expireDate){
+        return Jwts.builder()
+                .claim("username", email)
+                .claim("auth", authorities != null ? authorities : "ROLE_USER") // authorities 있는 경우 Member 필드의 Role 반환
+                .expiration(expireDate)
+                .signWith(key)
+                .compact();
+    }
+
 
     public boolean validateToken(String accessToken) {
         try{
