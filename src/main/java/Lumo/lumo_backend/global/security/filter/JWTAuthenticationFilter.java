@@ -45,7 +45,5 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             log.info("비로그인 사용자 요청입니다.");
         }
         filterChain.doFilter(request, response);
-
-
     }
 }
