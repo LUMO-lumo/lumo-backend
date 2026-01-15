@@ -6,11 +6,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import io.jsonwebtoken.*;
+import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Base64;
 
-@RequiredArgsConstructor
+@Component
 public class JWTProvider {
 
     private final Key key;
@@ -21,7 +22,6 @@ public class JWTProvider {
         this.key = Keys.hmacShaKeyFor(encodeKey);
         this.customUserDetailsService = customUserDetailsService; // 커스텀 UserDetailsService 를 통한 DB 조회
     }
-
 
     public boolean validateToken(String accessToken) {
         return false;
