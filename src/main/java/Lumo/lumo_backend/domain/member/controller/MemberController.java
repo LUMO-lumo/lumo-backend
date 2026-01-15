@@ -6,8 +6,12 @@ import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.member.service.MemberService;
 import Lumo.lumo_backend.domain.member.status.MemberSuccessCode;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
+import Lumo.lumo_backend.global.security.jwt.JWT;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,8 +34,21 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public APIResponse<String> reqLogin (){
-        return null;
+    public APIResponse<MemberRespDTO.LoginRespDTO> reqLogin (@RequestBody MemberReqDTO.LoginReqDTO dto, HttpServletResponse response){
+
+        JWT jwt = memberService.login(dto);
+
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", jwt.getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60) // 7일
+                .sameSite("Strict")
+                .build();
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        MemberRespDTO.LoginRespDTO respDTO = MemberRespDTO.LoginRespDTO.builder().isSuccess(true).accessToken(jwt.getAccessToken()).build();
+        return APIResponse.onSuccess(respDTO, MemberSuccessCode.LOGIN_SUCCESS);
     }
 
     @PostMapping("/logout")

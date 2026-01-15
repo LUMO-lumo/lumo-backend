@@ -23,4 +23,13 @@ public class MemberRespDTO {
     public static class SimpleAPIRespDTO {
         private Boolean isSuccess;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LoginRespDTO {
+        private Boolean isSuccess;
+        private String accessToken;
+    }
 }
