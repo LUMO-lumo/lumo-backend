@@ -1,6 +1,6 @@
 package Lumo.lumo_backend.domain.member.dto;
 
-import Lumo.lumo_backend.domain.member.entity.Login;
+import Lumo.lumo_backend.domain.member.entity.memberEnum.Login;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

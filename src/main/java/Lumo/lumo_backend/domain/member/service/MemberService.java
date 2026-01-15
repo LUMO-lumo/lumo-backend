@@ -2,9 +2,9 @@ package Lumo.lumo_backend.domain.member.service;
 
 import Lumo.lumo_backend.domain.member.dto.MemberReqDTO;
 import Lumo.lumo_backend.domain.member.dto.MemberRespDTO;
-import Lumo.lumo_backend.domain.member.entity.Login;
+import Lumo.lumo_backend.domain.member.entity.memberEnum.Login;
 import Lumo.lumo_backend.domain.member.entity.Member;
-import Lumo.lumo_backend.domain.member.entity.MemberRole;
+import Lumo.lumo_backend.domain.member.entity.memberEnum.MemberRole;
 import Lumo.lumo_backend.domain.member.exception.MemberException;
 import Lumo.lumo_backend.domain.member.repository.MemberRepository;
 import Lumo.lumo_backend.domain.member.status.MemberErrorCode;

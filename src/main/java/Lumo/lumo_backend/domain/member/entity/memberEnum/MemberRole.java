@@ -1,4 +1,4 @@
-package Lumo.lumo_backend.domain.member.entity;
+package Lumo.lumo_backend.domain.member.entity.memberEnum;
 
 public enum MemberRole {
     ADMIN, USER;
