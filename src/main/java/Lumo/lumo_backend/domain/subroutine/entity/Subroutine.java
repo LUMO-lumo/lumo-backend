@@ -39,4 +39,8 @@ public class Subroutine extends BaseEntity {
     public void checkSubroutine (){
         this.isSuccess = !this.isSuccess;
     }
+
+    public void increateCnt (){
+        this.successCount++;
+    }
 }
