@@ -36,7 +36,7 @@ public class SubroutineService {
     public Long createSubroutine (Member member, Long routineId, String title) {
         Member member1 = memberRepository.findById(member.getId()).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
         Routine routine = routineRepository.findById(routineId).orElseThrow(() -> new RoutineException(RoutineErrorCode.ROUTINE_NOT_FOUND));
-        Subroutine savedSubroutine = subroutineRepository.save(new Subroutine(title));
+        Subroutine savedSubroutine = subroutineRepository.save(new Subroutine(title, routine));
         routine.addSubroutine(savedSubroutine);
 
         return savedSubroutine.getId();

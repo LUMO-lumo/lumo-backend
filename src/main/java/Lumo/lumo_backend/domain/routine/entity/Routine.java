@@ -28,7 +28,7 @@ public class Routine extends BaseEntity {
     private Member member;
 
     @JsonIgnore
-    @OneToMany(/*mappedBy = "routine",*/ cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Subroutine> subroutineList = new ArrayList<>();
 
     public Routine(String title, Member member){
