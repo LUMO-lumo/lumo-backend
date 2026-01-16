@@ -13,10 +13,12 @@ public enum RoutineSuccessCode implements BaseCode {
     // 성공 응답 작성 예시 입니다.
     TEST_SUCCESS (HttpStatus.OK, "TEST2000", "테스트 성공 입니다."),
 
-    CREATE_ROUTINE_SUCCESS(HttpStatus.OK, "ROUTINE2000", "루틴 생성에 성공했습니다."),
-    GET_ROUTINE_SUCCESS(HttpStatus.OK, "ROUTINE2001", "루틴 조회에 성공했습니다."),
-    DELETE_ROUTINE_SUCCESS(HttpStatus.OK, "ROUTINE2002", "루틴 삭제에 성공했습니다."),
-    RENAME_ROUTINE_SUCCESS(HttpStatus.OK, "ROUTINE2003", "루틴 이름 변경에 성공했습니다.")
+    CREATE_ROUTINE_SUCCESS(HttpStatus.OK, "ROUTINE_2000", "루틴 생성에 성공했습니다."),
+    GET_ROUTINE_SUCCESS(HttpStatus.OK, "ROUTINE_2001", "루틴 조회에 성공했습니다."),
+    DELETE_ROUTINE_SUCCESS(HttpStatus.OK, "ROUTINE_2002", "루틴 삭제에 성공했습니다."),
+    RENAME_ROUTINE_SUCCESS(HttpStatus.OK, "ROUTINE_2003", "루틴 이름 변경에 성공했습니다."),
+    CHECK_ROUTINE_SUCCESS(HttpStatus.OK, "ROUTINE_2004", "루틴 체크에 성공했습니다."),
+
 
     ;
 
