@@ -4,6 +4,8 @@ import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.routine.status.RoutineSuccessCode;
 import Lumo.lumo_backend.domain.subroutine.service.SubroutineService;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequestMapping("/api/subroutine")
 @RequiredArgsConstructor
+@Tag(name = "서브루틴 API", description = "루틴 내 하위 서브루틴 관련 API 입니다.")
 public class SubroutineController {
 
     private final SubroutineService subroutineService;
@@ -24,23 +27,27 @@ public class SubroutineController {
      * */
 
     @PostMapping
-    public APIResponse<Long> createSubroutine(@AuthenticationPrincipal Member member, @RequestParam ("subroutineId") Long routineId, @RequestParam("title") String title) {
+    @Operation(summary = "서브루틴 생성 API", description = "입력 받은 제목으로 서브루틴을 생성하는 API 입니다. QueryParameter로 루틴 Id와 title 값을 주시면 됩니다")
+    public APIResponse<Long> createSubroutine(@AuthenticationPrincipal Member member, @RequestParam ("routineId") Long routineId, @RequestParam("title") String title) {
         return APIResponse.onSuccess(subroutineService.createSubroutine(member, routineId, title), RoutineSuccessCode.RENAME_ROUTINE_SUCCESS); /// id 반환 필요!
     }
 
     @DeleteMapping
+    @Operation(summary = "서브루틴 삭제 API", description = "QueryParameter로 주신 subroutineId를 통해 서브루틴을 삭제하는 API 입니다.")
     public APIResponse<Object> deleteSubroutine(@AuthenticationPrincipal Member member, @RequestParam ("subroutineId") Long subroutineId) {
         subroutineService.deleteSubroutine(member, subroutineId);
         return APIResponse.onSuccess(null, RoutineSuccessCode.RENAME_ROUTINE_SUCCESS);
     }
 
     @PatchMapping
-    public APIResponse<Object> renameSubroutine(@AuthenticationPrincipal Member member, @RequestParam ("id") Long subroutineId, @RequestParam("title") String title) {
+    @Operation(summary = "서브루틴 이름 변경 API", description = "QueryParameter로 주신 subroutineId와 title을 통해 서브루틴의 이름을 변경하는 API 입니다.")
+    public APIResponse<Object> renameSubroutine(@AuthenticationPrincipal Member member, @RequestParam ("subroutineId") Long subroutineId, @RequestParam("title") String title) {
         subroutineService.renameSubroutine(member, subroutineId, title);
         return APIResponse.onSuccess(null, RoutineSuccessCode.RENAME_ROUTINE_SUCCESS);
     }
 
     @PostMapping("/check")
+    @Operation(summary = "서브루틴 이름 변경 API", description = "QueryParameter로 주신 subroutineId를 통해 서브루틴 수행을 체크하는 API 입니다.")
     public APIResponse<Object> checkSubroutine (@AuthenticationPrincipal Member member, @RequestParam ("id") Long subroutineId) {
         subroutineService.checkSubroutine(member, subroutineId);
         return APIResponse.onSuccess(null, RoutineSuccessCode.RENAME_ROUTINE_SUCCESS);
