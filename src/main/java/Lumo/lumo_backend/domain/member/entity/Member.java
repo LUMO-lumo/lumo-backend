@@ -1,6 +1,8 @@
 package Lumo.lumo_backend.domain.member.entity;
 
 import Lumo.lumo_backend.domain.alarm.entity.Alarm;
+import Lumo.lumo_backend.domain.member.entity.memberEnum.Login;
+import Lumo.lumo_backend.domain.member.entity.memberEnum.MemberRole;
 import Lumo.lumo_backend.domain.routine.entity.Routine;
 import Lumo.lumo_backend.domain.setting.entity.Feedback;
 import Lumo.lumo_backend.domain.setting.entity.MemberStat;
@@ -9,11 +11,7 @@ import Lumo.lumo_backend.domain.todo.entity.ToDo;
 import Lumo.lumo_backend.global.BaseEntity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +32,9 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Login login;
+
+    @Enumerated(value = EnumType.STRING)
+    private MemberRole role = MemberRole.USER;
 
     @Email
     @Column(nullable = false, length = 50)
