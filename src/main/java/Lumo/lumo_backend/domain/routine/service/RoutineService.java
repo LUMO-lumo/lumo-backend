@@ -35,7 +35,7 @@ public class RoutineService {
 
     public List<RoutineRespDTO.GetRoutineDTO> getRoutine(Long memberId) {
 
-        List<Routine> routineList = routineRepository.findAllById(memberId);
+        List<Routine> routineList = routineRepository.findAllByMember_Id(memberId);
 
         return routineList.stream()
                 .map(routine ->

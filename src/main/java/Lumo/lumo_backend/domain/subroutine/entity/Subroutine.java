@@ -23,9 +23,9 @@ public class Subroutine extends BaseEntity {
 
     private Boolean isSuccess = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+/*    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routine_id")
-    private Routine routine;
+    private Routine routine;*/
 
     public Subroutine(String title){
         this.title = title;
