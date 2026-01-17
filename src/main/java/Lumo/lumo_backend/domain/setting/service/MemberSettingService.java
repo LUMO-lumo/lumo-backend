@@ -8,7 +8,6 @@ import Lumo.lumo_backend.domain.setting.dto.MemberSettingResponseDTO;
 import Lumo.lumo_backend.domain.setting.dto.MemberSettingUpdateRequestDTO;
 import Lumo.lumo_backend.domain.setting.entity.memberSetting.MemberSetting;
 import Lumo.lumo_backend.domain.setting.exception.MemberSettingException;
-import Lumo.lumo_backend.domain.setting.repository.MemberSettingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +21,6 @@ import static Lumo.lumo_backend.domain.setting.status.MemberSettingErrorCode.SET
 @Transactional
 public class MemberSettingService {
 
-    private final MemberSettingRepository memberSettingRepository;
     private final MemberRepository memberRepository;
 
     @Transactional(readOnly = true)
