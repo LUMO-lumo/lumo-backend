@@ -7,14 +7,26 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class MemberRequestDTO {
 
+public class MemberReqDTO {
 
     @Getter
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SignInRequestDTO {
+        @NotNull
+        @Email
+        private String email;
+        @NotNull
+        private String password;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LoginReqDTO {
         @NotNull
         @Email
         private String email;

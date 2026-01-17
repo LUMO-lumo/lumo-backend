@@ -1,6 +1,6 @@
 package Lumo.lumo_backend.global.init;
 
-import Lumo.lumo_backend.domain.member.entity.Login;
+import Lumo.lumo_backend.domain.member.entity.memberEnum.Login;
 import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.member.repository.MemberRepository;
 import org.springframework.boot.CommandLineRunner;
