@@ -1,6 +1,5 @@
 package Lumo.lumo_backend.domain.setting.status;
 
-
 import Lumo.lumo_backend.global.apiResponse.basecode.BaseCode;
 import Lumo.lumo_backend.global.apiResponse.dto.ReasonDTO;
 import lombok.AllArgsConstructor;
@@ -9,14 +8,12 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum MemberSettingSuccessCode implements BaseCode {
+public enum TermsSuccessCode implements BaseCode {
 
     // 성공 응답 작성 예시 입니다.
     TEST_SUCCESS (HttpStatus.OK, "TEST_2000", "테스트 성공 입니다."),
 
-
-    SETTING_GET_SUCCESS(HttpStatus.OK, "SETTING_2000", "설정 읽기에 성공하였습니다."),
-    SETTING_UPDATE_SUCCESS(HttpStatus.OK, "SETTING_2001", "설정 업데이트에 성공하였습니다."),
+    SETTING_UPDATE_SUCCESS(HttpStatus.OK, "SETTING_2000", "설정 업데이트에 성공하였습니다."),
     ;
 
     private final HttpStatus status;

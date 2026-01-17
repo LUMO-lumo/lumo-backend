@@ -1,7 +1,10 @@
 package Lumo.lumo_backend.domain.setting.exception;
 
-public class NoticeException extends RuntimeException {
-    public NoticeException(String message) {
-        super(message);
+import Lumo.lumo_backend.domain.setting.status.NoticeErrorCode;
+import Lumo.lumo_backend.global.exception.GeneralException;
+
+public class NoticeException extends GeneralException {
+    public NoticeException (NoticeErrorCode errorCode) {
+        super(errorCode);
     }
 }

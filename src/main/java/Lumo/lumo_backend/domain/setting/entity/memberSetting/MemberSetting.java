@@ -22,9 +22,9 @@ public class MemberSetting extends BaseEntity {
     @Column(name = "member_setting_id")
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "member_id", nullable = false, unique = true)
-    private Member member;
+//    @OneToOne
+//    @JoinColumn(name = "member_id", nullable = false, unique = true)
+//    private Member member;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -77,9 +77,9 @@ public class MemberSetting extends BaseEntity {
         this.briefingVoiceDefaultType = briefingVoiceDefaultType;
     }
 
-    public static MemberSetting createDefault(Member member) {
+    public static MemberSetting createDefault() {
         return MemberSetting.builder()
-                .member(member)
+//                .member(member)
                 .theme(Theme.LIGHT)
                 .language(Language.KO)
                 .build();

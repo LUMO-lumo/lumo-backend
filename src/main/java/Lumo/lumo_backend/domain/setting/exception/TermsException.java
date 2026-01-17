@@ -1,7 +1,10 @@
 package Lumo.lumo_backend.domain.setting.exception;
 
-public class TermsException extends RuntimeException {
-    public TermsException(String message) {
-        super(message);
+import Lumo.lumo_backend.domain.setting.status.TermsErrorCode;
+import Lumo.lumo_backend.global.exception.GeneralException;
+
+public class TermsException extends GeneralException {
+    public TermsException (TermsErrorCode errorCode) {
+        super(errorCode);
     }
 }

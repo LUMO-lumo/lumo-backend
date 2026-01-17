@@ -1,7 +1,10 @@
 package Lumo.lumo_backend.domain.setting.exception;
 
-public class MemberStatException extends RuntimeException {
-    public MemberStatException(String message) {
-        super(message);
+import Lumo.lumo_backend.domain.setting.status.MemberStatErrorCode;
+import Lumo.lumo_backend.global.exception.GeneralException;
+
+public class MemberStatException extends GeneralException {
+    public MemberStatException (MemberStatErrorCode errorCode) {
+        super(errorCode);
     }
 }

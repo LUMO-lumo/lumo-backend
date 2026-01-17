@@ -1,7 +1,10 @@
 package Lumo.lumo_backend.domain.setting.exception;
 
-public class InquiryException extends RuntimeException {
-    public InquiryException(String message) {
-        super(message);
+import Lumo.lumo_backend.domain.setting.status.InquiryErrorCode;
+import Lumo.lumo_backend.global.exception.GeneralException;
+
+public class InquiryException extends GeneralException {
+    public InquiryException (InquiryErrorCode errorCode) {
+        super(errorCode);
     }
 }

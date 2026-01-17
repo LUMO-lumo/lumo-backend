@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/admin/inquiries")
 public class AdminInquiryController {
 
+    // 사용자 문의사항 답변 수정
     @PostMapping("/{inquiryId}")
     public APIResponse<Object> createAdminInquiry() {
         return null;
     }
 
+    // 사용자 문의사항 답변
     @PatchMapping("/{inquiryId}")
     public APIResponse<Object> updateAdminInquiry() {
         return null;
