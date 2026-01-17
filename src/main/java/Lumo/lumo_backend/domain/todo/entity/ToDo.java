@@ -41,10 +41,6 @@ public class ToDo extends BaseEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    public boolean isOwnedBy(Long memberId) {
-        return member.getId().equals(memberId);
-    }
-
     public void update(String content) {
         this.content = content;
     }

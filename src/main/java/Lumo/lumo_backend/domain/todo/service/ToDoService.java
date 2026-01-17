@@ -26,12 +26,11 @@ public class ToDoService {
     private final ToDoRepository toDoRepository;
     private final MemberRepository memberRepository;
 
-    public ToDoResponseDTO create(Long memberId, ToDoCreateRequestDTO toDoCreateRequestDTO) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
+    public ToDoResponseDTO create(Member member, ToDoCreateRequestDTO toDoCreateRequestDTO) {
+        Member persistedMember = getPersistedMember(member);
 
         ToDo toDo = ToDo.builder()
-                .member(member)
+                .member(persistedMember)
                 .eventDate(toDoCreateRequestDTO.eventDate())
                 .content(toDoCreateRequestDTO.content())
                 .build();
@@ -40,11 +39,13 @@ public class ToDoService {
         return ToDoResponseDTO.from(savedToDo);
     }
 
-    public ToDoResponseDTO update(Long memberId, Long toDoId, ToDoUpdateRequestDTO toDoUpdateRequestDTO) {
+    public ToDoResponseDTO update(Member member, Long toDoId, ToDoUpdateRequestDTO toDoUpdateRequestDTO) {
+        Member persistedMember = getPersistedMember(member);
+
         ToDo toDo = toDoRepository.findById(toDoId)
                 .orElseThrow(() -> new ToDoException(ToDoErrorCode.NOT_FOUND));
 
-        if (!toDo.isOwnedBy(memberId)) {
+        if (toDo.getMember()!=persistedMember) {
             throw new ToDoException(ToDoErrorCode.ACCESS_DENIED);
         }
 
@@ -54,11 +55,13 @@ public class ToDoService {
         return ToDoResponseDTO.from(toDo);
     }
 
-    public void delete(Long memberId, Long toDoId) {
+    public void delete(Member member, Long toDoId) {
+        Member persistedMember = getPersistedMember(member);
+
         ToDo toDo = toDoRepository.findById(toDoId)
                 .orElseThrow(() -> new ToDoException(ToDoErrorCode.NOT_FOUND));
 
-        if (!toDo.isOwnedBy(memberId)) {
+        if (toDo.getMember()!=persistedMember) {
             throw new ToDoException(ToDoErrorCode.ACCESS_DENIED);
         }
 
@@ -66,12 +69,16 @@ public class ToDoService {
     }
 
     @Transactional(readOnly = true)
-    public ToDoListResponseDTO findToDoListByEventDate(Long memberId, LocalDate eventDate) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
+    public ToDoListResponseDTO findToDoListByEventDate(Member member, LocalDate eventDate) {
+        Member persistedMember = getPersistedMember(member);
 
-        List<ToDo> toDos = toDoRepository.findAllByMemberAndEventDate(member, eventDate);
+        List<ToDo> toDos = toDoRepository.findAllByMemberAndEventDate(persistedMember, eventDate);
 
         return ToDoListResponseDTO.from(toDos);
+    }
+
+    private Member getPersistedMember(Member member) {
+        return memberRepository.findById(member.getId())
+                .orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
     }
 }
