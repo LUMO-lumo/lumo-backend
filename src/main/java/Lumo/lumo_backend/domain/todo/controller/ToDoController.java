@@ -9,6 +9,7 @@ import Lumo.lumo_backend.domain.todo.status.ToDoSuccessCode;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
 import Lumo.lumo_backend.global.security.userDetails.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/to-do")
 @RequiredArgsConstructor
+@Tag(name = "할 일")
 public class ToDoController {
 
     private final ToDoService toDoService;
