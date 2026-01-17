@@ -3,6 +3,7 @@ package Lumo.lumo_backend.domain.routine.entity;
 import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.subroutine.entity.Subroutine;
 import Lumo.lumo_backend.global.BaseEntity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,7 +27,8 @@ public class Routine extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Subroutine> subroutineList = new ArrayList<>();
 
     public Routine(String title, Member member){

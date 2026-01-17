@@ -23,12 +23,13 @@ public class Subroutine extends BaseEntity {
 
     private Boolean isSuccess = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "routine_id")
     private Routine routine;
 
-    public Subroutine(String title){
+    public Subroutine(String title, Routine routine){
         this.title = title;
+        this.routine = routine;
     }
 
     public void renameSubroutine (String title){
@@ -37,5 +38,9 @@ public class Subroutine extends BaseEntity {
 
     public void checkSubroutine (){
         this.isSuccess = !this.isSuccess;
+    }
+
+    public void increateCnt (){
+        this.successCount++;
     }
 }
