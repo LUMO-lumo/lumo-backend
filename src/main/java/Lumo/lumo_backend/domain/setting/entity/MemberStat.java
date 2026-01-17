@@ -21,9 +21,9 @@ public class MemberStat extends BaseEntity {
     @Column(name = "member_stat_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false, unique = true)
-    private Member member;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "member_id", nullable = false, unique = true)
+//    private Member member;
 
     @Column(nullable = false)
     private int alarmCreationCount;
@@ -40,9 +40,9 @@ public class MemberStat extends BaseEntity {
     @Column(nullable = false)
     private int activatedAlarmOffCount;
 
-    public static MemberStat createDefault(Member member) {
+    public static MemberStat createDefault() {
         return MemberStat.builder()
-                .member(member)
+//                .member(member)
                 .alarmCreationCount(0)
                 .appOpenCount(0)
                 .build();

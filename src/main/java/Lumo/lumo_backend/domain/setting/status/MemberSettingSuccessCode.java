@@ -14,7 +14,9 @@ public enum MemberSettingSuccessCode implements BaseCode {
     // 성공 응답 작성 예시 입니다.
     TEST_SUCCESS (HttpStatus.OK, "TEST_2000", "테스트 성공 입니다."),
 
-    SETTING_UPDATE_SUCCESS(HttpStatus.OK, "SETTING_2000", "설정 업데이트에 성공하였습니다."),
+
+    SETTING_GET_SUCCESS(HttpStatus.OK, "SETTING_2000", "설정 읽기에 성공하였습니다."),
+    SETTING_UPDATE_SUCCESS(HttpStatus.OK, "SETTING_2001", "설정 업데이트에 성공하였습니다."),
     ;
 
     private final HttpStatus status;

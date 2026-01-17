@@ -57,10 +57,10 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ToDo> toDoList = new ArrayList<>();
 
-    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL,  orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL,  orphanRemoval = true)
     private MemberSetting setting;
 
-    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL,  orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL,  orphanRemoval = true)
     private MemberStat stat;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -81,8 +81,8 @@ public class Member extends BaseEntity {
                 .login(login)
                 .build();
 
-        MemberSetting setting = MemberSetting.createDefault(member);
-        MemberStat stat = MemberStat.createDefault(member);
+        MemberSetting setting = MemberSetting.createDefault();
+        MemberStat stat = MemberStat.createDefault();
 
         member.setting = setting;
         member.stat = stat;
