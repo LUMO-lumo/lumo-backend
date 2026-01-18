@@ -12,6 +12,7 @@ public enum InquirySuccessCode implements BaseCode {
 
     INQUIRY_CREATE_SUCCESS(HttpStatus.OK, "INQUIRY_200_1", "문의사항 생성에 성공하였습니다."),
     INQUIRY_UPDATE_SUCCESS(HttpStatus.OK, "INQUIRY_200_2", "문의사항 수정에 성공하였습니다."),
+    INQUIRY_GET_SUCCESS(HttpStatus.OK, "INQUIRY_200_3", "문의사항 조회에 성공하였습니다."),
     ;
 
     private final HttpStatus status;

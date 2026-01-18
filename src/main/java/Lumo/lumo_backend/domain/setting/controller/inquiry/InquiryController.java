@@ -36,7 +36,7 @@ public class InquiryController {
 
     @Operation(summary = "사용자 문의사항 수정")
     @PatchMapping("/{inquiryId}")
-    public APIResponse<Object> update(
+    public APIResponse<InquiryResponseDTO> update(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @PathVariable Long inquiryId,
             @RequestBody @Valid InquiryCreateRequestDTO inquiryCreateRequestDTO
@@ -45,9 +45,14 @@ public class InquiryController {
         return APIResponse.onSuccess(inquiryResponseDTO, InquirySuccessCode.INQUIRY_UPDATE_SUCCESS);
     }
 
+    @Operation(summary = "사용자 문의사항 조회")
     @GetMapping("/{inquiryId}")
-    public APIResponse<Object> get() {
-        return null;
+    public APIResponse<InquiryResponseDTO> get(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable Long inquiryId
+    ) {
+        InquiryResponseDTO inquiryResponseDTO = inquiryService.get(customUserDetails.getMember(), inquiryId);
+        return APIResponse.onSuccess(inquiryResponseDTO, InquirySuccessCode.INQUIRY_GET_SUCCESS);
     }
 
 }

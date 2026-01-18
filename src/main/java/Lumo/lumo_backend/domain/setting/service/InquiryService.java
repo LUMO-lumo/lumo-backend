@@ -52,6 +52,20 @@ public class InquiryService {
         return InquiryResponseDTO.from(inquiry);
     }
 
+    @Transactional(readOnly = true)
+    public InquiryResponseDTO get(Member member, Long inquiryId) {
+        Member persistedMember = getPersistedMember(member);
+
+        Inquiry inquiry = inquiryRepository.findById(inquiryId)
+                .orElseThrow(() -> new InquiryException(InquiryErrorCode.INQUIRY_NOT_FOUND));
+
+        if(inquiry.getMember()!=persistedMember){
+            throw new InquiryException(InquiryErrorCode.INQUIRY_ACCESS_DENIED);
+        }
+
+        return InquiryResponseDTO.from(inquiry);
+    }
+
     private Member getPersistedMember(Member member) {
         return memberRepository.findById(member.getId())
                 .orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
