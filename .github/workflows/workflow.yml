@@ -31,6 +31,9 @@ jobs:
           key: ${{secrets.EC2_PRIVATE_KEY}}
           script: |
             # 합치려고 했으나, workflow 상 연결 오버헤드 발생으로 합쳐서 작성
+            set -e
+            cd /home/ubuntu
+            
             # 1. git repo 디렉토리 확인
             if [ -d "lumo-backend" ]; then
               echo "Git repository already exists. Pulling !!"
