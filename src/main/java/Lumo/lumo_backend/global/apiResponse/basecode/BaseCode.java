@@ -9,5 +9,9 @@ public interface BaseCode {
 
     ReasonDTO getReasonHttpStatus();
 
+    String getCode ();
+
+    String getMessage();
+
 }
 

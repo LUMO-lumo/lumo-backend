@@ -1,0 +1,100 @@
+package Lumo.lumo_backend.domain.member.controller;
+
+import Lumo.lumo_backend.domain.member.dto.MemberReqDTO;
+import Lumo.lumo_backend.domain.member.dto.MemberRespDTO;
+import Lumo.lumo_backend.domain.member.entity.Member;
+import Lumo.lumo_backend.domain.member.service.MemberService;
+import Lumo.lumo_backend.domain.member.status.MemberSuccessCode;
+import Lumo.lumo_backend.global.apiResponse.APIResponse;
+import Lumo.lumo_backend.global.security.jwt.JWT;
+import Lumo.lumo_backend.global.security.userDetails.CustomUserDetails;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import static Lumo.lumo_backend.domain.member.status.MemberSuccessCode.VERIFY_CODE_SUCCESS;
+
+@RestController
+@Slf4j
+@RequestMapping("/api/member")
+@RequiredArgsConstructor
+@Tag(name = "사용자 API", description = "회원가입, 로그인, 이메일 인증 관련 API를 담은 사용자 API 입니다.")
+public class MemberController {
+
+    private final MemberService memberService;
+
+
+    ///  자동 로그인, 이메일 기억하기 기능도 추가가 필요!
+
+    @GetMapping("/login")
+    @Operation(summary = "로그인 방식 조회 API", description = "사용자가 로그인한 방식을 조회하는 API 입니다.")
+    public APIResponse<MemberRespDTO.GetLoginDTO> getLoginMethod(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        return APIResponse.onSuccess(memberService.getLogin(userDetails.getMember()), MemberSuccessCode.GET_LOGIN_SUCCESS); // 로그인 방식 리턴
+    }
+
+    @PostMapping("/login")
+    @Operation(summary = "로그인 API", description = "닉네임과 비밀번호로 로그인을 진행합니다. 성공 여부와 JWT accessToken을 반환합니다. 쿠키로는 RefreshToken를 설정하도록 하였습니다. ")
+    public APIResponse<MemberRespDTO.LoginRespDTO> reqLogin (@RequestBody MemberReqDTO.LoginReqDTO dto, HttpServletResponse response){
+
+        JWT jwt = memberService.login(dto);
+
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", jwt.getRefreshToken())
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(7 * 24 * 60 * 60) // 7일
+                .sameSite("Strict")
+                .build();
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        MemberRespDTO.LoginRespDTO respDTO = MemberRespDTO.LoginRespDTO.builder().isSuccess(true).accessToken(jwt.getAccessToken()).build();
+        return APIResponse.onSuccess(respDTO, MemberSuccessCode.LOGIN_SUCCESS);
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃 API", description = "로그인을 한 사용자에 한해, 로그아웃을 진행하는 API 입니다.")
+    public APIResponse<Object> logout() {
+        return null; // bool 값 리턴
+    }
+
+    @PostMapping("/withdrawl")
+    @Operation(summary = "회원탈퇴 API", description = "로그인을 한 사용자에 한해, 회원탈퇴를 진행하는 API 입니다.")
+    public APIResponse<Object> withdrawal() {
+        return null; // bool 값 리턴, SOFT DELETE
+    }
+
+    @GetMapping("/email-duplicate")
+    @Operation(summary = "이메일 중복 체크 API", description = "회원가입 중 이메일 확잍을 통해 서비스 중복 가입을 방지하는 API 입니다.")
+    public APIResponse<MemberRespDTO.SimpleAPIRespDTO> checkEmailDuplicate(@RequestParam("email") String email) {
+        MemberRespDTO.SimpleAPIRespDTO dto = MemberRespDTO.SimpleAPIRespDTO.builder().isSuccess(memberService.checkEmailDuplicate(email)).build();
+        return APIResponse.onSuccess(dto, MemberSuccessCode.EMAIL_DUPLICATE_CHECK_SUCCESS);
+    }
+
+    @PostMapping("/request-code")
+    @Operation(summary = "이메일 인증 코드 API", description = "회원가입 중 사용자의 악의적인 회원가입 방지를 위해 인증 코드를 발행하는 API 입니다.")
+    public APIResponse<MemberRespDTO.SimpleAPIRespDTO> requestVerificationCode(@RequestParam("email") String email) {
+        memberService.requestVerificationCode(email);
+        return APIResponse.onSuccess(MemberRespDTO.SimpleAPIRespDTO.builder().isSuccess(true).build(), MemberSuccessCode.REQ_CODE_SUCCESS); // bool 값 리턴,;
+    }
+
+    @PostMapping("/verify-code")
+    @Operation(summary = "인증 코드 검증 API", description = "회원가입 중 요청한 인증 코드를 통해 이메일을 인증하는 API 입니다.")
+    public APIResponse<Object> verifyCode(@RequestParam("code") String code) {
+        memberService.verifyCode(code);
+        return APIResponse.onSuccess(MemberRespDTO.SimpleAPIRespDTO.builder().isSuccess(true).build(), VERIFY_CODE_SUCCESS);
+    }
+
+    @PostMapping("/signin")
+    @Operation(summary = "회원가입 API", description = "이메일 중복 체크, 이메일 인증 코드 검증 이후 최종적으로 사용자가 입력한 정보를 바탕으로 회원가입을 요청하는 API 입니다.")
+    public APIResponse<MemberRespDTO.SimpleAPIRespDTO> signIn(@RequestBody MemberReqDTO.SignInRequestDTO dto) {
+        memberService.signIn(dto);
+        return APIResponse.onSuccess(MemberRespDTO.SimpleAPIRespDTO.builder().isSuccess(true).build(), MemberSuccessCode.SIGN_IN_SUCCESS); // bool 값 리턴,
+    }
+
+}

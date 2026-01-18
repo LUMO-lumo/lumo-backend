@@ -1,6 +1,6 @@
 logging:
   level:
-    org.hibernate.SQL: DEBUG
+    show_sql: DEBUG
 
 spring:
   application:
@@ -22,12 +22,30 @@ spring:
         hbm2ddl:
           auto: update
         default_batch_fetch_size: 1000
+  mail:
+    host: ${MAIL_SENDER_HOST}
+    port: 587
+    username: ${MAIL_SENDER_USERNAME}
+    password: ${MAIL_SENDER_PASSWORD}
 
-#  data:
-#    redis:
-#      host: ${REDIS_HOST}
-#      port: 6379
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: 6379
 
   sql:
     init:
       mode: never
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health # health 엔드포인트를 웹에 노출
+  endpoint:
+    health:
+      show-details: always # 상세 상태 확인 (선택 사항)
+
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
