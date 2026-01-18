@@ -24,18 +24,13 @@ jobs:
           docker push ${{secrets.DOCKER_USERNAME}}/lumo
 
       - name: EC2 작업
-        uses: appleboy/ssh-action@v1.0.0
+        uses: appleboy/ssh-action@master
         with:
           host: ${{secrets.EC2_HOST}}
           username: ${{secrets.EC2_USERNAME}}
           key: ${{secrets.EC2_PRIVATE_KEY}}
           debug: true
-          script: |
-            echo "hello"
-            set -e
-            cd /home/ubuntu
-            
-            # 1. git repo 디렉토리 확인
+          script: | 
             if [ -d "lumo-backend" ]; then
               echo "Git repository already exists. Pulling !!"
               cd lumo-backend
@@ -46,7 +41,6 @@ jobs:
               cd lumo-backend
             fi
             
-            # 2. env 작성
             echo "MYSQL_HOST=${{secrets.MYSQL_HOST}}" > .env 
             echo "MYSQL_NAME=${{secrets.MYSQL_NAME}}" >> .env
             echo "MYSQL_USERNAME=${{secrets.MYSQL_USERNAME}}" >> .env
@@ -56,10 +50,8 @@ jobs:
             echo "MAIL_SENDER_PASSWORD=${{secrets.MAIL_SENDER_PASSWORD}}" >> .env
             echo "REDIS_HOST=${{secrets.REDIS_HOST}}" >> .env
             echo "JWT_SECRET_KEY=${{secrets.JWT_SECRET_KEY}}" >> .env
-            
-            # 3. 도커 로그인 
+
             sudo docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
             sudo docker-compose pull
-            
-            # Blue-Green deploy
+
             bash ./deploy.sh 2>&1 | sudo tee deploy.log
