@@ -24,13 +24,13 @@ jobs:
           docker push ${{secrets.DOCKER_USERNAME}}/lumo
 
       - name: EC2 작업
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{secrets.EC2_HOST}}
           username: ${{secrets.EC2_USERNAME}}
           key: ${{secrets.EC2_PRIVATE_KEY}}
-          script: |
-            # 합치려고 했으나, workflow 상 연결 오버헤드 발생으로 합쳐서 작성
+          script: | 
+            echo "hello"
             set -e
             cd /home/ubuntu
             
