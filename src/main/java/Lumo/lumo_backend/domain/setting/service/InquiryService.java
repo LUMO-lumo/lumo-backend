@@ -21,12 +21,11 @@ public class InquiryService {
     private final MemberRepository memberRepository;
     private final InquiryRepository inquiryRepository;
 
-    public InquiryResponseDTO create(Long memberId, InquiryCreateRequestDTO inquiryCreateRequestDTO) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
+    public InquiryResponseDTO create(Member member, InquiryCreateRequestDTO inquiryCreateRequestDTO) {
+        Member persistedMember = getPersistedMember(member);
 
         Inquiry inquiry = Inquiry.builder()
-                .member(member)
+                .member(persistedMember)
                 .title(inquiryCreateRequestDTO.getTitle())
                 .content(inquiryCreateRequestDTO.getContent())
                 .build();
@@ -36,12 +35,14 @@ public class InquiryService {
         return InquiryResponseDTO.from(saved);
     }
 
-    public InquiryResponseDTO update(Long memberId, Long inquiryId, InquiryCreateRequestDTO inquiryCreateRequestDTO) {
+    public InquiryResponseDTO update(Member member, Long inquiryId, InquiryCreateRequestDTO inquiryCreateRequestDTO) {
         //todo 자식 문의사항 생성 시 수정 불가
+        Member persistedMember = getPersistedMember(member);
+
         Inquiry inquiry = inquiryRepository.findById(inquiryId)
                 .orElseThrow(() -> new InquiryException(InquiryErrorCode.INQUIRY_NOT_FOUND));
 
-        if(!inquiry.isOwnedBy(memberId)){
+        if(inquiry.getMember()!=persistedMember){
             throw new InquiryException(InquiryErrorCode.INQUIRY_ACCESS_DENIED);
         }
 
@@ -49,5 +50,10 @@ public class InquiryService {
 
         inquiryRepository.flush(); //update_at 갱신 후 응답
         return InquiryResponseDTO.from(inquiry);
+    }
+
+    private Member getPersistedMember(Member member) {
+        return memberRepository.findById(member.getId())
+                .orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
     }
 }

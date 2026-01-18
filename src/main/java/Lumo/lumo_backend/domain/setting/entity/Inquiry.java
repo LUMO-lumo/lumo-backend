@@ -40,10 +40,6 @@ public class Inquiry extends BaseEntity {
     @OneToOne(mappedBy = "parentInquiry")
     private Inquiry childInquiry;
 
-    public boolean isOwnedBy(Long memberId) {
-        return this.member.getId().equals(memberId);
-    }
-
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
