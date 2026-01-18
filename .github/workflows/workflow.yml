@@ -32,14 +32,14 @@ jobs:
           script: |
             # 합치려고 했으나, workflow 상 연결 오버헤드 발생으로 합쳐서 작성
             # 1. git repo 디렉토리 확인
-            if [ -d "Lumo" ]; then
+            if [ -d "lumo-backend" ]; then
               echo "Git repository already exists. Pulling !!"
-              cd Lumo
+              cd lumo-backend
               sudo git pull origin main
             else
               echo "Git repository not found. Cloning !"
               git clone https://github.com/LUMO-lumo/lumo-backend.git
-              cd Lumo
+              cd lumo-backend
             fi
             
             # 2. env 작성
