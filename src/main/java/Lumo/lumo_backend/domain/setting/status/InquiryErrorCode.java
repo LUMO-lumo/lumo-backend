@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 public enum InquiryErrorCode implements BaseErrorCode {
 
     INQUIRY_NOT_FOUND(HttpStatus.NOT_FOUND,"INQUIRY_404_1", "문의사항을 찾지 못했습니다."),
-    INQUIRY_ACCESS_DENIED(HttpStatus.BAD_REQUEST,"INQUIRY_404_1", "해당 문의사항에 접근 권한이 없습니다.")
+    INQUIRY_ACCESS_DENIED(HttpStatus.BAD_REQUEST,"INQUIRY_400_1", "해당 문의사항에 접근 권한이 없습니다.")
     ;
 
     private final HttpStatus httpStatus;
