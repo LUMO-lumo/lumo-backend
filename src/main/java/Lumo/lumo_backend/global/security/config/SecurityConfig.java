@@ -37,8 +37,12 @@ public class SecurityConfig {
                 })
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((auth) -> {
-                    auth.requestMatchers("/**").permitAll();
-//                            .anyRequest().authenticated();
+                    auth
+                            .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                            .requestMatchers("/api/alarms/**").authenticated()
+                            .requestMatchers("/api/missions/**").authenticated()
+                            .requestMatchers("/api/members/me/**").authenticated()
+                            .anyRequest().permitAll();
                 });
         return http.build();
     }
