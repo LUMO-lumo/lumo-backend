@@ -48,7 +48,6 @@ public class AlarmService {
         if (requestDto.getRepeatDays() != null && !requestDto.getRepeatDays().isEmpty()) {
             List<AlarmRepeatDay> repeatDays = requestDto.getRepeatDays().stream()
                     .map(dayOfWeek -> AlarmRepeatDay.builder()
-                            .alarm(alarm)
                             .dayOfWeek(dayOfWeek)
                             .build())
                     .collect(Collectors.toList());
