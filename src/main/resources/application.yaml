@@ -37,6 +37,14 @@ spring:
     init:
       mode: never
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health # health 엔드포인트를 웹에 노출
+  endpoint:
+    health:
+      show-details: always # 상세 상태 확인 (선택 사항)
 
 jwt:
   secret:
