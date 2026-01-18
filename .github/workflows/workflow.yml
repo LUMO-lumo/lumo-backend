@@ -58,4 +58,4 @@ jobs:
             sudo docker-compose pull
             
             # Blue-Green deploy
-            bash ${{secrets.DEPLOY_SCRIPT_PATH}}/deploy.sh
+            bash nginx/deploy.sh
