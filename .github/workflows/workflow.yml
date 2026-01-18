@@ -58,4 +58,4 @@ jobs:
             sudo docker-compose pull
             
             # Blue-Green deploy
-            bash /home/ubuntu/nginx/deploy.sh
+            bash /home/ubuntu/nginx/deploy.sh 2>&1 | sudo tee deploy.log
