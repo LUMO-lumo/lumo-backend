@@ -8,50 +8,56 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: 레포 체킹
+      - name: checking repo...
         uses: actions/checkout@v3
 
-      - name: 도커 로그인
+      - uses: actions/checkout@v4
+      - name: setting jdk...
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: logging in docker...
         uses: docker/login-action@v2
         with:
           username: ${{secrets.DOCKER_USERNAME}}
           password: ${{secrets.DOCKER_PASSWORD}}
 
-      - name: 도커 빌드 + 이미지 업로드
+      - name: build docker and push image..
         run: |
           chmod +x ./gradlew 
           docker build -t ${{secrets.DOCKER_USERNAME}}/lumo .
           docker push ${{secrets.DOCKER_USERNAME}}/lumo
 
-      - name: EC2 작업
+      - name: working in ec2...
         uses: appleboy/ssh-action@master
         with:
           host: ${{secrets.EC2_HOST}}
           username: ${{secrets.EC2_USERNAME}}
           key: ${{secrets.EC2_PRIVATE_KEY}}
-          debug: true
           script: | 
             if [ -d "lumo-backend" ]; then
-              echo "Git repository already exists. Pulling !!"
-              cd lumo-backend
+              sudo echo "Git repository already exists. Pulling !!"
+              sudo cd lumo-backend
               sudo git pull origin main
             else
-              echo "Git repository not found. Cloning !"
-              git clone https://github.com/LUMO-lumo/lumo-backend.git
-              cd lumo-backend
+              sudo echo "Git repository not found. Cloning !"
+              sudo git clone https://github.com/LUMO-lumo/lumo-backend.git
+              sudo cd lumo-backend
             fi
             
-            echo "MYSQL_HOST=${{secrets.MYSQL_HOST}}" > .env 
-            echo "MYSQL_NAME=${{secrets.MYSQL_NAME}}" >> .env
-            echo "MYSQL_USERNAME=${{secrets.MYSQL_USERNAME}}" >> .env
-            echo "MYSQL_PASSWORD=${{secrets.MYSQL_PASSWORD}}" >> .env
-            echo "MAIL_SENDER_HOST=${{secrets.MAIL_SENDER_HOST}}" >> .env
-            echo "MAIL_SENDER_USERNAME=${{secrets.MAIL_SENDER_USERNAME}}" >> .env
-            echo "MAIL_SENDER_PASSWORD=${{secrets.MAIL_SENDER_PASSWORD}}" >> .env
-            echo "REDIS_HOST=${{secrets.REDIS_HOST}}" >> .env
-            echo "JWT_SECRET_KEY=${{secrets.JWT_SECRET_KEY}}" >> .env
+            sudo echo "MYSQL_HOST=${{secrets.MYSQL_HOST}}" > .env 
+            sudo echo "MYSQL_NAME=${{secrets.MYSQL_NAME}}" >> .env
+            sudo echo "MYSQL_USERNAME=${{secrets.MYSQL_USERNAME}}" >> .env
+            sudo echo "MYSQL_PASSWORD=${{secrets.MYSQL_PASSWORD}}" >> .env
+            sudo echo "MAIL_SENDER_HOST=${{secrets.MAIL_SENDER_HOST}}" >> .env
+            sudo echo "MAIL_SENDER_USERNAME=${{secrets.MAIL_SENDER_USERNAME}}" >> .env
+            sudo echo "MAIL_SENDER_PASSWORD=${{secrets.MAIL_SENDER_PASSWORD}}" >> .env
+            sudo echo "REDIS_HOST=${{secrets.REDIS_HOST}}" >> .env
+            sudo echo "JWT_SECRET_KEY=${{secrets.JWT_SECRET_KEY}}" >> .env
 
             sudo docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
             sudo docker-compose pull
 
-            bash ./deploy.sh 2>&1 | sudo tee deploy.log
+            sudo bash ./deploy.sh 2>&1 | sudo tee deploy.log
