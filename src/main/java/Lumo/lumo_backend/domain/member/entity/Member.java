@@ -5,6 +5,7 @@ import Lumo.lumo_backend.domain.member.entity.memberEnum.Login;
 import Lumo.lumo_backend.domain.member.entity.memberEnum.MemberRole;
 import Lumo.lumo_backend.domain.routine.entity.Routine;
 import Lumo.lumo_backend.domain.setting.entity.Feedback;
+import Lumo.lumo_backend.domain.setting.entity.MemberDevice;
 import Lumo.lumo_backend.domain.setting.entity.MemberStat;
 import Lumo.lumo_backend.domain.setting.entity.memberSetting.MemberSetting;
 import Lumo.lumo_backend.domain.todo.entity.ToDo;
@@ -69,6 +70,14 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member")
     private List<Feedback> feedbacks = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private List<MemberDevice> devices = new ArrayList<>();
+
+//    public void addDevice(MemberDevice device) {
+//        this.devices.add(device);
+//    }
 
     public void addRoutine (Routine routine){
         this.routineList.add(routine);

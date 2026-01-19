@@ -20,17 +20,17 @@ public class MemberDevice extends BaseEntity {
     @Column(name = "member_device_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "member_id", nullable = false)
+//    private Member member;
 
     @Column(nullable = false)
-    private String device_name;
+    private String deviceName;
 
     @Column(nullable = false)
-    private String model_name;
+    private String modelName;
 
     @Column(nullable = false)
-    private String os_version;
+    private String osVersion;
 
 }
