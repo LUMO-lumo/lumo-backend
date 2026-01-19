@@ -1,5 +1,8 @@
 #!/bin/bash
 
+echo ">>> Checking Infrastructure Services..."
+sudo docker-compose up -d prometheus grafana
+
 EXIST_BLUE=$(sudo docker ps -q -f name=Lumo_Blue)
 
 if [ -z "$EXIST_BLUE" ]; then
@@ -22,7 +25,7 @@ echo "${TARGET_PORT} -> Try Health Check.."
 
 for retry_cnt in {1..10}
 do
-        echo ">>> Health check try ${retry_count}.."
+        echo ">>> Health check try ${$retry_cnt}.."
         RESPONSE=$(curl -s http://localhost:${TARGET_PORT}/actuator/health)
         UP_COUNT=$(echo $RESPONSE | grep 'UP' | wc -l)
 
