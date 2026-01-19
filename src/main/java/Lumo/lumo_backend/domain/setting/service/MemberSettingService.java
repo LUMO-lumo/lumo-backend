@@ -3,18 +3,18 @@ package Lumo.lumo_backend.domain.setting.service;
 import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.member.exception.MemberException;
 import Lumo.lumo_backend.domain.member.repository.MemberRepository;
-import Lumo.lumo_backend.domain.member.status.MemberErrorCode;
 import Lumo.lumo_backend.domain.setting.dto.MemberSettingResponseDTO;
 import Lumo.lumo_backend.domain.setting.dto.MemberSettingUpdateRequestDTO;
 import Lumo.lumo_backend.domain.setting.entity.memberSetting.MemberSetting;
-import Lumo.lumo_backend.domain.setting.exception.MemberSettingException;
+import Lumo.lumo_backend.domain.setting.exception.SettingException;
+import Lumo.lumo_backend.global.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static Lumo.lumo_backend.domain.member.status.MemberErrorCode.CANT_FOUND_MEMBER;
-import static Lumo.lumo_backend.domain.setting.status.MemberSettingErrorCode.SETTING_NOT_FOUND;
-import static Lumo.lumo_backend.domain.setting.status.MemberSettingErrorCode.SETTING_UPDATE_FAILED;
+import static Lumo.lumo_backend.domain.setting.status.SettingErrorCode.SETTING_NOT_FOUND;
+import static Lumo.lumo_backend.global.apiResponse.status.ErrorCode.INTERNAL_SERVER_ERROR;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +33,7 @@ public class MemberSettingService {
 
         // 유효성 검사
         if (memberSetting == null) {
-            throw new MemberSettingException(SETTING_NOT_FOUND);
+            throw new SettingException(SETTING_NOT_FOUND);
         }
 
         return MemberSettingResponseDTO.from(memberSetting);
@@ -48,7 +48,7 @@ public class MemberSettingService {
 
         // 유효성 검사
         if (memberSetting == null) {
-            throw new MemberSettingException(SETTING_NOT_FOUND);
+            throw new SettingException(SETTING_NOT_FOUND);
         }
 
 
@@ -66,7 +66,7 @@ public class MemberSettingService {
                     request.getBriefingVoiceDefaultType()
             );
         } catch (Exception e) {
-            throw new MemberSettingException(SETTING_UPDATE_FAILED);
+            throw new GeneralException(INTERNAL_SERVER_ERROR);
         }
 
     }

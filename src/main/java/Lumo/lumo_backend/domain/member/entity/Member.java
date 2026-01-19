@@ -74,12 +74,13 @@ public class Member extends BaseEntity {
         this.routineList.add(routine);
     }
 
-    public static Member create(String email, String username, String password, Login login) {
+    public static Member create(String email, String username, String password, Login login, MemberRole role) {
         Member member = Member.builder()
                 .email(email)
                 .username(username)
                 .password(password)
                 .login(login)
+                .role(role)
                 .build();
 
         MemberSetting setting = MemberSetting.createDefault();
