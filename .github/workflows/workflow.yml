@@ -36,28 +36,25 @@ jobs:
           host: ${{secrets.EC2_HOST}}
           username: ${{secrets.EC2_USERNAME}}
           key: ${{secrets.EC2_PRIVATE_KEY}}
-          script: | 
-            if [ -d "lumo-backend" ]; then
-              sudo echo "Git repository already exists. Pulling !!"
-              sudo cd lumo-backend
-              sudo git pull origin main
-            else
-              sudo echo "Git repository not found. Cloning !"
-              sudo git clone https://github.com/LUMO-lumo/lumo-backend.git
-              sudo cd lumo-backend
+          script: |
+            if [ ! -d "lumo-backend" ]; then
+               git clone https://github.com/LUMO-lumo/lumo-backend.git
             fi
+            cd lumo-backend
+            git pull origin main
             
-            sudo echo "MYSQL_HOST=${{secrets.MYSQL_HOST}}" > .env 
-            sudo echo "MYSQL_NAME=${{secrets.MYSQL_NAME}}" >> .env
-            sudo echo "MYSQL_USERNAME=${{secrets.MYSQL_USERNAME}}" >> .env
-            sudo echo "MYSQL_PASSWORD=${{secrets.MYSQL_PASSWORD}}" >> .env
-            sudo echo "MAIL_SENDER_HOST=${{secrets.MAIL_SENDER_HOST}}" >> .env
-            sudo echo "MAIL_SENDER_USERNAME=${{secrets.MAIL_SENDER_USERNAME}}" >> .env
-            sudo echo "MAIL_SENDER_PASSWORD=${{secrets.MAIL_SENDER_PASSWORD}}" >> .env
-            sudo echo "REDIS_HOST=${{secrets.REDIS_HOST}}" >> .env
-            sudo echo "JWT_SECRET_KEY=${{secrets.JWT_SECRET_KEY}}" >> .env
+            echo "MYSQL_HOST=${{secrets.MYSQL_HOST}}" > .env 
+            echo "MYSQL_NAME=${{secrets.MYSQL_NAME}}" >> .env
+            echo "MYSQL_USERNAME=${{secrets.MYSQL_USERNAME}}" >> .env
+            echo "MYSQL_PASSWORD=${{secrets.MYSQL_PASSWORD}}" >> .env
+            echo "MAIL_SENDER_HOST=${{secrets.MAIL_SENDER_HOST}}" >> .env
+            echo "MAIL_SENDER_USERNAME=${{secrets.MAIL_SENDER_USERNAME}}" >> .env
+            echo "MAIL_SENDER_PASSWORD=${{secrets.MAIL_SENDER_PASSWORD}}" >> .env
+            echo "REDIS_HOST=${{secrets.REDIS_HOST}}" >> .env
+            echo "JWT_SECRET_KEY=${{secrets.JWT_SECRET_KEY}}" >> .env
 
             sudo docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
             sudo docker-compose pull
 
+            chmod +x deploy.sh
             sudo bash ./deploy.sh 2>&1 | sudo tee deploy.log
