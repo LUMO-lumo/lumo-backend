@@ -52,9 +52,9 @@ jobs:
             echo "MAIL_SENDER_PASSWORD=${{secrets.MAIL_SENDER_PASSWORD}}" >> .env
             echo "REDIS_HOST=${{secrets.REDIS_HOST}}" >> .env
             echo "JWT_SECRET_KEY=${{secrets.JWT_SECRET_KEY}}" >> .env
-
+            
             sudo docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
             sudo docker-compose pull
-
+            
             chmod +x deploy.sh
             sudo bash ./deploy.sh 2>&1 | sudo tee deploy.log

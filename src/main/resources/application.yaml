@@ -41,10 +41,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: health # health 엔드포인트를 웹에 노출
+        include: health, prometheus # health + prometheus 엔드포인트 노출
   endpoint:
     health:
-      show-details: always # 상세 상태 확인 (선택 사항)
+      show-details: always # 상세 상태 확인
 
 jwt:
   secret:
