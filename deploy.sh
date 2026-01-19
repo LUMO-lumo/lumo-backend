@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo ">>> Checking Infrastructure Services..."
-sudo docker-compose up -d prometheus grafana
+sudo docker compose up -d prometheus grafana
 
 EXIST_BLUE=$(sudo docker ps -q -f name=Lumo_Blue)
 
@@ -19,7 +19,7 @@ fi
 
 echo "${BEFORE_COLOR} is running! start deploying new ${TARGET_COLOR}"
 
-sudo docker-compose up -d ${TARGET_COLOR}
+sudo docker compose up -d ${TARGET_COLOR}
 
 echo "${TARGET_PORT} -> Try Health Check.."
 
@@ -36,7 +36,7 @@ do
 
         if [ $retry_cnt -eq 10 ]; then
             echo ">>> Health check FAILED, Stop Deploying..."
-            sudo docker-compose stop ${TARGET_COLOR}
+            sudo docker compose stop ${TARGET_COLOR}
             exit 1
         fi
 
@@ -49,6 +49,6 @@ echo "set \$service_url http://127.0.0.1:${TARGET_PORT};" | sudo tee /etc/nginx/
 sudo nginx -s reload
 
 echo ">>> Shutting down previous container (${BEFORE_COLOR})..."
-sudo docker-compose stop ${BEFORE_COLOR}
+sudo docker compose stop ${BEFORE_COLOR}
 
 echo ">>> Deploy Success!!!!!!!!!!!!!!!!!!!"
