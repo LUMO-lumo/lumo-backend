@@ -41,7 +41,9 @@ jobs:
                git clone https://github.com/LUMO-lumo/lumo-backend.git
             fi
             cd lumo-backend
-            git pull origin main
+            
+            sudo git checkout -f main
+            sudo git reset --hard origin/main
             
             echo "MYSQL_HOST=${{secrets.MYSQL_HOST}}" > .env 
             echo "MYSQL_NAME=${{secrets.MYSQL_NAME}}" >> .env
@@ -54,7 +56,7 @@ jobs:
             echo "JWT_SECRET_KEY=${{secrets.JWT_SECRET_KEY}}" >> .env
             
             sudo docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-            sudo docker-compose pull
+            sudo docker compose pull
             
             chmod +x deploy.sh
             sudo bash ./deploy.sh 2>&1 | sudo tee deploy.log
