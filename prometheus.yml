@@ -10,4 +10,4 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     scrape_interval: 5s
     static_configs:
-      - targets: ['Blue:8080', 'Green:8080'] # 내부 포트 = 8080
+      - targets: [ 'host.docker.internal:8081', 'host.docker.internal:8082' ]# 내부 포트 = 8080
