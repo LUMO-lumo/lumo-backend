@@ -34,7 +34,7 @@ services:
 #    restart: on-failure
 
 # 이후 성능 측정 툴 대비
-  prometheus:
+  Prometheus:
     image: prom/prometheus:latest
     container_name: Lumo_Prometheus
     ports:
@@ -47,7 +47,7 @@ services:
     - '--storage.tsdb.path=/prometheus'
     restart: always
 
-  grafana:
+  Grafana:
     image: grafana/grafana:latest
     container_name: Lumo_Grafana
     ports:
@@ -58,7 +58,7 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=0000
       - GF_USERS_ALLOW_SIGN_UP=false # 회원가입 비활성화
     depends_on:
-      - prometheus
+      - Prometheus
     restart: always
 
 volumes:
