@@ -1,8 +1,8 @@
 package Lumo.lumo_backend.domain.alarm.entity;
 
+import Lumo.lumo_backend.global.BaseEntity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
 
 /**
  * 미션 문제 콘텐츠 엔티티
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Table(name = "mission_content")
-public class MissionContent {
+public class MissionContent extends BaseEntity {
 
     /**
      * 문제 콘텐츠 고유 ID (PK)
@@ -57,17 +57,4 @@ public class MissionContent {
      */
     @Column(name = "answer", length = 200, nullable = false)
     private String answer;
-
-    /**
-     * 문제 등록일시
-     */
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        if (this.createdAt == null) {  // 이 부분 추가!
-            this.createdAt = LocalDateTime.now();
-        }
-    }
 }
