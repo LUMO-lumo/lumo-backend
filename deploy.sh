@@ -25,7 +25,7 @@ echo "${TARGET_PORT} -> Try Health Check.."
 
 for retry_cnt in {1..10}
 do
-        echo ">>> Health check try ${$retry_cnt}.."
+        echo ">>> Health check try ${retry_cnt}.."
         RESPONSE=$(curl -s http://localhost:${TARGET_PORT}/actuator/health)
         UP_COUNT=$(echo $RESPONSE | grep 'UP' | wc -l)
 
