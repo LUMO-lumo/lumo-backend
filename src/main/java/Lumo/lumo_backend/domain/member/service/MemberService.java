@@ -200,10 +200,13 @@ public class MemberService {
     }
 
 
-    public void verifyCode (String code){
-        String savedCode = (String) redisTemplate.opsForValue().get(code);
+    public void verifyCode (String email, String code){
+        String savedCode = (String) redisTemplate.opsForValue().get(email);
 
         if (savedCode == null){
+            throw new MemberException(MemberErrorCode.WRONG_CODE);
+        }
+        else if (!savedCode.equals(code)){
             throw new MemberException(MemberErrorCode.WRONG_CODE);
         }
     }
