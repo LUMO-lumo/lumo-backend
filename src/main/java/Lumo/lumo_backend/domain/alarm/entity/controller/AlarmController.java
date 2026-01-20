@@ -274,20 +274,7 @@ public class AlarmController {
         return APIResponse.onSuccess(response, AlarmSuccessCode.MISSION_HISTORY_RETRIEVED);
     }
 
-    /**
-     * 특정 알람의 미션 기록 조회
-     * GET /api/alarms/{alarmId}/mission-history
-     */
-    @GetMapping("/{alarmId}/mission-history")
-    @Operation(summary = "특정 알람의 미션 기록 조회 API", description = "특정 알람의 미션 수행 기록을 조회하는 API입니다.")
-    public APIResponse<List<MissionHistoryResponseDto>> getAlarmMissionHistory(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @PathVariable Long alarmId
-    ) {
-        List<MissionHistoryResponseDto> response =
-                alarmService.getAlarmMissionHistory(userDetails.getMember(), alarmId);
-        return APIResponse.onSuccess(response, AlarmSuccessCode.MISSION_HISTORY_RETRIEVED);
-    }
+
 
     /**
      * 내 알람 울림 기록 조회
