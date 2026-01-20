@@ -1,8 +1,9 @@
-
 package Lumo.lumo_backend.domain.alarm.entity;
 
+import Lumo.lumo_backend.global.BaseEntity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
 
 /**
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Table(name = "mission_history")
-public class MissionHistory {
+public class MissionHistory extends BaseEntity {
 
     /**
      * 기록 고유 ID (PK)
@@ -57,15 +58,4 @@ public class MissionHistory {
      */
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
-
-    /**
-     * 기록 생성일시
-     */
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
 }
