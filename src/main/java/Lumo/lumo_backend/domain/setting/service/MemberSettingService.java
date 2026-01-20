@@ -3,8 +3,8 @@ package Lumo.lumo_backend.domain.setting.service;
 import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.member.exception.MemberException;
 import Lumo.lumo_backend.domain.member.repository.MemberRepository;
-import Lumo.lumo_backend.domain.setting.dto.MemberSettingResponseDTO;
-import Lumo.lumo_backend.domain.setting.dto.MemberSettingUpdateRequestDTO;
+import Lumo.lumo_backend.domain.setting.dto.MemberSettingResDTO;
+import Lumo.lumo_backend.domain.setting.dto.MemberSettingUpdateReqDTO;
 import Lumo.lumo_backend.domain.setting.entity.memberSetting.MemberSetting;
 import Lumo.lumo_backend.domain.setting.exception.SettingException;
 import Lumo.lumo_backend.global.exception.GeneralException;
@@ -24,7 +24,7 @@ public class MemberSettingService {
     private final MemberRepository memberRepository;
 
     @Transactional(readOnly = true)
-    public MemberSettingResponseDTO get(Long memberId) {
+    public MemberSettingResDTO get(Long memberId) {
 
         // member, memberSetting 획득
         Member member = memberRepository.findById(memberId)
@@ -36,10 +36,10 @@ public class MemberSettingService {
             throw new SettingException(SETTING_NOT_FOUND);
         }
 
-        return MemberSettingResponseDTO.from(memberSetting);
+        return MemberSettingResDTO.from(memberSetting);
     }
 
-    public void update(Long memberId, MemberSettingUpdateRequestDTO request) {
+    public void update(Long memberId, MemberSettingUpdateReqDTO request) {
 
         // member, memberSetting 획득
         Member member = memberRepository.findById(memberId)

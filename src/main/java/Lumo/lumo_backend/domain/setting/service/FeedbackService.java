@@ -3,9 +3,9 @@ package Lumo.lumo_backend.domain.setting.service;
 
 import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.member.repository.MemberRepository;
-import Lumo.lumo_backend.domain.setting.dto.FeedbackCreateRequestDTO;
-import Lumo.lumo_backend.domain.setting.dto.FeedbackResponseDTO;
-import Lumo.lumo_backend.domain.setting.dto.FeedbackUpdateRequestDTO;
+import Lumo.lumo_backend.domain.setting.dto.FeedbackCreateReqDTO;
+import Lumo.lumo_backend.domain.setting.dto.FeedbackResDTO;
+import Lumo.lumo_backend.domain.setting.dto.FeedbackUpdateReqDTO;
 import Lumo.lumo_backend.domain.setting.entity.Feedback;
 import Lumo.lumo_backend.domain.setting.repository.FeedbackRepository;
 import lombok.*;
@@ -21,7 +21,7 @@ public class FeedbackService {
     private final FeedbackRepository feedbackRepository;
     private final MemberRepository memberRepository;
 
-    public Long create(Long memberId, FeedbackCreateRequestDTO request) {
+    public Long create(Long memberId, FeedbackCreateReqDTO request) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow();
 
@@ -35,13 +35,13 @@ public class FeedbackService {
     }
 
     @Transactional(readOnly = true)
-    public FeedbackResponseDTO get(Long feedbackId) {
+    public FeedbackResDTO get(Long feedbackId) {
         Feedback feedback = feedbackRepository.findById(feedbackId)
                 .orElseThrow();
-        return FeedbackResponseDTO.from(feedback);
+        return FeedbackResDTO.from(feedback);
     }
 
-    public void update(Long feedbackId, FeedbackUpdateRequestDTO request) {
+    public void update(Long feedbackId, FeedbackUpdateReqDTO request) {
         Feedback feedback = feedbackRepository.findById(feedbackId)
                 .orElseThrow();
         feedback.update(request.getTitle(), request.getContent());

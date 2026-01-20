@@ -1,8 +1,8 @@
 package Lumo.lumo_backend.domain.setting.controller;
 
-import Lumo.lumo_backend.domain.setting.dto.FeedbackCreateRequestDTO;
-import Lumo.lumo_backend.domain.setting.dto.FeedbackResponseDTO;
-import Lumo.lumo_backend.domain.setting.dto.FeedbackUpdateRequestDTO;
+import Lumo.lumo_backend.domain.setting.dto.FeedbackCreateReqDTO;
+import Lumo.lumo_backend.domain.setting.dto.FeedbackResDTO;
+import Lumo.lumo_backend.domain.setting.dto.FeedbackUpdateReqDTO;
 import Lumo.lumo_backend.domain.setting.service.FeedbackService;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
 import Lumo.lumo_backend.global.apiResponse.status.SuccessCode;
@@ -23,7 +23,7 @@ public class FeedbackController {
 
     @PostMapping
     public APIResponse<Long> create(
-            @RequestBody FeedbackCreateRequestDTO request
+            @RequestBody FeedbackCreateReqDTO request
     ) {
         Long memberId = 1L; // test
         return APIResponse.onSuccess(feedbackService.create(memberId, request), SuccessCode.OK);
@@ -31,7 +31,7 @@ public class FeedbackController {
 
 
     @GetMapping("/{feedbackId}")
-    public APIResponse<FeedbackResponseDTO> get(
+    public APIResponse<FeedbackResDTO> get(
             @PathVariable Long feedbackId
     ) {
 
@@ -42,7 +42,7 @@ public class FeedbackController {
     @PatchMapping("/{feedbackId}")
     public APIResponse<Void> update(
             @PathVariable Long feedbackId,
-            @RequestBody FeedbackUpdateRequestDTO request
+            @RequestBody FeedbackUpdateReqDTO request
     ) {
         feedbackService.update(feedbackId, request);
         return APIResponse.onSuccess(null, SuccessCode.OK);

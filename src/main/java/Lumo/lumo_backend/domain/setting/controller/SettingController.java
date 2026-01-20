@@ -1,7 +1,7 @@
 package Lumo.lumo_backend.domain.setting.controller;
 
-import Lumo.lumo_backend.domain.setting.dto.MemberSettingResponseDTO;
-import Lumo.lumo_backend.domain.setting.dto.MemberSettingUpdateRequestDTO;
+import Lumo.lumo_backend.domain.setting.dto.MemberSettingResDTO;
+import Lumo.lumo_backend.domain.setting.dto.MemberSettingUpdateReqDTO;
 import Lumo.lumo_backend.domain.setting.service.MemberSettingService;
 import Lumo.lumo_backend.domain.setting.status.SettingSuccessCode;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
@@ -22,7 +22,7 @@ public class SettingController {
     private final MemberSettingService memberSettingService;
 
     @GetMapping
-    public APIResponse<MemberSettingResponseDTO> get() {
+    public APIResponse<MemberSettingResDTO> get() {
         Long memberId = 1L;
 
         return APIResponse.onSuccess(memberSettingService.get(memberId), SettingSuccessCode.SETTING_DETAIL_SUCCESS);
@@ -31,7 +31,7 @@ public class SettingController {
 
     @PatchMapping
     public APIResponse<Void> update(
-            @RequestBody MemberSettingUpdateRequestDTO request
+            @RequestBody MemberSettingUpdateReqDTO request
     ) {
         Long memberId = 1L;
         memberSettingService.update(memberId, request);

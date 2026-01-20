@@ -69,11 +69,11 @@ public class Member extends BaseEntity {
     private List<Routine> routineList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
-    private List<Feedback> feedbacks = new ArrayList<>();
+    private List<Feedback> feedbackList = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private List<MemberDevice> devices = new ArrayList<>();
+    private List<MemberDevice> deviceList = new ArrayList<>();
 
 //    public void addDevice(MemberDevice device) {
 //        this.devices.add(device);

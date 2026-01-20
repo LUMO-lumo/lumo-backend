@@ -1,7 +1,9 @@
 package Lumo.lumo_backend.domain.setting.controller;
 
 
-import Lumo.lumo_backend.domain.setting.dto.DeviceCreateRequestDTO;
+import Lumo.lumo_backend.domain.setting.dto.MemberDeviceCreateReqDTO;
+import Lumo.lumo_backend.domain.setting.dto.MemberDeviceResDTO;
+import Lumo.lumo_backend.domain.setting.dto.MemberDeviceUpdateReqDTO;
 import Lumo.lumo_backend.domain.setting.service.MemberDeviceService;
 import Lumo.lumo_backend.domain.setting.status.SettingSuccessCode;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
@@ -27,9 +29,9 @@ public class DeviceController {
 
     @PostMapping
     @Operation(summary = "기기 생성 API", description = "사용자의 기기를 DB에 등록합니다.")
-    public APIResponse<Void> create(
+    public APIResponse<Void> createDevice(
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestBody DeviceCreateRequestDTO request
+            @RequestBody MemberDeviceCreateReqDTO request
     ) {
 
         memberDeviceService.create(userDetails.getMember().getId(), request);
@@ -37,19 +39,32 @@ public class DeviceController {
     }
 
     @GetMapping
-    public APIResponse<Object> getMemberDevice() {
-        return null;
+    public APIResponse<MemberDeviceResDTO> getList(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        return APIResponse.onSuccess(memberDeviceService.getList(userDetails.getMember().getId()), SettingSuccessCode.DEVICE_LIST_SUCCESS);
     }
 
     @PatchMapping("/{deviceId}")
-    public APIResponse<Object> updateMemberDevice() {
-        return null;
+    public APIResponse<Void> update(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long deviceId,
+            @RequestBody MemberDeviceUpdateReqDTO request
+    ) {
+
+        memberDeviceService.update(userDetails.getMember().getId(), request, deviceId);
+        return APIResponse.onSuccess(null, SettingSuccessCode.DEVICE_UPDATE_SUCCESS);
     }
 
-    @DeleteMapping("/{deviceId}")
-    public APIResponse<Object> deleteMemberDevice() {
-        return null;
-    }
+//    @DeleteMapping("/{deviceId}")
+//    public APIResponse<Void> delete(
+//            @AuthenticationPrincipal CustomUserDetails userDetails,
+//            @PathVariable Long deviceId
+//    ) {
+//
+//        memberDeviceService.delete(userDetails.getMember().getId(), deviceId);
+//        return APIResponse.onSuccess(null, SettingSuccessCode.DEVICE_DELETE_SUCCESS);
+//    }
 
 
 }
