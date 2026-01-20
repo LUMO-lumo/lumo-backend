@@ -1,4 +1,3 @@
-
 package Lumo.lumo_backend.domain.alarm.entity;
 
 import jakarta.persistence.*;
@@ -67,6 +66,8 @@ public class MissionContent {
 
     @PrePersist
     protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+        if (this.createdAt == null) {  // 이 부분 추가!
+            this.createdAt = LocalDateTime.now();
+        }
     }
 }
