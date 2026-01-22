@@ -22,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -65,12 +66,11 @@ public class MemberService {
         MimeMessageHelper helper;
         String code;
 
-        /// try 에서 발송 성공 응답 반환 까지 시간이 걸림, 비동기 처리가 필요
-
         try {
             code = generateVerificationCode();
             helper = new MimeMessageHelper(msg, true, "utf-8");
             helper.setTo(email);
+            helper.setFrom("no-reply@mail.com", "no-reply@mail.com");
             helper.setSubject("Lumo 인증 이메일 알림.");
             helper.setText("<!DOCTYPE html>\n" +
                     "<html lang=\"ko\">\n" +
@@ -177,13 +177,19 @@ public class MemberService {
                     "</body>\n" +
                     "</html>", true);
             helper.setReplyTo("no-reply@mail.com");
-        } catch (MessagingException e) {
+            mailSender.send(msg);
+        }
+        catch (MessagingException e) {
             e.printStackTrace();
             throw new MemberException(MemberErrorCode.CANT_SEND_EMAIL);
         }
-        redisTemplate.opsForValue().set(email, code, 180, TimeUnit.SECONDS); // 3분으로 설정
+        catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
 
-        log.info("saved code -> {}", (String) redisTemplate.opsForValue().get(email));
+        redisTemplate.opsForValue().set(email, code, 180, TimeUnit.SECONDS);
+
+        log.info("[MemberService] saved code -> {}", redisTemplate.opsForValue().get(email));
     }
 
     public static String generateVerificationCode() {
