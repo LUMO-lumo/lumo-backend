@@ -21,7 +21,7 @@ public class EncouragementController {
     private final EncouragementRepository encouragementRepository;
 
     @Operation(summary = "오늘의 한마디 조회")
-    @GetMapping
+    @GetMapping("/random")
     public APIResponse<EncouragementResponseDTO> getRandom(){
 
         Encouragement encouragement = encouragementRepository.findRandomOne();
