@@ -45,6 +45,11 @@ public class MemberService {
     private static final int CODE_LENGTH = 4;
 
     public MemberRespDTO.GetLoginDTO getLogin (Member member){
+
+        if (member == null){
+            throw new MemberException(MemberErrorCode.CANT_FOUND_MEMBER);
+        }
+
         Optional<Member> byEmail = memberRepository.findByEmail(member.getEmail());
         if (byEmail.isPresent()){
             return MemberRespDTO.GetLoginDTO.builder().login(byEmail.get().getLogin()).build();
