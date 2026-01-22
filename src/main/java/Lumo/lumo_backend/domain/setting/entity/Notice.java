@@ -21,22 +21,20 @@ public class Notice extends BaseEntity {
     @Column(name = "notice_id")
     private Long id;
 
+    private String type;
+
     @Column(nullable = false, length = 100)
     private String title;
 
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private boolean isActive;
+
     /**
      * soft delete 일자
      */
     private LocalDateTime deletedAt;
-
-    @Column(nullable = false)
-    private boolean isActive;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private NoticeType noticeType;
 
 }
