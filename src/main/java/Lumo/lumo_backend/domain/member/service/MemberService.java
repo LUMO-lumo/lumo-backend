@@ -22,6 +22,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
@@ -41,36 +42,36 @@ public class MemberService {
     private final RedisTemplate redisTemplate;
     private final JavaMailSender mailSender;
     private final JWTProvider jwtProvider;
+    private final BCryptPasswordEncoder encoder;
+
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final int CODE_LENGTH = 4;
 
-    public MemberRespDTO.GetLoginDTO getLogin (Member member){
+    public MemberRespDTO.GetLoginDTO getLogin(Member member) {
 
-        if (member == null){
+        if (member == null) {
             throw new MemberException(MemberErrorCode.CANT_FOUND_MEMBER);
         }
 
         Optional<Member> byEmail = memberRepository.findByEmail(member.getEmail());
-        if (byEmail.isPresent()){
+        if (byEmail.isPresent()) {
             return MemberRespDTO.GetLoginDTO.builder().login(byEmail.get().getLogin()).build();
-        }
-        else{
+        } else {
             return MemberRespDTO.GetLoginDTO.builder().login(Login.NULL).build();
         }
     }
 
-    public Boolean checkEmailDuplicate (String email){
+    public Boolean checkEmailDuplicate(String email) {
         Optional<Member> byEmail = memberRepository.findByEmail(email);
-        if (byEmail.isPresent()){
+        if (byEmail.isPresent()) {
             throw new MemberException(MemberErrorCode.EXIST_MEMBER);
-        }
-        else{
+        } else {
             return true;
         }
     }
 
     @Async
-    public void requestVerificationCode (String email){
+    public void requestVerificationCode(String email) {
         MimeMessage msg = mailSender.createMimeMessage();
         MimeMessageHelper helper;
         String code;
@@ -187,12 +188,10 @@ public class MemberService {
                     "</html>", true);
             helper.setReplyTo("no-reply@mail.com");
             mailSender.send(msg);
-        }
-        catch (MessagingException e) {
+        } catch (MessagingException e) {
             e.printStackTrace();
             throw new MemberException(MemberErrorCode.CANT_SEND_EMAIL);
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
 
@@ -215,36 +214,38 @@ public class MemberService {
     }
 
 
-    public void verifyCode (String email, String code){
+    public void verifyCode(String email, String code) {
         String savedCode = (String) redisTemplate.opsForValue().get(email);
 
-        if (savedCode == null){
+        if (savedCode == null) {
             throw new MemberException(MemberErrorCode.WRONG_CODE);
-        }
-        else if (!savedCode.equals(code)){
+        } else if (!savedCode.equals(code)) {
             throw new MemberException(MemberErrorCode.WRONG_CODE);
         }
     }
 
-    public void signIn (MemberReqDTO.SignInRequestDTO dto){
+    public void signIn(MemberReqDTO.SignInRequestDTO dto) {
         Optional<Member> byEmail = memberRepository.findByEmail(dto.getEmail());
 
-        if(byEmail.isPresent()) {
+        if (byEmail.isPresent()) {
             throw new MemberException(MemberErrorCode.EXIST_MEMBER);
         }
 
+        String encode = encoder.encode(dto.getPassword());
+
+        log.info("[MemberService] signIn with password -> {}", encode);
         Member newMember = Member.builder()
                 .login(Login.NORMAL)
                 .email(dto.getEmail())
-                .username("test_username") /// username 사용할 일이 아마 마이 페이지에서가 전부인 거 같은데,
-                .password(dto.getPassword()) /// password 암호화 하여 저장해야 함
+                .username(dto.getUsername())
+                .password(encode)
                 .role(MemberRole.USER)
                 .build();
 
         memberRepository.save(newMember);
     }
 
-    public JWT login (MemberReqDTO.LoginReqDTO dto){
+    public JWT login(MemberReqDTO.LoginReqDTO dto) {
         Member member = memberRepository.findByEmailAndPassword(dto.getEmail(), dto.getPassword()).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
 
         List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(member.getRole().toString()));
@@ -253,6 +254,5 @@ public class MemberService {
 
         return jwt;
     }
-
 
 }
