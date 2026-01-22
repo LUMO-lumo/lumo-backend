@@ -10,6 +10,7 @@ import Lumo.lumo_backend.global.apiResponse.status.ErrorCode;
 import Lumo.lumo_backend.global.apiResponse.status.SuccessCode;
 import Lumo.lumo_backend.global.exception.GeneralException;
 import Lumo.lumo_backend.global.security.userDetails.CustomUserDetails;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class AdminNoticeController {
 
     private final NoticeService noticeService;
 
+    @Operation(summary = "공지사항 생성")
     @PostMapping
     public APIResponse<NoticeResponseDTO> createNotice(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -36,9 +38,16 @@ public class AdminNoticeController {
         return APIResponse.onSuccess(noticeResponseDTO, SuccessCode.OK); //todo 성공코드 변경
     }
 
+    @Operation(summary = "공지사항 수정")
     @PatchMapping("/{noticeId}")
-    public APIResponse<Object> updateNotice() {
-        return null;
+    public APIResponse<NoticeResponseDTO> updateNotice(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable Long noticeId,
+            @RequestBody @Valid NoticeCreateRequestDTO noticeCreateRequestDTO
+    ) {
+        verifyAdmin(customUserDetails.getMember());
+        NoticeResponseDTO noticeResponseDTO = noticeService.update(noticeId, noticeCreateRequestDTO);
+        return APIResponse.onSuccess(noticeResponseDTO, SuccessCode.OK);
     }
 
 

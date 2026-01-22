@@ -37,4 +37,9 @@ public class Notice extends BaseEntity {
      */
     private LocalDateTime deletedAt;
 
+    public void update(String type, String title, String content) {
+        this.type = type;
+        this.title = title;
+        this.content = content;
+    }
 }
