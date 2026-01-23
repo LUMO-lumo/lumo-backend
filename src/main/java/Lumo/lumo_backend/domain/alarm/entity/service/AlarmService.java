@@ -363,7 +363,7 @@ public class AlarmService {
             return new ArrayList<>();
         }
 
-        // 랜덤 문제 조회
+        // DB에서 랜덤 문제 조회 (이미 구현되어 있음)
         List<MissionContent> contents = missionContentRepository.findRandomByTypeAndDifficulty(
                 mission.getMissionType().name(),
                 mission.getDifficulty().name(),
@@ -379,7 +379,6 @@ public class AlarmService {
                 .map(MissionContentResponseDto::fromWithoutAnswer)
                 .collect(Collectors.toList());
     }
-
     /**
      * 미션 답안 제출
      */

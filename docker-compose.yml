@@ -8,12 +8,9 @@ services:
     container_name: Lumo_Blue
     ports:
       - "8081:8080"
+#    depends_on:
+#      - redis
     env_file: .env
-#    environment:
-#      - MYSQL_HOST={MYSQL_HOST}
-#      - MYSQL_NAME={MYSQL_NAME}
-#      - MYSQL_PASSWORD={MYSQL_PASSWORD}
-#      - MYSQL_USERNAME={MYSQL_USERNAME}
     restart: on-failure
 
   Green:
@@ -23,13 +20,18 @@ services:
     ports:
       - "8082:8080"
     env_file: .env
-#    environment:
-#      - MYSQL_HOST={MYSQL_HOST}
-#      - MYSQL_NAME={MYSQL_NAME}
-#      - MYSQL_PASSWORD={MYSQL_PASSWORD}
-#      - MYSQL_USERNAME={MYSQL_USERNAME}
     restart: on-failure
 
+#  redis:
+#    image: redis:alpine
+#    container_name: Lumo_Redis
+#    ports:
+#      - "6379:6379"
+#    volumes:
+#      - redis_data:/data
+#    networks:
+#      - lumo-network
+#    restart: on-failure
 
 # 이후 성능 측정 툴 대비
   prometheus:
@@ -39,8 +41,11 @@ services:
       - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    command: --config.file=/etc/prometheus/prometheus.yml
-    restart: on-failure
+      - prometheus_data:/prometheus
+    command:
+    - '--config.file=/etc/prometheus/prometheus.yml'
+    - '--storage.tsdb.path=/prometheus'
+    restart: always
 
   grafana:
     image: grafana/grafana:latest
@@ -49,9 +54,14 @@ services:
       - "3000:3000"
     volumes:
       - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=0000
+      - GF_USERS_ALLOW_SIGN_UP=false # 회원가입 비활성화
     depends_on:
       - prometheus
-    restart: on-failure
+    restart: always
 
 volumes:
   grafana_data: # Grafana 데이터 영속성을 위한 볼륨 정의
+  prometheus_data:
+#  redis_data:
