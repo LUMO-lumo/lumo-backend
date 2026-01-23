@@ -85,8 +85,8 @@ public class MemberController {
 
     @PostMapping("/verify-code")
     @Operation(summary = "인증 코드 검증 API", description = "회원가입 중 요청한 인증 코드를 통해 이메일을 인증하는 API 입니다.")
-    public APIResponse<Object> verifyCode(@RequestParam("code") String code) {
-        memberService.verifyCode(code);
+    public APIResponse<Object> verifyCode(@RequestParam("email") String email, @RequestParam("code") String code) {
+        memberService.verifyCode(email, code);
         return APIResponse.onSuccess(MemberRespDTO.SimpleAPIRespDTO.builder().isSuccess(true).build(), VERIFY_CODE_SUCCESS);
     }
 
