@@ -47,13 +47,19 @@ public class AdminNoticeController {
     ) {
         verifyAdmin(customUserDetails.getMember());
         NoticeResponseDTO noticeResponseDTO = noticeService.update(noticeId, noticeCreateRequestDTO);
-        return APIResponse.onSuccess(noticeResponseDTO, SuccessCode.OK);
+        return APIResponse.onSuccess(noticeResponseDTO, SuccessCode.OK); //todo 에러코드 변경
     }
 
 
+    @Operation(summary = "공지사항 삭제")
     @DeleteMapping("/{noticeId}")
-    public APIResponse<Object> deleteNotice() {
-        return null;
+    public APIResponse<Void> deleteNotice(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable Long noticeId
+    ) {
+        verifyAdmin(customUserDetails.getMember());
+        noticeService.delete(noticeId);
+        return APIResponse.onSuccess(null, SuccessCode.OK); //todo 에러코드 변경
     }
 
     private void verifyAdmin(Member member) {

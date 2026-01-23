@@ -6,7 +6,10 @@ import Lumo.lumo_backend.domain.setting.entity.Notice;
 import Lumo.lumo_backend.domain.setting.repository.NoticeRepository;
 import Lumo.lumo_backend.global.apiResponse.status.ErrorCode;
 import Lumo.lumo_backend.global.exception.GeneralException;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,7 +43,20 @@ public class NoticeService {
                 noticeCreateRequestDTO.getContent()
         );
 
-        noticeRepository.flush();
+        noticeRepository.flush(); //수정일자 적용된 값 반환 위함
         return NoticeResponseDTO.from(notice);
+    }
+
+    public void delete(Long noticeId) {
+        Notice notice = noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.BAD_REQUEST));//todo 에러코드 수정
+
+        notice.softDelete();
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
+    public void hardDelete() {
+        List<Notice> deleted = noticeRepository.findByDeletedAtBefore(LocalDateTime.now().minusMonths(1));
+        noticeRepository.deleteAll(deleted);
     }
 }
