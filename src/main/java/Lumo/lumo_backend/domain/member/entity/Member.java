@@ -44,7 +44,6 @@ public class Member extends BaseEntity {
     @Column(nullable = false, length = 50)
     private String username;
 
-    @Column(length = 50) // SNS 연동 시에는 NULL
     private String password;
 
     private Integer missionSuccessRate = 0; // 초기값 = 0
