@@ -36,7 +36,7 @@ public enum MemberErrorCode implements BaseErrorCode {
     public ErrorReasonDTO getReason() {
         return ErrorReasonDTO.builder()
                 .isSuccess(false)
-                .code(code)
+                .code(this.name())
                 .message(message)
                 .build();
     }
@@ -46,8 +46,13 @@ public enum MemberErrorCode implements BaseErrorCode {
         return ErrorReasonDTO.builder()
                 .isSuccess(false)
                 .httpStatus(httpStatus)
-                .code(code)
+                .code(this.name())
                 .message(message)
                 .build();
+    }
+
+    @Override
+    public String getCodeName() {
+        return this.name();  // enum 객체의 이름 반환
     }
 }

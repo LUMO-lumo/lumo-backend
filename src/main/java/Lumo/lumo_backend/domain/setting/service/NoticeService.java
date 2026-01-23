@@ -1,4 +1,4 @@
-package Lumo.lumo_backend.domain.setting.service;
-
-public class NoticeService {
-}
+//package Lumo.lumo_backend.domain.setting.service;
+//
+//public class NoticeService {
+//}
