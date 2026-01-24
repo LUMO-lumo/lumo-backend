@@ -58,7 +58,7 @@ public class AdminNoticeController {
             @PathVariable Long noticeId
     ) {
         verifyAdmin(customUserDetails.getMember());
-        noticeService.delete(noticeId);
+        noticeService.softDelete(noticeId);
         return APIResponse.onSuccess(null, SuccessCode.OK); //todo 에러코드 변경
     }
 

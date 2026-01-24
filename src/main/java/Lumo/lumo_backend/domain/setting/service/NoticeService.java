@@ -47,7 +47,7 @@ public class NoticeService {
         return NoticeResponseDTO.from(notice);
     }
 
-    public void delete(Long noticeId) {
+    public void softDelete(Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new GeneralException(ErrorCode.BAD_REQUEST));//todo 에러코드 수정
 
