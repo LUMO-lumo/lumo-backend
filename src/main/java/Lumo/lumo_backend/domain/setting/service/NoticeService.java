@@ -59,4 +59,16 @@ public class NoticeService {
         List<Notice> deleted = noticeRepository.findByDeletedAtBefore(LocalDateTime.now().minusMonths(1));
         noticeRepository.deleteAll(deleted);
     }
+
+    @Transactional(readOnly = true)
+    public NoticeResponseDTO get(Long noticeId) {
+        Notice notice = noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new GeneralException(ErrorCode.BAD_REQUEST)); //todo 에러코드 수정
+
+        if (!notice.isActive()) {
+            throw new GeneralException(ErrorCode.BAD_REQUEST); //todo 에러코드 수정
+        }
+
+        return NoticeResponseDTO.from(notice);
+    }
 }
