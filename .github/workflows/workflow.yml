@@ -49,6 +49,7 @@ jobs:
             echo "MYSQL_NAME=${{secrets.MYSQL_NAME}}" >> .env
             echo "MYSQL_USERNAME=${{secrets.MYSQL_USERNAME}}" >> .env
             echo "MYSQL_PASSWORD=${{secrets.MYSQL_PASSWORD}}" >> .env
+            echo "MYSQL_PORT=${{secrets.MYSQL_PORT}}" >> .env
             echo "MAIL_SENDER_HOST=${{secrets.MAIL_SENDER_HOST}}" >> .env
             echo "MAIL_SENDER_USERNAME=${{secrets.MAIL_SENDER_USERNAME}}" >> .env
             echo "MAIL_SENDER_PASSWORD=${{secrets.MAIL_SENDER_PASSWORD}}" >> .env
