@@ -66,17 +66,12 @@ public class MemberDeviceService {
                         () -> new SettingException(DEVICE_NOT_FOUND)
                 );
 
-        if (request.getDeviceName() != null) {
-            memberDevice.setDeviceName(request.getDeviceName());
-        }
 
-        if (request.getModelName() != null) {
-            memberDevice.setModelName(request.getModelName());
-        }
-
-        if (request.getOsVersion() != null) {
-            memberDevice.setOsVersion(request.getOsVersion());
-        }
+        memberDevice.update(
+                request.getDeviceName(),
+                request.getModelName(),
+                request.getOsVersion()
+        );
     }
 
     public void delete(Long memberId, Long deviceId) {

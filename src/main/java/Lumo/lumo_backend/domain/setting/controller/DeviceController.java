@@ -28,7 +28,7 @@ public class DeviceController {
     private final MemberDeviceService memberDeviceService;
 
     @PostMapping
-    @Operation(summary = "기기 생성 API", description = "사용자의 기기를 DB에 등록합니다.")
+    @Operation(summary = "기기 생성", description = "사용자의 기기를 DB에 등록합니다.")
     public APIResponse<Void> createDevice(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody MemberDeviceCreateReqDTO request
@@ -39,6 +39,7 @@ public class DeviceController {
     }
 
     @GetMapping
+    @Operation(summary = "기기 목록 조회", description = "사용자의 기기 목록를 DB에서 조회합니다.")
     public APIResponse<MemberDeviceResDTO> getList(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
@@ -46,6 +47,7 @@ public class DeviceController {
     }
 
     @PatchMapping("/{deviceId}")
+    @Operation(summary = "기기 수정", description = "사용자의 기기 정보를 DB에서 수정합니다.")
     public APIResponse<Void> update(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable Long deviceId,

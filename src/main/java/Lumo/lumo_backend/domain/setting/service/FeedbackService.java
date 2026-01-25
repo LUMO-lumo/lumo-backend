@@ -2,12 +2,18 @@ package Lumo.lumo_backend.domain.setting.service;
 
 
 import Lumo.lumo_backend.domain.member.entity.Member;
+import Lumo.lumo_backend.domain.member.exception.MemberException;
 import Lumo.lumo_backend.domain.member.repository.MemberRepository;
+import Lumo.lumo_backend.domain.member.status.MemberErrorCode;
 import Lumo.lumo_backend.domain.setting.dto.FeedbackCreateReqDTO;
 import Lumo.lumo_backend.domain.setting.dto.FeedbackResDTO;
 import Lumo.lumo_backend.domain.setting.dto.FeedbackUpdateReqDTO;
 import Lumo.lumo_backend.domain.setting.entity.Feedback;
+import Lumo.lumo_backend.domain.setting.exception.SettingException;
 import Lumo.lumo_backend.domain.setting.repository.FeedbackRepository;
+import Lumo.lumo_backend.domain.setting.status.SettingErrorCode;
+import Lumo.lumo_backend.global.apiResponse.status.ErrorCode;
+import Lumo.lumo_backend.global.exception.GeneralException;
 import lombok.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +29,9 @@ public class FeedbackService {
 
     public Long create(Long memberId, FeedbackCreateReqDTO request) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow();
+                .orElseThrow(
+                        () -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER)
+                );
 
         Feedback feedback = Feedback.builder()
                 .member(member)
@@ -35,15 +43,32 @@ public class FeedbackService {
     }
 
     @Transactional(readOnly = true)
-    public FeedbackResDTO get(Long feedbackId) {
+    public FeedbackResDTO get(Long memberId, Long feedbackId) {
         Feedback feedback = feedbackRepository.findById(feedbackId)
-                .orElseThrow();
+                .orElseThrow(
+                        () -> new SettingException(SettingErrorCode.FEEDBACK_NOT_FOUND)
+                );
+
+        // member 검증
+        if (feedback.getMember().getId() != memberId) {
+            throw new GeneralException(ErrorCode.BAD_REQUEST);
+        }
+
         return FeedbackResDTO.from(feedback);
     }
 
-    public void update(Long feedbackId, FeedbackUpdateReqDTO request) {
+    public void update(Long memberId, Long feedbackId, FeedbackUpdateReqDTO request) {
         Feedback feedback = feedbackRepository.findById(feedbackId)
-                .orElseThrow();
+                .orElseThrow(
+                        () -> new SettingException(SettingErrorCode.FEEDBACK_NOT_FOUND)
+                );
+
+
+        // member 검증
+        if (feedback.getMember().getId() != memberId) {
+            throw new GeneralException(ErrorCode.BAD_REQUEST);
+        }
+
         feedback.update(request.getTitle(), request.getContent());
     }
 

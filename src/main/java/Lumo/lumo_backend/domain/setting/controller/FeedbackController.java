@@ -6,8 +6,10 @@ import Lumo.lumo_backend.domain.setting.dto.FeedbackUpdateReqDTO;
 import Lumo.lumo_backend.domain.setting.service.FeedbackService;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
 import Lumo.lumo_backend.global.apiResponse.status.SuccessCode;
+import Lumo.lumo_backend.global.security.userDetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -23,28 +25,29 @@ public class FeedbackController {
 
     @PostMapping
     public APIResponse<Long> create(
+            @AuthenticationPrincipal CustomUserDetails userDetail,
             @RequestBody FeedbackCreateReqDTO request
     ) {
-        Long memberId = 1L; // test
-        return APIResponse.onSuccess(feedbackService.create(memberId, request), SuccessCode.OK);
+        return APIResponse.onSuccess(feedbackService.create(userDetail.getMember().getId(), request), SuccessCode.OK);
     }
 
 
     @GetMapping("/{feedbackId}")
     public APIResponse<FeedbackResDTO> get(
+            @AuthenticationPrincipal CustomUserDetails userDetail,
             @PathVariable Long feedbackId
     ) {
 
-        Long memberId = 1L;
-        return APIResponse.onSuccess(feedbackService.get(feedbackId), SuccessCode.OK);
+        return APIResponse.onSuccess(feedbackService.get(userDetail.getMember().getId(), feedbackId), SuccessCode.OK);
     }
 
     @PatchMapping("/{feedbackId}")
     public APIResponse<Void> update(
+            @AuthenticationPrincipal CustomUserDetails userDetail,
             @PathVariable Long feedbackId,
             @RequestBody FeedbackUpdateReqDTO request
     ) {
-        feedbackService.update(feedbackId, request);
+        feedbackService.update(userDetail.getMember().getId(), feedbackId, request);
         return APIResponse.onSuccess(null, SuccessCode.OK);
     }
 

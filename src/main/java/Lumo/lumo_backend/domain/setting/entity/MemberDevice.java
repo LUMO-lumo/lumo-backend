@@ -10,12 +10,12 @@ import lombok.*;
  */
 @Entity
 @Builder
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Getter
-@Setter
 @Table(name = "member_device")
 public class MemberDevice extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_device_id")
@@ -33,5 +33,12 @@ public class MemberDevice extends BaseEntity {
 
     @Column(nullable = false)
     private String osVersion;
+
+
+    public void update(String deviceName, String modelName, String osVersion) {
+        this.deviceName = deviceName;
+        this.modelName = modelName;
+        this.osVersion = osVersion;
+    }
 
 }
