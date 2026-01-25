@@ -69,10 +69,6 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<Feedback> feedbacks = new ArrayList<>();
 
-    public void addRoutine (Routine routine){
-        this.routineList.add(routine);
-    }
-
     public static Member create(String email, String username, String password, Login login) {
         Member member = Member.builder()
                 .email(email)
