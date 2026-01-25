@@ -29,8 +29,8 @@ public class Notice extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private boolean isActive;
+    @Column( nullable = false)
+    private boolean active;
 
     /**
      * soft delete 일자
@@ -44,7 +44,7 @@ public class Notice extends BaseEntity {
     }
 
     public void softDelete() {
-        isActive = false;
+        active = false;
         deletedAt = LocalDateTime.now();
     }
 }

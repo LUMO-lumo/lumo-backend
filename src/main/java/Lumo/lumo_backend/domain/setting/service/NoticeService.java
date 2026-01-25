@@ -1,6 +1,7 @@
 package Lumo.lumo_backend.domain.setting.service;
 
 import Lumo.lumo_backend.domain.setting.dto.NoticeCreateRequestDTO;
+import Lumo.lumo_backend.domain.setting.dto.NoticePreviewDTO;
 import Lumo.lumo_backend.domain.setting.dto.NoticeResponseDTO;
 import Lumo.lumo_backend.domain.setting.entity.Notice;
 import Lumo.lumo_backend.domain.setting.repository.NoticeRepository;
@@ -25,7 +26,7 @@ public class NoticeService {
                 .type(noticeCreateRequestDTO.getType())
                 .title(noticeCreateRequestDTO.getTitle())
                 .content(noticeCreateRequestDTO.getContent())
-                .isActive(true)
+                .active(true)
                 .build();
 
         Notice saved = noticeRepository.save(notice);
@@ -70,5 +71,14 @@ public class NoticeService {
         }
 
         return NoticeResponseDTO.from(notice);
+    }
+
+    @Transactional(readOnly = true)
+    public List<NoticePreviewDTO> getList(String keyword) {
+        if (keyword == null || keyword.isEmpty()) {
+            return noticeRepository.findAllByActiveOrderByCreatedAtDesc(true);
+        } else {
+            return noticeRepository.search(keyword);
+        }
     }
 }
