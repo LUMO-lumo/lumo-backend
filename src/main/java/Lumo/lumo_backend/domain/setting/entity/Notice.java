@@ -35,9 +35,6 @@ public class Notice extends BaseEntity {
     @Column(nullable = false)
     private boolean active;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private NoticeType noticeType;
 
     @Column(nullable = false)
     private boolean fixed;
