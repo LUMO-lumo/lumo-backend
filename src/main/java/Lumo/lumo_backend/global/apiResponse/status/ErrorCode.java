@@ -16,21 +16,23 @@ public enum ErrorCode implements BaseErrorCode {
 
     // 여기서부터 이어서 작성해주시기 바랍니다.
 
-
-    BAD_REQUEST(HttpStatus.BAD_REQUEST,
-            "COMMON400_1",
-            "잘못된 요청입니다."),
-
     INVALID_JSON(HttpStatus.BAD_REQUEST,
             "COMMON400_2",
             "JSON 형식이 올바르지 않습니다."),
 
-    /// USER
-    MEMBER_TEST_EXCEPTION (HttpStatus.BAD_REQUEST, "MEMBER1234", "테스트 사용자 API 예외 입니다."),
+    REQUEST_INVALID(HttpStatus.BAD_REQUEST, "SERVER_4000", "잘못된 요청입니다."),
+    REQUEST_MISSING_PARAMETER(HttpStatus.BAD_REQUEST, "SERVER_4001", "필수 파라미터가 누락되었습니다."),
+    REQUEST_INVALID_FORMAT(HttpStatus.BAD_REQUEST, "SERVER_4002", "JSON 형식 또는 데이터 타입 오류입니다."),
 
+    AUTH_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "SERVER_4100", "인증 정보가 없습니다."),
+    AUTH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "SERVER_4101", "토큰이 만료되었습니다."),
+    AUTH_TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "SERVER_4102", "유효하지 않은 토큰입니다."),
 
-    /// ALARM
-    ALARM_TEST_EXCEPTION (HttpStatus.BAD_REQUEST, "ALARM1234", "테스트 알람 API 예외 입니다."),
+    AUTH_FORBIDDEN(HttpStatus.FORBIDDEN, "SERVER_4300", "접근 권한이 없습니다."),
+
+    // 500 계열: 서버 측 오류
+    SYSTEM_INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "SERVER_5000", "서버 내부 오류가 발생했습니다."),
+    SYSTEM_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "SERVER_5300", "현재 서비스 이용이 불가능합니다."),
 
 
     /// SERVER
