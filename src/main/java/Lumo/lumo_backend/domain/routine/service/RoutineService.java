@@ -1,6 +1,7 @@
 package Lumo.lumo_backend.domain.routine.service;
 
 import Lumo.lumo_backend.domain.member.entity.Member;
+import Lumo.lumo_backend.domain.member.exception.MemberException;
 import Lumo.lumo_backend.domain.member.repository.MemberRepository;
 import Lumo.lumo_backend.domain.member.status.MemberErrorCode;
 import Lumo.lumo_backend.domain.routine.dto.RoutineRespDTO;
@@ -28,7 +29,7 @@ public class RoutineService {
 
     @Transactional
     public RoutineRespDTO.CreateRoutineDTO createRoutine(Long memberId, String title) {
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new GeneralException(ErrorCode.MEMBER_TEST_EXCEPTION));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
         Routine routine = new Routine(title, member);
         return RoutineRespDTO.CreateRoutineDTO.builder().id(routineRepository.save(routine).getId()).build();
     }

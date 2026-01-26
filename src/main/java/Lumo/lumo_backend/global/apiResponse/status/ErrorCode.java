@@ -21,6 +21,7 @@ public enum ErrorCode implements BaseErrorCode {
             "JSON 형식이 올바르지 않습니다."),
 
     REQUEST_INVALID(HttpStatus.BAD_REQUEST, "SERVER_4000", "잘못된 요청입니다."),
+    BAD_REQUEST(HttpStatus.BAD_REQUEST, "SERVER_4000", "잘못된 요청입니다."),
     REQUEST_MISSING_PARAMETER(HttpStatus.BAD_REQUEST, "SERVER_4001", "필수 파라미터가 누락되었습니다."),
     REQUEST_INVALID_FORMAT(HttpStatus.BAD_REQUEST, "SERVER_4002", "JSON 형식 또는 데이터 타입 오류입니다."),
 
