@@ -41,7 +41,8 @@ jobs:
                git clone https://github.com/LUMO-lumo/lumo-backend.git
             fi
             cd lumo-backend
-            
+
+            sudo git fetch
             sudo git checkout -f main
             sudo git reset --hard origin/main
             
