@@ -24,7 +24,7 @@ public class APIResponse<T> {
     private T result;
 
     public static <T> APIResponse<T> onSuccess(T result, BaseCode code) {
-        return new APIResponse<>(true, code.getCode(), code.getMessage(), result);
+        return new APIResponse<>(true, code.getCodeName(), code.getMessage(), result);
     }
 
     public static <T> APIResponse<T> onFailure(String code, String message, T data) {

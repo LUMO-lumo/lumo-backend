@@ -8,7 +8,7 @@ import lombok.*;
 /**
  * 약관 엔티티
  */
-@Entity
+//@Entity
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

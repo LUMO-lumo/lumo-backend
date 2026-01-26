@@ -15,6 +15,8 @@ public enum ErrorCode implements BaseErrorCode {
     TEST_EXCEPTION (HttpStatus.BAD_REQUEST, "TEST4000", "테스트 예외 입니다."),
 
     // 여기서부터 이어서 작성해주시기 바랍니다.
+
+
     BAD_REQUEST(HttpStatus.BAD_REQUEST,
             "COMMON400_1",
             "잘못된 요청입니다."),
@@ -35,6 +37,10 @@ public enum ErrorCode implements BaseErrorCode {
     INTERNAL_SERVER_ERROR (HttpStatus.INTERNAL_SERVER_ERROR, "SERVER5000", "서버 에러 입니다. 관리자에게 문의 부탁 드립니다")
 
 
+
+
+
+
     ;
 
 
@@ -48,7 +54,7 @@ public enum ErrorCode implements BaseErrorCode {
     public ErrorReasonDTO getReason() {
         return ErrorReasonDTO.builder()
                 .isSuccess(false)
-                .code(code)
+                .code(this.name())
                 .message(message)
                 .build();
     }
@@ -58,8 +64,13 @@ public enum ErrorCode implements BaseErrorCode {
         return ErrorReasonDTO.builder()
                 .isSuccess(false)
                 .httpStatus(httpStatus)
-                .code(code)
+                .code(this.name())
                 .message(message)
                 .build();
+    }
+
+    @Override
+    public String getCodeName() {
+        return this.name();  // enum 객체의 이름 반환
     }
 }

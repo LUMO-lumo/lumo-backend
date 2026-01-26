@@ -5,13 +5,13 @@ import lombok.*;
 
 @Getter
 @AllArgsConstructor
-public class FeedbackResponseDTO {
+public class FeedbackResDTO {
     private Long id;
     private String title;
     private String content;
 
-    public static FeedbackResponseDTO from(Feedback feedback) {
-        return new FeedbackResponseDTO(
+    public static FeedbackResDTO from(Feedback feedback) {
+        return new FeedbackResDTO(
                 feedback.getId(),
                 feedback.getTitle(),
                 feedback.getContent()

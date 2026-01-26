@@ -41,7 +41,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         ErrorCode errorCode = ErrorCode.INVALID_JSON;
-        APIResponse<Object> body = APIResponse.onFailure(errorCode.getCode(), errorCode.getMessage(), null);
+        APIResponse<Object> body = APIResponse.onFailure(errorCode.getCodeName(), errorCode.getMessage(), null);
         return super.handleExceptionInternal(ex, body, headers, status, request);
     }
 
@@ -81,17 +81,17 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     }
 
     private ResponseEntity<Object> handleExceptionInternalConstraint(Exception ex, ErrorCode errorStatus, HttpHeaders headers, WebRequest request) {
-        APIResponse<Object> body = APIResponse.onFailure(errorStatus.getCode(), errorStatus.getMessage(), null);
+        APIResponse<Object> body = APIResponse.onFailure(errorStatus.getCodeName(), errorStatus.getMessage(), null);
         return super.handleExceptionInternal(ex, body, headers, errorStatus.getHttpStatus(), request);
     }
 
     private ResponseEntity<Object> handleExceptionInternalArgs(Exception ex, HttpHeaders headers, ErrorCode errorCommonStatus, WebRequest request, Map<String, String> errorArgs) {
-        APIResponse<Object> body = APIResponse.onFailure(errorCommonStatus.getCode(), errorCommonStatus.getMessage(), errorArgs);
+        APIResponse<Object> body = APIResponse.onFailure(errorCommonStatus.getCodeName(), errorCommonStatus.getMessage(), errorArgs);
         return super.handleExceptionInternal(ex, body, headers, errorCommonStatus.getHttpStatus(), request);
     }
 
     private ResponseEntity<Object> handleExceptionInternalFalse(Exception ex, ErrorCode errorCommonStatus, HttpHeaders headers, HttpStatus status, WebRequest request, String errorPoint) {
-        APIResponse<Object> body = APIResponse.onFailure(errorCommonStatus.getCode(), errorCommonStatus.getMessage(), errorPoint);
+        APIResponse<Object> body = APIResponse.onFailure(errorCommonStatus.getCodeName(), errorCommonStatus.getMessage(), errorPoint);
         return super.handleExceptionInternal(ex, body, headers, status, request
         );
     }

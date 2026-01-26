@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * 약관 동의 컨트롤러
  */
-@RestController
+//@RestController
 @Slf4j
 @RequestMapping("/api/terms/agreements")
 public class TermsAgreementController {

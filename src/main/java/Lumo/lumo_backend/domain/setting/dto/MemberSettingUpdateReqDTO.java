@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class MemberSettingUpdateRequestDTO {
+public class MemberSettingUpdateReqDTO {
     private Theme theme;
     private Language language;
     private boolean batterySaving;

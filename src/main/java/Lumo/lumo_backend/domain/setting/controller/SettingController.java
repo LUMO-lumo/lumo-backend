@@ -1,13 +1,14 @@
 package Lumo.lumo_backend.domain.setting.controller;
 
-import Lumo.lumo_backend.domain.setting.dto.MemberSettingResponseDTO;
-import Lumo.lumo_backend.domain.setting.dto.MemberSettingUpdateRequestDTO;
+import Lumo.lumo_backend.domain.setting.dto.MemberSettingResDTO;
+import Lumo.lumo_backend.domain.setting.dto.MemberSettingUpdateReqDTO;
 import Lumo.lumo_backend.domain.setting.service.MemberSettingService;
-import Lumo.lumo_backend.domain.setting.status.MemberSettingSuccessCode;
+import Lumo.lumo_backend.domain.setting.status.SettingSuccessCode;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
-import Lumo.lumo_backend.global.apiResponse.status.SuccessCode;
+import Lumo.lumo_backend.global.security.userDetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -23,20 +24,21 @@ public class SettingController {
     private final MemberSettingService memberSettingService;
 
     @GetMapping
-    public APIResponse<MemberSettingResponseDTO> get() {
-        Long memberId = 1L;
+    public APIResponse<MemberSettingResDTO> get(
+            @AuthenticationPrincipal CustomUserDetails userDetail
+    ) {
 
-        return APIResponse.onSuccess(memberSettingService.get(memberId), MemberSettingSuccessCode.SETTING_GET_SUCCESS);
+        return APIResponse.onSuccess(memberSettingService.get(userDetail.getMember().getId()), SettingSuccessCode.SETTING_DETAIL_SUCCESS);
     }
 
 
     @PatchMapping
     public APIResponse<Void> update(
-            @RequestBody MemberSettingUpdateRequestDTO request
+            @AuthenticationPrincipal CustomUserDetails userDetail,
+            @RequestBody MemberSettingUpdateReqDTO request
     ) {
-        Long memberId = 1L;
-        memberSettingService.update(memberId, request);
-        return APIResponse.onSuccess(null, MemberSettingSuccessCode.SETTING_UPDATE_SUCCESS);
+        memberSettingService.update(userDetail.getMember().getId(), request);
+        return APIResponse.onSuccess(null, SettingSuccessCode.SETTING_UPDATE_SUCCESS);
     }
 
 

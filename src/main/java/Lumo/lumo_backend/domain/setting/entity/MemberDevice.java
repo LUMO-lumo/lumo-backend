@@ -10,27 +10,35 @@ import lombok.*;
  */
 @Entity
 @Builder
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Getter
 @Table(name = "member_device")
 public class MemberDevice extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_device_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "member_id", nullable = false)
+//    private Member member;
 
     @Column(nullable = false)
-    private String device_name;
+    private String deviceName;
 
     @Column(nullable = false)
-    private String model_name;
+    private String modelName;
 
     @Column(nullable = false)
-    private String os_version;
+    private String osVersion;
+
+
+    public void update(String deviceName, String modelName, String osVersion) {
+        this.deviceName = deviceName;
+        this.modelName = modelName;
+        this.osVersion = osVersion;
+    }
 
 }
