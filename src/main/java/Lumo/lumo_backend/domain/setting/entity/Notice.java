@@ -2,10 +2,8 @@ package Lumo.lumo_backend.domain.setting.entity;
 
 import Lumo.lumo_backend.global.BaseEntity.BaseEntity;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import lombok.*;
-
-import java.time.LocalDate;
-
 
 /**
  * 공지사항 엔티티
@@ -23,19 +21,29 @@ public class Notice extends BaseEntity {
     @Column(name = "notice_id")
     private Long id;
 
+    private String type;
+
     @Column(nullable = false, length = 100)
     private String title;
 
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private LocalDate DeletedAt;
-
-    @Column(nullable = false)
+    @Column( nullable = false)
     private boolean active;
+    /**
+     * soft delete 일자
+     */
+    private LocalDateTime deletedAt;
 
+    public void update(String type, String title, String content) {
+        this.type = type;
+        this.title = title;
+        this.content = content;
+    }
 
-    @Column(nullable = false)
-    private boolean fixed;
+    public void softDelete() {
+        active = false;
+        deletedAt = LocalDateTime.now();
+    }
 }
