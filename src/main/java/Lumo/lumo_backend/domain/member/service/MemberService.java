@@ -1,5 +1,7 @@
 package Lumo.lumo_backend.domain.member.service;
 
+import Lumo.lumo_backend.domain.alarm.entity.MissionHistory;
+import Lumo.lumo_backend.domain.alarm.entity.repository.MissionHistoryRepository;
 import Lumo.lumo_backend.domain.member.dto.MemberReqDTO;
 import Lumo.lumo_backend.domain.member.dto.MemberRespDTO;
 import Lumo.lumo_backend.domain.member.entity.memberEnum.Login;
@@ -39,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final MissionHistoryRepository missionHistoryRepository;
     private final RedisTemplate redisTemplate;
     private final JavaMailSender mailSender;
     private final JWTProvider jwtProvider;
@@ -253,6 +256,11 @@ public class MemberService {
         JWT jwt = jwtProvider.generateToken(authentication);
 
         return jwt;
+    }
+
+    public void getMissionHistory (Long memberId){
+        List<MissionHistory> missionHistoryList = missionHistoryRepository.findAllByMemberId(memberId);
+        return;
     }
 
 }
