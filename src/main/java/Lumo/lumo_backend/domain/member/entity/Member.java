@@ -46,9 +46,9 @@ public class Member extends BaseEntity {
 
     private String password;
 
-    private Integer missionSuccessRate = 0; // 초기값 = 0
+    private Integer missionSuccessRate; // 이번 달 달성률, LocalDate.now().getDayOfMonth()/member.getConsecutiveSuccessCnt() 로 계산 가능
 
-    private Integer consecutiveSuccessCnt = 0; // 초기값 = 0
+    private Integer consecutiveSuccessCnt; // 미션 연속 성공 수
 
     private Boolean isProUpgraded = false;
 
@@ -77,10 +77,6 @@ public class Member extends BaseEntity {
 //    public void addDevice(MemberDevice device) {
 //        this.devices.add(device);
 //    }
-
-    public void addRoutine (Routine routine){
-        this.routineList.add(routine);
-    }
 
     public static Member create(String email, String username, String password, Login login, MemberRole role) {
         Member member = Member.builder()

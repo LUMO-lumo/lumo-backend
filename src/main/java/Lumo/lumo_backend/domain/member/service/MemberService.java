@@ -28,6 +28,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -256,6 +257,15 @@ public class MemberService {
         JWT jwt = jwtProvider.generateToken(authentication);
 
         return jwt;
+    }
+
+    public MemberRespDTO.GetMissionRecordRespDTO getMissionRecord (Long memberId){
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
+
+        return MemberRespDTO.GetMissionRecordRespDTO.builder()
+                .missionSuccessRate(LocalDate.now().getDayOfMonth()/member.getConsecutiveSuccessCnt())
+                .consecutiveSuccessCnt(member.getConsecutiveSuccessCnt())
+                .build();
     }
 
     public void getMissionHistory (Long memberId){
