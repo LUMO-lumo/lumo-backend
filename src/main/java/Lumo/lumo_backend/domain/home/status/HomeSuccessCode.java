@@ -1,15 +1,16 @@
-package Lumo.lumo_backend.domain.encouragement.status;
+package Lumo.lumo_backend.domain.home.status;
 
 import Lumo.lumo_backend.global.apiResponse.basecode.BaseCode;
 import Lumo.lumo_backend.global.apiResponse.dto.ReasonDTO;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Getter
-@RequiredArgsConstructor
-public enum EncouragementSuccessCode implements BaseCode {
-    GET_ENCOURAGEMENT_SUCCESS(HttpStatus.OK, "ENCOURAGEMENT_200_1", "오늘의 한마디 조회에 성공했습니다.")
+@AllArgsConstructor
+public enum HomeSuccessCode implements BaseCode {
+
+    HOME_GET_SUCCESS(HttpStatus.OK, "HOME_2000", "홈 페이지 조회 성공"),
     ;
 
     private final HttpStatus status;
