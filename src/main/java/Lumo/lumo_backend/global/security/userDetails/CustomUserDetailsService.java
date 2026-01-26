@@ -22,6 +22,6 @@ public class CustomUserDetailsService implements UserDetailsService { // 상속�
 
         return memberRepository.findByEmail(username)
                 .map(CustomUserDetails::new) // 이후 @AuthenticationPrincipal 사용으로 Controller 계층에서 받도록
-                .orElseThrow(() -> new GeneralException(ErrorCode.MEMBER_TEST_EXCEPTION)); // 일단 GeneralException으로?
+                .orElseThrow(() -> new GeneralException(ErrorCode.AUTH_UNAUTHORIZED)); // 일단 GeneralException으로?
     }
 }

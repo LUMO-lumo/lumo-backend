@@ -32,4 +32,13 @@ public class MemberRespDTO {
         private Boolean isSuccess;
         private String accessToken;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class  GetMissionRecordRespDTO {
+        private Integer missionSuccessRate;
+        private Integer consecutiveSuccessCnt;
+    }
 }

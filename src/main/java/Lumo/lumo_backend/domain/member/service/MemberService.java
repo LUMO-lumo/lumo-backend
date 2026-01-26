@@ -1,5 +1,7 @@
 package Lumo.lumo_backend.domain.member.service;
 
+import Lumo.lumo_backend.domain.alarm.entity.MissionHistory;
+import Lumo.lumo_backend.domain.alarm.entity.repository.MissionHistoryRepository;
 import Lumo.lumo_backend.domain.member.dto.MemberReqDTO;
 import Lumo.lumo_backend.domain.member.dto.MemberRespDTO;
 import Lumo.lumo_backend.domain.member.entity.memberEnum.Login;
@@ -26,6 +28,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +42,7 @@ import java.util.concurrent.TimeUnit;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final MissionHistoryRepository missionHistoryRepository;
     private final RedisTemplate redisTemplate;
     private final JavaMailSender mailSender;
     private final JWTProvider jwtProvider;
@@ -253,6 +257,20 @@ public class MemberService {
         JWT jwt = jwtProvider.generateToken(authentication);
 
         return jwt;
+    }
+
+    public MemberRespDTO.GetMissionRecordRespDTO getMissionRecord (Long memberId){
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
+
+        return MemberRespDTO.GetMissionRecordRespDTO.builder()
+                .missionSuccessRate(LocalDate.now().getDayOfMonth()/member.getConsecutiveSuccessCnt())
+                .consecutiveSuccessCnt(member.getConsecutiveSuccessCnt())
+                .build();
+    }
+
+    public void getMissionHistory (Long memberId){
+        List<MissionHistory> missionHistoryList = missionHistoryRepository.findAllByMemberId(memberId);
+        return;
     }
 
 }
