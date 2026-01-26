@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 /**
  * 약관 버전 엔티티
  */
-@Entity
+//@Entity
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

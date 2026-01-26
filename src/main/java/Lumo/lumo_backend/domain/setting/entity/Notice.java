@@ -31,7 +31,6 @@ public class Notice extends BaseEntity {
 
     @Column( nullable = false)
     private boolean active;
-
     /**
      * soft delete 일자
      */

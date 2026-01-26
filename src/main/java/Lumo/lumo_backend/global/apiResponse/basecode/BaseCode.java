@@ -13,5 +13,7 @@ public interface BaseCode {
 
     String getMessage();
 
+    String getCodeName();
+
 }
 

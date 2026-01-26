@@ -10,7 +10,7 @@ import lombok.*;
 /**
  * 사용자 문의사항 엔티티
  */
-@Entity
+//@Entity
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class MemberSettingResponseDTO {
+public class MemberSettingResDTO {
     private Theme theme;
     private Language language;
     private boolean batterySaving;
@@ -16,8 +16,8 @@ public class MemberSettingResponseDTO {
     private String briefingSentence;
     private BriefingVoiceDefaultType briefingVoiceDefaultType;
 
-    public static MemberSettingResponseDTO from(MemberSetting memberSetting) {
-        return new MemberSettingResponseDTO(
+    public static MemberSettingResDTO from(MemberSetting memberSetting) {
+        return new MemberSettingResDTO(
                 memberSetting.getTheme(),
                 memberSetting.getLanguage(),
                 memberSetting.isBatterySaving(),

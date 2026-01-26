@@ -5,6 +5,7 @@ import Lumo.lumo_backend.domain.member.entity.memberEnum.Login;
 import Lumo.lumo_backend.domain.member.entity.memberEnum.MemberRole;
 import Lumo.lumo_backend.domain.routine.entity.Routine;
 import Lumo.lumo_backend.domain.setting.entity.Feedback;
+import Lumo.lumo_backend.domain.setting.entity.MemberDevice;
 import Lumo.lumo_backend.domain.setting.entity.MemberStat;
 import Lumo.lumo_backend.domain.setting.entity.memberSetting.MemberSetting;
 import Lumo.lumo_backend.domain.todo.entity.ToDo;
@@ -67,18 +68,27 @@ public class Member extends BaseEntity {
     private List<Routine> routineList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
-    private List<Feedback> feedbacks = new ArrayList<>();
+    private List<Feedback> feedbackList = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private List<MemberDevice> deviceList = new ArrayList<>();
+
+//    public void addDevice(MemberDevice device) {
+//        this.devices.add(device);
+//    }
 
     public void addRoutine (Routine routine){
         this.routineList.add(routine);
     }
 
-    public static Member create(String email, String username, String password, Login login) {
+    public static Member create(String email, String username, String password, Login login, MemberRole role) {
         Member member = Member.builder()
                 .email(email)
                 .username(username)
                 .password(password)
                 .login(login)
+                .role(role)
                 .build();
 
         MemberSetting setting = MemberSetting.createDefault();

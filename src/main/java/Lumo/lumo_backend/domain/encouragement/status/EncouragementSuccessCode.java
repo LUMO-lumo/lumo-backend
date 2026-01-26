@@ -21,7 +21,7 @@ public enum EncouragementSuccessCode implements BaseCode {
     public ReasonDTO getReason() {
         return ReasonDTO.builder()
                 .isSuccess(true)
-                .code(code)
+                .code(this.name())
                 .message(message)
                 .build();
     }
@@ -31,8 +31,13 @@ public enum EncouragementSuccessCode implements BaseCode {
         return ReasonDTO.builder()
                 .httpStatus(status)
                 .isSuccess(true)
-                .code(code)
+                .code(this.name())
                 .message(message)
                 .build();
+    }
+
+    @Override
+    public String getCodeName() {
+        return this.name();  // enum 객체의 이름 반환
     }
 }
