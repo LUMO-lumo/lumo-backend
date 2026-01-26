@@ -1,10 +1,9 @@
-
 package Lumo.lumo_backend.domain.alarm.entity;
 
 import Lumo.lumo_backend.domain.member.entity.Member;
+import Lumo.lumo_backend.global.BaseEntity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Table(name = "alarm")
-public class Alarm {
+public class Alarm extends BaseEntity {
 
     /**
      * 알람 고유 ID (PK)
@@ -76,18 +75,6 @@ public class Alarm {
     private Integer volume = 50;
 
     /**
-     * 알람 생성일시
-     */
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    /**
-     * 알람 수정일시
-     */
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    /**
      * 알람 반복 요일 목록 (1:N)
      * - 월,수,금 반복이면 3개 row
      */
@@ -114,7 +101,12 @@ public class Alarm {
     @Builder.Default
     private List<AlarmLog> alarmLogs = new ArrayList<>();
 
-
+    /**
+     * 미션 수행 기록 (1:N)
+     */
+    @OneToMany(mappedBy = "alarm", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<MissionHistory> missionHistories = new ArrayList<>();
 
     /**
      * 사운드 타입 설정 (편의 메서드)
@@ -128,23 +120,5 @@ public class Alarm {
      */
     public AlarmSound getAlarmSound() {
         return soundType != null ? AlarmSound.valueOf(soundType) : null;
-    }
-
-
-    /**
-     * 미션 수행 기록 (1:N)
-     */
-    @OneToMany(mappedBy = "alarm", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<MissionHistory> missionHistories = new ArrayList<>();
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
     }
 }

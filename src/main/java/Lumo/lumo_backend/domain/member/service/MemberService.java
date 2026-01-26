@@ -1,5 +1,7 @@
 package Lumo.lumo_backend.domain.member.service;
 
+import Lumo.lumo_backend.domain.alarm.entity.MissionHistory;
+import Lumo.lumo_backend.domain.alarm.entity.repository.MissionHistoryRepository;
 import Lumo.lumo_backend.domain.member.dto.MemberReqDTO;
 import Lumo.lumo_backend.domain.member.dto.MemberRespDTO;
 import Lumo.lumo_backend.domain.member.entity.memberEnum.Login;
@@ -17,11 +19,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -31,46 +38,53 @@ import java.util.concurrent.TimeUnit;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@EnableAsync
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final MissionHistoryRepository missionHistoryRepository;
     private final RedisTemplate redisTemplate;
     private final JavaMailSender mailSender;
     private final JWTProvider jwtProvider;
+    private final BCryptPasswordEncoder encoder;
+
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final int CODE_LENGTH = 4;
 
-    public MemberRespDTO.GetLoginDTO getLogin (Member member){
-        Optional<Member> byEmail = memberRepository.findByEmail(member.getEmail());
-        if (byEmail.isPresent()){
-            return MemberRespDTO.GetLoginDTO.builder().login(byEmail.get().getLogin()).build();
+    public MemberRespDTO.GetLoginDTO getLogin(Member member) {
+
+        if (member == null) {
+            throw new MemberException(MemberErrorCode.CANT_FOUND_MEMBER);
         }
-        else{
+
+        Optional<Member> byEmail = memberRepository.findByEmail(member.getEmail());
+        if (byEmail.isPresent()) {
+            return MemberRespDTO.GetLoginDTO.builder().login(byEmail.get().getLogin()).build();
+        } else {
             return MemberRespDTO.GetLoginDTO.builder().login(Login.NULL).build();
         }
     }
 
-    public Boolean checkEmailDuplicate (String email){
+    public Boolean checkEmailDuplicate(String email) {
         Optional<Member> byEmail = memberRepository.findByEmail(email);
-        if (byEmail.isPresent()){
+        if (byEmail.isPresent()) {
             throw new MemberException(MemberErrorCode.EXIST_MEMBER);
-        }
-        else{
+        } else {
             return true;
         }
     }
 
-    public void requestVerificationCode (String email){
+    @Async
+    public void requestVerificationCode(String email) {
         MimeMessage msg = mailSender.createMimeMessage();
         MimeMessageHelper helper;
         String code;
-
-        /// try 에서 발송 성공 응답 반환 까지 시간이 걸림, 비동기 처리가 필요
 
         try {
             code = generateVerificationCode();
             helper = new MimeMessageHelper(msg, true, "utf-8");
             helper.setTo(email);
+            helper.setFrom("no-reply@mail.com", "no-reply@mail.com");
             helper.setSubject("Lumo 인증 이메일 알림.");
             helper.setText("<!DOCTYPE html>\n" +
                     "<html lang=\"ko\">\n" +
@@ -177,13 +191,17 @@ public class MemberService {
                     "</body>\n" +
                     "</html>", true);
             helper.setReplyTo("no-reply@mail.com");
+            mailSender.send(msg);
         } catch (MessagingException e) {
             e.printStackTrace();
             throw new MemberException(MemberErrorCode.CANT_SEND_EMAIL);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
-        redisTemplate.opsForValue().set(email, code, 180, TimeUnit.SECONDS); // 3분으로 설정
 
-        log.info("saved code -> {}", (String) redisTemplate.opsForValue().get(email));
+        redisTemplate.opsForValue().set(email, code, 180, TimeUnit.SECONDS);
+
+        log.info("[MemberService] saved code -> {}", redisTemplate.opsForValue().get(email));
     }
 
     public static String generateVerificationCode() {
@@ -200,33 +218,38 @@ public class MemberService {
     }
 
 
-    public void verifyCode (String code){
-        String savedCode = (String) redisTemplate.opsForValue().get(code);
+    public void verifyCode(String email, String code) {
+        String savedCode = (String) redisTemplate.opsForValue().get(email);
 
-        if (savedCode == null){
+        if (savedCode == null) {
+            throw new MemberException(MemberErrorCode.WRONG_CODE);
+        } else if (!savedCode.equals(code)) {
             throw new MemberException(MemberErrorCode.WRONG_CODE);
         }
     }
 
-    public void signIn (MemberReqDTO.SignInRequestDTO dto){
+    public void signIn(MemberReqDTO.SignInRequestDTO dto) {
         Optional<Member> byEmail = memberRepository.findByEmail(dto.getEmail());
 
-        if(byEmail.isPresent()) {
+        if (byEmail.isPresent()) {
             throw new MemberException(MemberErrorCode.EXIST_MEMBER);
         }
 
+        String encode = encoder.encode(dto.getPassword());
+
+        log.info("[MemberService] signIn with password -> {}", encode);
         Member newMember = Member.builder()
                 .login(Login.NORMAL)
                 .email(dto.getEmail())
-                .username("test_username") /// username 사용할 일이 아마 마이 페이지에서가 전부인 거 같은데,
-                .password(dto.getPassword()) /// password 암호화 하여 저장해야 함
+                .username(dto.getUsername())
+                .password(encode)
                 .role(MemberRole.USER)
                 .build();
 
         memberRepository.save(newMember);
     }
 
-    public JWT login (MemberReqDTO.LoginReqDTO dto){
+    public JWT login(MemberReqDTO.LoginReqDTO dto) {
         Member member = memberRepository.findByEmailAndPassword(dto.getEmail(), dto.getPassword()).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
 
         List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(member.getRole().toString()));
@@ -236,5 +259,18 @@ public class MemberService {
         return jwt;
     }
 
+    public MemberRespDTO.GetMissionRecordRespDTO getMissionRecord (Long memberId){
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
+
+        return MemberRespDTO.GetMissionRecordRespDTO.builder()
+                .missionSuccessRate(LocalDate.now().getDayOfMonth()/member.getConsecutiveSuccessCnt())
+                .consecutiveSuccessCnt(member.getConsecutiveSuccessCnt())
+                .build();
+    }
+
+    public void getMissionHistory (Long memberId){
+        List<MissionHistory> missionHistoryList = missionHistoryRepository.findAllByMemberId(memberId);
+        return;
+    }
 
 }

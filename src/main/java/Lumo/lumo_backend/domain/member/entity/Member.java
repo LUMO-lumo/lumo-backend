@@ -5,6 +5,7 @@ import Lumo.lumo_backend.domain.member.entity.memberEnum.Login;
 import Lumo.lumo_backend.domain.member.entity.memberEnum.MemberRole;
 import Lumo.lumo_backend.domain.routine.entity.Routine;
 import Lumo.lumo_backend.domain.setting.entity.Feedback;
+import Lumo.lumo_backend.domain.setting.entity.MemberDevice;
 import Lumo.lumo_backend.domain.setting.entity.MemberStat;
 import Lumo.lumo_backend.domain.setting.entity.memberSetting.MemberSetting;
 import Lumo.lumo_backend.domain.todo.entity.ToDo;
@@ -43,12 +44,11 @@ public class Member extends BaseEntity {
     @Column(nullable = false, length = 50)
     private String username;
 
-    @Column(length = 50) // SNS 연동 시에는 NULL
     private String password;
 
-    private Integer missionSuccessRate = 0; // 초기값 = 0
+    private Integer missionSuccessRate; // 이번 달 달성률, LocalDate.now().getDayOfMonth()/member.getConsecutiveSuccessCnt() 로 계산 가능
 
-    private Integer consecutiveSuccessCnt = 0; // 초기값 = 0
+    private Integer consecutiveSuccessCnt; // 미션 연속 성공 수
 
     private Boolean isProUpgraded = false;
 
@@ -68,18 +68,23 @@ public class Member extends BaseEntity {
     private List<Routine> routineList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
-    private List<Feedback> feedbacks = new ArrayList<>();
+    private List<Feedback> feedbackList = new ArrayList<>();
 
-    public void addRoutine (Routine routine){
-        this.routineList.add(routine);
-    }
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private List<MemberDevice> deviceList = new ArrayList<>();
 
-    public static Member create(String email, String username, String password, Login login) {
+//    public void addDevice(MemberDevice device) {
+//        this.devices.add(device);
+//    }
+
+    public static Member create(String email, String username, String password, Login login, MemberRole role) {
         Member member = Member.builder()
                 .email(email)
                 .username(username)
                 .password(password)
                 .login(login)
+                .role(role)
                 .build();
 
         MemberSetting setting = MemberSetting.createDefault();

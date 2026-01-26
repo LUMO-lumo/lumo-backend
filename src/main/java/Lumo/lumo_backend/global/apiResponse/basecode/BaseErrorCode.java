@@ -13,4 +13,6 @@ public interface BaseErrorCode {
 
     String getMessage();
 
+    String getCodeName();
+
 }

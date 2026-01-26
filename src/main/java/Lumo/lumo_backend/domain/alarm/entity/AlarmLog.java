@@ -1,5 +1,6 @@
 package Lumo.lumo_backend.domain.alarm.entity;
 
+import Lumo.lumo_backend.global.BaseEntity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Table(name = "alarm_log")
-public class AlarmLog {
+public class AlarmLog extends BaseEntity {
 
     /**
      * 로그 고유 ID (PK)

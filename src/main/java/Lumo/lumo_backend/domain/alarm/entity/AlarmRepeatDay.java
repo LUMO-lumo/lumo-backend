@@ -1,6 +1,6 @@
-
 package Lumo.lumo_backend.domain.alarm.entity;
 
+import Lumo.lumo_backend.global.BaseEntity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +15,7 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Table(name = "alarm_repeat_day")
-public class AlarmRepeatDay {
+public class AlarmRepeatDay extends BaseEntity {
 
     /**
      * 반복 설정 고유 ID (PK)

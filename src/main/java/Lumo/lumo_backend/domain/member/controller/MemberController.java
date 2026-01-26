@@ -85,8 +85,8 @@ public class MemberController {
 
     @PostMapping("/verify-code")
     @Operation(summary = "인증 코드 검증 API", description = "회원가입 중 요청한 인증 코드를 통해 이메일을 인증하는 API 입니다.")
-    public APIResponse<Object> verifyCode(@RequestParam("code") String code) {
-        memberService.verifyCode(code);
+    public APIResponse<Object> verifyCode(@RequestParam("email") String email, @RequestParam("code") String code) {
+        memberService.verifyCode(email, code);
         return APIResponse.onSuccess(MemberRespDTO.SimpleAPIRespDTO.builder().isSuccess(true).build(), VERIFY_CODE_SUCCESS);
     }
 
@@ -96,5 +96,13 @@ public class MemberController {
         memberService.signIn(dto);
         return APIResponse.onSuccess(MemberRespDTO.SimpleAPIRespDTO.builder().isSuccess(true).build(), MemberSuccessCode.SIGN_IN_SUCCESS); // bool 값 리턴,
     }
+
+    @GetMapping("/mission-history")
+    @Operation(summary = "내 미션 수행 기록 조회", description = "사용자가 진행했던 미션의 기록을 모두 확인하는 API 입니다.")
+    public APIResponse<Object> getMissionHistory(@AuthenticationPrincipal CustomUserDetails userDetails) {
+//        return APIResponse.onSuccess(memberService.getMissionHistory(userDetails.getMember().getId()), MemberSuccessCode.TEST_SUCCESS);
+        return null;
+    }
+
 
 }
