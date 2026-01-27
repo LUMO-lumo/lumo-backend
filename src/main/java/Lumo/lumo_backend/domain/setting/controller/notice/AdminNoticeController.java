@@ -5,9 +5,9 @@ import Lumo.lumo_backend.domain.member.entity.memberEnum.MemberRole;
 import Lumo.lumo_backend.domain.setting.dto.NoticeCreateRequestDTO;
 import Lumo.lumo_backend.domain.setting.dto.NoticeResponseDTO;
 import Lumo.lumo_backend.domain.setting.service.NoticeService;
+import Lumo.lumo_backend.domain.setting.status.SettingSuccessCode;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
 import Lumo.lumo_backend.global.apiResponse.status.ErrorCode;
-import Lumo.lumo_backend.global.apiResponse.status.SuccessCode;
 import Lumo.lumo_backend.global.exception.GeneralException;
 import Lumo.lumo_backend.global.security.userDetails.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-//@RestController
+@RestController
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/notices")
@@ -35,7 +35,7 @@ public class AdminNoticeController {
     ) {
         verifyAdmin(customUserDetails.getMember());
         NoticeResponseDTO noticeResponseDTO = noticeService.create(noticeCreateRequestDTO);
-        return APIResponse.onSuccess(noticeResponseDTO, SuccessCode.OK); //todo 성공코드 변경
+        return APIResponse.onSuccess(noticeResponseDTO, SettingSuccessCode.NOTICE_CREATE_SUCCESS);
     }
 
     @Operation(summary = "공지사항 수정")
@@ -47,7 +47,7 @@ public class AdminNoticeController {
     ) {
         verifyAdmin(customUserDetails.getMember());
         NoticeResponseDTO noticeResponseDTO = noticeService.update(noticeId, noticeCreateRequestDTO);
-        return APIResponse.onSuccess(noticeResponseDTO, SuccessCode.OK); //todo 에러코드 변경
+        return APIResponse.onSuccess(noticeResponseDTO, SettingSuccessCode.NOTICE_UPDATE_SUCCESS);
     }
 
 
@@ -59,12 +59,12 @@ public class AdminNoticeController {
     ) {
         verifyAdmin(customUserDetails.getMember());
         noticeService.softDelete(noticeId);
-        return APIResponse.onSuccess(null, SuccessCode.OK); //todo 에러코드 변경
+        return APIResponse.onSuccess(null, SettingSuccessCode.NOTICE_DELETE_SUCCESS);
     }
 
     private void verifyAdmin(Member member) {
         if(member.getRole()!= MemberRole.ADMIN){
-            throw new GeneralException(ErrorCode.BAD_REQUEST); //todo 에러코드 변경
+            throw new GeneralException(ErrorCode.AUTH_FORBIDDEN);
         }
     }
 
