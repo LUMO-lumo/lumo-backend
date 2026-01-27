@@ -6,7 +6,6 @@ import Lumo.lumo_backend.domain.member.repository.MemberRepository;
 import Lumo.lumo_backend.domain.member.status.MemberErrorCode;
 import Lumo.lumo_backend.domain.todo.dto.request.ToDoCreateRequestDTO;
 import Lumo.lumo_backend.domain.todo.dto.request.ToDoUpdateRequestDTO;
-import Lumo.lumo_backend.domain.todo.dto.response.ToDoListResponseDTO;
 import Lumo.lumo_backend.domain.todo.dto.response.ToDoResponseDTO;
 import Lumo.lumo_backend.domain.todo.entity.ToDo;
 import Lumo.lumo_backend.domain.todo.exception.ToDoException;
@@ -69,12 +68,12 @@ public class ToDoService {
     }
 
     @Transactional(readOnly = true)
-    public ToDoListResponseDTO findToDoListByEventDate(Member member, LocalDate eventDate) {
+    public List<ToDoResponseDTO> findToDoListByEventDate(Member member, LocalDate eventDate) {
         Member persistedMember = getPersistedMember(member);
 
-        List<ToDo> toDos = toDoRepository.findAllByMemberAndEventDate(persistedMember, eventDate);
+        List<ToDoResponseDTO> toDos = toDoRepository.findAllByMemberAndEventDate(persistedMember, eventDate);
 
-        return ToDoListResponseDTO.from(toDos);
+        return toDos;
     }
 
     private Member getPersistedMember(Member member) {
