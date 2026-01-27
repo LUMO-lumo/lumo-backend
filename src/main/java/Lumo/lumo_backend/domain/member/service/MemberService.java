@@ -235,18 +235,7 @@ public class MemberService {
             throw new MemberException(MemberErrorCode.EXIST_MEMBER);
         }
 
-        String encode = encoder.encode(dto.getPassword());
-
-        log.info("[MemberService] signIn with password -> {}", encode);
-        Member newMember = Member.builder()
-                .login(Login.NORMAL)
-                .email(dto.getEmail())
-                .username(dto.getUsername())
-                .password(encode)
-                .role(MemberRole.USER)
-                .build();
-
-        memberRepository.save(newMember);
+        memberRepository.save(Member.create(dto.getEmail(), dto.getUsername(), encoder.encode(dto.getPassword()), Login.NORMAL, MemberRole.USER));
     }
 
     public JWT login(MemberReqDTO.LoginReqDTO dto) {
