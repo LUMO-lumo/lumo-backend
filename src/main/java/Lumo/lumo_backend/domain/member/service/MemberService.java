@@ -250,13 +250,14 @@ public class MemberService {
     }
 
     public JWT login(MemberReqDTO.LoginReqDTO dto) {
-        Member member = memberRepository.findByEmailAndPassword(dto.getEmail(), dto.getPassword()).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
+        Member member = memberRepository.findByEmail(dto.getEmail()).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
+        if (!encoder.matches(dto.getPassword(), member.getPassword())) {
+            throw new MemberException(MemberErrorCode.CANT_FOUND_MEMBER);
+        }
 
         List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(member.getRole().toString()));
         Authentication authentication = new UsernamePasswordAuthenticationToken(member.getEmail(), member.getPassword(), authorities);
-        JWT jwt = jwtProvider.generateToken(authentication);
-
-        return jwt;
+        return jwtProvider.generateToken(authentication);
     }
 
     public MemberRespDTO.GetMissionRecordRespDTO getMissionRecord (Long memberId){
