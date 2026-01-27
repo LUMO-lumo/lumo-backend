@@ -59,7 +59,8 @@ public class MemberController {
 
     @PostMapping("/logout")
     @Operation(summary = "로그아웃 API", description = "로그인을 한 사용자에 한해, 로그아웃을 진행하는 API 입니다.")
-    public APIResponse<Object> logout() {
+    public APIResponse<Object> logout(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        memberService.logout(userDetails.getMember().getId());
         return null; // bool 값 리턴
     }
 

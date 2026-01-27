@@ -246,7 +246,16 @@ public class MemberService {
 
         List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(member.getRole().toString()));
         Authentication authentication = new UsernamePasswordAuthenticationToken(member.getEmail(), member.getPassword(), authorities);
-        return jwtProvider.generateToken(authentication);
+        JWT jwt = jwtProvider.generateToken(authentication);
+
+        redisTemplate.opsForValue().set("refresh:"+dto.getEmail(), jwt.getRefreshToken());
+
+        return jwt;
+    }
+
+    public void logout (Long memberId){
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
+        redisTemplate.delete("refresh:"+member.getEmail());
     }
 
     public MemberRespDTO.GetMissionRecordRespDTO getMissionRecord (Long memberId){
