@@ -1,7 +1,7 @@
 package Lumo.lumo_backend.domain.home.service;
 
+import Lumo.lumo_backend.domain.encouragement.commandLineRunner.EncouragementTextLoader;
 import Lumo.lumo_backend.domain.encouragement.entity.Encouragement;
-import Lumo.lumo_backend.domain.encouragement.repository.EncouragementRepository;
 import Lumo.lumo_backend.domain.home.dto.HomeResponseDTO;
 import Lumo.lumo_backend.domain.member.dto.MemberRespDTO.GetMissionRecordRespDTO;
 import Lumo.lumo_backend.domain.member.entity.Member;
@@ -18,13 +18,13 @@ import org.springframework.stereotype.Service;
 public class HomeService {
 
     private final MemberService memberService;
-    private final EncouragementRepository encouragementRepository;
     private final ToDoService toDoService;
+    private final EncouragementTextLoader encouragementTextLoader;
 
     public HomeResponseDTO get(Member member) {
-        Encouragement encouragement = encouragementRepository.findRandomOne();
         List<ToDoResponseDTO> todo = toDoService.findToDoListByEventDate(member, LocalDate.now());
         GetMissionRecordRespDTO missionRecord = memberService.getMissionRecord(member.getId());
+        Encouragement encouragement = encouragementTextLoader.getTodayEncouragement();
 
         return HomeResponseDTO.builder()
                 .encouragement(encouragement.getContent())
