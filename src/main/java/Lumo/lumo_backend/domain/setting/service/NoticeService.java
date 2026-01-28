@@ -4,9 +4,9 @@ import Lumo.lumo_backend.domain.setting.dto.NoticeCreateRequestDTO;
 import Lumo.lumo_backend.domain.setting.dto.NoticePreviewDTO;
 import Lumo.lumo_backend.domain.setting.dto.NoticeResponseDTO;
 import Lumo.lumo_backend.domain.setting.entity.Notice;
+import Lumo.lumo_backend.domain.setting.exception.SettingException;
 import Lumo.lumo_backend.domain.setting.repository.NoticeRepository;
-import Lumo.lumo_backend.global.apiResponse.status.ErrorCode;
-import Lumo.lumo_backend.global.exception.GeneralException;
+import Lumo.lumo_backend.domain.setting.status.SettingErrorCode;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ public class NoticeService {
 
     public NoticeResponseDTO update(Long noticeId, NoticeCreateRequestDTO noticeCreateRequestDTO) {
         Notice notice = noticeRepository.findById(noticeId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.BAD_REQUEST));//todo 에러코드 수정
+                .orElseThrow(() -> new SettingException(SettingErrorCode.NOTICE_NOT_FOUND));
 
         notice.update(
                 noticeCreateRequestDTO.getType(),
@@ -50,7 +50,7 @@ public class NoticeService {
 
     public void softDelete(Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.BAD_REQUEST));//todo 에러코드 수정
+                .orElseThrow(() -> new SettingException(SettingErrorCode.NOTICE_NOT_FOUND));
 
         notice.softDelete();
     }
@@ -64,10 +64,10 @@ public class NoticeService {
     @Transactional(readOnly = true)
     public NoticeResponseDTO get(Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId)
-                .orElseThrow(() -> new GeneralException(ErrorCode.BAD_REQUEST)); //todo 에러코드 수정
+                .orElseThrow(() -> new SettingException(SettingErrorCode.NOTICE_NOT_FOUND));
 
         if (!notice.isActive()) {
-            throw new GeneralException(ErrorCode.BAD_REQUEST); //todo 에러코드 수정
+            throw new SettingException(SettingErrorCode.NOTICE_NOT_FOUND);
         }
 
         return NoticeResponseDTO.from(notice);

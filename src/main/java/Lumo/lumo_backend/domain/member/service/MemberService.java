@@ -235,28 +235,27 @@ public class MemberService {
             throw new MemberException(MemberErrorCode.EXIST_MEMBER);
         }
 
-        String encode = encoder.encode(dto.getPassword());
-
-        log.info("[MemberService] signIn with password -> {}", encode);
-        Member newMember = Member.builder()
-                .login(Login.NORMAL)
-                .email(dto.getEmail())
-                .username(dto.getUsername())
-                .password(encode)
-                .role(MemberRole.USER)
-                .build();
-
-        memberRepository.save(newMember);
+        memberRepository.save(Member.create(dto.getEmail(), dto.getUsername(), encoder.encode(dto.getPassword()), Login.NORMAL, MemberRole.USER));
     }
 
     public JWT login(MemberReqDTO.LoginReqDTO dto) {
-        Member member = memberRepository.findByEmailAndPassword(dto.getEmail(), dto.getPassword()).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
+        Member member = memberRepository.findByEmail(dto.getEmail()).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
+        if (!encoder.matches(dto.getPassword(), member.getPassword())) {
+            throw new MemberException(MemberErrorCode.CANT_FOUND_MEMBER);
+        }
 
         List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(member.getRole().toString()));
         Authentication authentication = new UsernamePasswordAuthenticationToken(member.getEmail(), member.getPassword(), authorities);
         JWT jwt = jwtProvider.generateToken(authentication);
 
+        redisTemplate.opsForValue().set("refresh:"+dto.getEmail(), jwt.getRefreshToken());
+
         return jwt;
+    }
+
+    public void logout (Long memberId){
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
+        redisTemplate.delete("refresh:"+member.getEmail());
     }
 
     public MemberRespDTO.GetMissionRecordRespDTO getMissionRecord (Long memberId){

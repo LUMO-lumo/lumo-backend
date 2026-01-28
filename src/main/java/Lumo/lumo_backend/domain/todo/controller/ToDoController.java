@@ -2,7 +2,6 @@ package Lumo.lumo_backend.domain.todo.controller;
 
 import Lumo.lumo_backend.domain.todo.dto.request.ToDoCreateRequestDTO;
 import Lumo.lumo_backend.domain.todo.dto.request.ToDoUpdateRequestDTO;
-import Lumo.lumo_backend.domain.todo.dto.response.ToDoListResponseDTO;
 import Lumo.lumo_backend.domain.todo.dto.response.ToDoResponseDTO;
 import Lumo.lumo_backend.domain.todo.service.ToDoService;
 import Lumo.lumo_backend.domain.todo.status.ToDoSuccessCode;
@@ -12,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -65,11 +65,11 @@ public class ToDoController {
 
     @Operation(summary = "일별 할 일 목록 조회")
     @GetMapping
-    public APIResponse<ToDoListResponseDTO> findToDoListByEventDate(
+    public APIResponse<List<ToDoResponseDTO>> findToDoListByEventDate(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam LocalDate eventDate
     ){
-        ToDoListResponseDTO toDoList = toDoService.findToDoListByEventDate(userDetails.getMember(), eventDate);
+        List<ToDoResponseDTO> toDoList = toDoService.findToDoListByEventDate(userDetails.getMember(), eventDate);
         return APIResponse.onSuccess(toDoList, ToDoSuccessCode.GET_TODO_SUCCESS);
     }
 }

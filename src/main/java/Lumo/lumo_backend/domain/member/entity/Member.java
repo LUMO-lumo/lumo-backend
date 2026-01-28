@@ -13,6 +13,8 @@ import Lumo.lumo_backend.global.BaseEntity.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
+@DynamicInsert
 @Table(name = "member")
 public class Member extends BaseEntity {
 
@@ -46,11 +49,17 @@ public class Member extends BaseEntity {
 
     private String password;
 
+    @Column (nullable = false)
+    @ColumnDefault("0")
     private Integer missionSuccessRate; // 이번 달 달성률, LocalDate.now().getDayOfMonth()/member.getConsecutiveSuccessCnt() 로 계산 가능
 
+    @Column(nullable = false)
+    @ColumnDefault("0")
     private Integer consecutiveSuccessCnt; // 미션 연속 성공 수
 
-    private Boolean isProUpgraded = false;
+    @Column(nullable = false)
+    @ColumnDefault("false")
+    private Boolean isProUpgraded;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Alarm> alarmList = new ArrayList<>();
@@ -74,15 +83,14 @@ public class Member extends BaseEntity {
     @JoinColumn(name = "member_id")
     private List<MemberDevice> deviceList = new ArrayList<>();
 
-//    public void addDevice(MemberDevice device) {
-//        this.devices.add(device);
-//    }
-
     public static Member create(String email, String username, String password, Login login, MemberRole role) {
         Member member = Member.builder()
                 .email(email)
                 .username(username)
                 .password(password)
+                .consecutiveSuccessCnt(0)
+                .isProUpgraded(false)
+                .missionSuccessRate (0)
                 .login(login)
                 .role(role)
                 .build();
