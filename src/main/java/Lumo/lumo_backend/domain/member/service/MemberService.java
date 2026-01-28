@@ -258,12 +258,11 @@ public class MemberService {
         redisTemplate.delete("refresh:"+member.getEmail());
     }
 
-    public MemberRespDTO.GetMissionRecordRespDTO getMissionRecord (Long memberId){
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
+    public MemberRespDTO.GetMissionRecordRespDTO getMissionRecord (Member persistedMember) {
 
         return MemberRespDTO.GetMissionRecordRespDTO.builder()
-                .missionSuccessRate(LocalDate.now().getDayOfMonth()/member.getConsecutiveSuccessCnt())
-                .consecutiveSuccessCnt(member.getConsecutiveSuccessCnt())
+                .missionSuccessRate(LocalDate.now().getDayOfMonth()/persistedMember.getConsecutiveSuccessCnt())
+                .consecutiveSuccessCnt(persistedMember.getConsecutiveSuccessCnt())
                 .build();
     }
 

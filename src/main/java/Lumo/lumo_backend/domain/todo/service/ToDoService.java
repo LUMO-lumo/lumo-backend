@@ -76,6 +76,12 @@ public class ToDoService {
         return toDos;
     }
 
+    @Transactional(readOnly = true)
+    public List<String> findTodayThreeToDo(Member persistedMember) {
+
+        return toDoRepository.findTodayThreeToDo(persistedMember.getId(), LocalDate.now());
+    }
+
     private Member getPersistedMember(Member member) {
         return memberRepository.findById(member.getId())
                 .orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
