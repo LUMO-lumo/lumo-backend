@@ -5,10 +5,11 @@ import Lumo.lumo_backend.domain.encouragement.entity.Encouragement;
 import Lumo.lumo_backend.domain.home.dto.HomeResponseDTO;
 import Lumo.lumo_backend.domain.member.dto.MemberRespDTO.GetMissionRecordRespDTO;
 import Lumo.lumo_backend.domain.member.entity.Member;
+import Lumo.lumo_backend.domain.member.exception.MemberException;
+import Lumo.lumo_backend.domain.member.repository.MemberRepository;
 import Lumo.lumo_backend.domain.member.service.MemberService;
-import Lumo.lumo_backend.domain.todo.dto.response.ToDoResponseDTO;
+import Lumo.lumo_backend.domain.member.status.MemberErrorCode;
 import Lumo.lumo_backend.domain.todo.service.ToDoService;
-import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,14 +18,17 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class HomeService {
 
+    private final MemberRepository memberRepository;
     private final MemberService memberService;
     private final ToDoService toDoService;
     private final EncouragementTextLoader encouragementTextLoader;
 
     public HomeResponseDTO get(Member member) {
-        List<ToDoResponseDTO> todo = toDoService.findToDoListByEventDate(member, LocalDate.now());
-        GetMissionRecordRespDTO missionRecord = memberService.getMissionRecord(member.getId());
+        Member persistedMember = getPersistedMember(member);
+
         Encouragement encouragement = encouragementTextLoader.getTodayEncouragement();
+        List<String> todo = toDoService.findTodayThreeToDo(persistedMember);
+        GetMissionRecordRespDTO missionRecord = memberService.getMissionRecord(persistedMember);
 
         return HomeResponseDTO.builder()
                 .encouragement(encouragement.getContent())
@@ -33,4 +37,8 @@ public class HomeService {
                 .build();
     }
 
+    private Member getPersistedMember(Member member) {
+        return memberRepository.findById(member.getId())
+                .orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
+    }
 }
