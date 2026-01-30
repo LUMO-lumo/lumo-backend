@@ -27,19 +27,23 @@ public class AlarmService {
     private final AlarmLogRepository alarmLogRepository;
     private final MissionContentRepository missionContentRepository;
     private final MissionHistoryRepository missionHistoryRepository;
+    private final AlarmSoundService alarmSoundService;
 
     /**
      * 알람 생성
      */
     @Transactional
     public AlarmResponseDto createAlarm(Member member, AlarmCreateRequestDto requestDto) {
+        // 사운드 타입 유효성 검증
+        String soundType = validateAndGetSoundType(requestDto.getSoundType());
+
         // 알람 생성
         Alarm alarm = Alarm.builder()
                 .member(member)
                 .alarmTime(requestDto.getAlarmTime())
                 .label(requestDto.getLabel())
                 .isEnabled(requestDto.getIsEnabled())
-                .soundType(requestDto.getSoundType())
+                .soundType(soundType)
                 .vibration(requestDto.getVibration())
                 .volume(requestDto.getVolume())
                 .build();
@@ -105,6 +109,11 @@ public class AlarmService {
     public AlarmResponseDto updateAlarm(Member member, Long alarmId, AlarmUpdateRequestDto requestDto) {
         Alarm alarm = findAlarmByIdAndMember(alarmId, member);
 
+        // 사운드 타입 유효성 검증 (수정 요청에 포함된 경우만)
+        String soundType = requestDto.getSoundType() != null
+                ? validateAndGetSoundType(requestDto.getSoundType())
+                : alarm.getSoundType();
+
         // 빌더 패턴으로 업데이트 (불변 객체 패턴)
         Alarm updatedAlarm = Alarm.builder()
                 .alarmId(alarm.getAlarmId())
@@ -112,7 +121,7 @@ public class AlarmService {
                 .alarmTime(requestDto.getAlarmTime() != null ? requestDto.getAlarmTime() : alarm.getAlarmTime())
                 .label(requestDto.getLabel() != null ? requestDto.getLabel() : alarm.getLabel())
                 .isEnabled(alarm.getIsEnabled())
-                .soundType(requestDto.getSoundType() != null ? requestDto.getSoundType() : alarm.getSoundType())
+                .soundType(soundType)
                 .vibration(requestDto.getVibration() != null ? requestDto.getVibration() : alarm.getVibration())
                 .volume(requestDto.getVolume() != null ? requestDto.getVolume() : alarm.getVolume())
                 .repeatDays(alarm.getRepeatDays())
@@ -379,6 +388,7 @@ public class AlarmService {
                 .map(MissionContentResponseDto::fromWithoutAnswer)
                 .collect(Collectors.toList());
     }
+
     /**
      * 미션 답안 제출
      */
@@ -508,6 +518,22 @@ public class AlarmService {
 
         AlarmLog savedLog = alarmLogRepository.save(log);
         return AlarmLogResponseDto.from(savedLog);
+    }
+
+    /**
+     * 사운드 타입 유효성 검증 및 기본값 처리
+     */
+    private String validateAndGetSoundType(String soundType) {
+        if (soundType == null || soundType.trim().isEmpty()) {
+            return alarmSoundService.getDefaultSoundType();
+        }
+
+        if (!alarmSoundService.isValidSoundType(soundType)) {
+            log.warn("Invalid sound type provided: {}, using default", soundType);
+            return alarmSoundService.getDefaultSoundType();
+        }
+
+        return soundType.toUpperCase();
     }
 
     /**
