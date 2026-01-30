@@ -275,4 +275,10 @@ public class MemberService {
         return;
     }
 
+    // 주 마다 사용자 연속 성공 횟수 정리
+    @Scheduled(cron = "0 0 0 * * 0")
+    public void asdf(){
+        memberRepository.findAll().forEach(Member::initConsecutiveSuccessCnt);
+    }
+
 }
