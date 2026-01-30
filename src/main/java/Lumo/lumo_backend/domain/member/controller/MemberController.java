@@ -29,9 +29,6 @@ public class MemberController {
 
     private final MemberService memberService;
 
-
-    ///  자동 로그인, 이메일 기억하기 기능도 추가가 필요!
-
     @GetMapping("/login")
     @Operation(summary = "로그인 방식 조회 API", description = "사용자가 로그인한 방식을 조회하는 API 입니다.")
     public APIResponse<MemberRespDTO.GetLoginDTO> getLoginMethod(@AuthenticationPrincipal CustomUserDetails userDetails) {
