@@ -4,6 +4,7 @@ import Lumo.lumo_backend.domain.alarm.entity.MissionHistory;
 import Lumo.lumo_backend.domain.alarm.entity.repository.MissionHistoryRepository;
 import Lumo.lumo_backend.domain.member.dto.MemberReqDTO;
 import Lumo.lumo_backend.domain.member.dto.MemberRespDTO;
+import Lumo.lumo_backend.domain.member.dto.MissionStat;
 import Lumo.lumo_backend.domain.member.entity.memberEnum.Login;
 import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.member.entity.memberEnum.MemberRole;
@@ -21,6 +22,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -260,8 +262,10 @@ public class MemberService {
 
     public MemberRespDTO.GetMissionRecordRespDTO getMissionRecord (Member persistedMember) {
 
+        MissionStat missionStat = missionHistoryRepository.findMissionStatsByMember(persistedMember.getId(), LocalDate.now().withDayOfMonth(1).atStartOfDay());
+
         return MemberRespDTO.GetMissionRecordRespDTO.builder()
-                .missionSuccessRate(LocalDate.now().getDayOfMonth()/persistedMember.getConsecutiveSuccessCnt())
+                .missionSuccessRate((int) (missionStat.getSuccess() / missionStat.getTotal() *100))
                 .consecutiveSuccessCnt(persistedMember.getConsecutiveSuccessCnt())
                 .build();
     }
@@ -269,6 +273,12 @@ public class MemberService {
     public void getMissionHistory (Long memberId){
         List<MissionHistory> missionHistoryList = missionHistoryRepository.findAllByMemberId(memberId);
         return;
+    }
+
+    // 주 마다 사용자 연속 성공 횟수 정리
+    @Scheduled(cron = "0 0 0 * * 0")
+    public void asdf(){
+        memberRepository.findAll().forEach(Member::initConsecutiveSuccessCnt);
     }
 
 }
