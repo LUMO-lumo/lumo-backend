@@ -26,6 +26,10 @@ dependencies {
     implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator' // prometheus, blue-green checking
+	implementation 'org.springframework.boot:spring-boot-starter'
+
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.15' // swagger
+	implementation 'org.apache.commons:commons-lang3:3.18.0' // springdoc의 의존 라이브러리. 이전 버전 취약성 문제
 
 	// jwt
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
@@ -33,19 +37,19 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.5' // Jackson JSON 파서
 
 	runtimeOnly 'com.mysql:mysql-connector-j'
-    implementation 'org.springframework.boot:spring-boot-starter'
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+
     compileOnly 'org.projectlombok:lombok'
+
     annotationProcessor 'org.projectlombok:lombok'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.mockito:mockito-core:5.8.0'
+
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-	// Swagger
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.15'
-	implementation 'org.apache.commons:commons-lang3:3.18.0' // springdoc의 의존 라이브러리. 이전 버전 취약성 문제
-
-	testImplementation 'org.mockito:mockito-core:5.8.0'
 }
 
 tasks.named('test') {

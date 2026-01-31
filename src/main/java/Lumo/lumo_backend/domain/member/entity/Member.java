@@ -104,4 +104,8 @@ public class Member extends BaseEntity {
         return member;
     }
 
+    public void initConsecutiveSuccessCnt (){
+        this.consecutiveSuccessCnt = 0;
+    }
+
 }
