@@ -13,4 +13,7 @@ public interface ToDoRepository extends JpaRepository<ToDo, Long> {
 
     @Query(value = "SELECT content FROM to_do WHERE member_id=:memberId AND event_date=:eventDate LIMIT 3", nativeQuery = true)
     List<String> findTodayThreeToDo(Long memberId, LocalDate eventDate);
+
+    @Query(value = "SELECT t.content FROM ToDo t WHERE t.member=:member AND t.eventDate=:eventDate")
+    List<String> findContentByMemberAndEventDate(Member member, LocalDate eventDate);
 }
