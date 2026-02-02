@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/to-do")
 @RequiredArgsConstructor
+@Slf4j
 @Tag(name = "할 일")
 public class ToDoController {
 
@@ -68,8 +70,29 @@ public class ToDoController {
     public APIResponse<List<ToDoResponseDTO>> findToDoListByEventDate(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam LocalDate eventDate
-    ){
+    ) {
         List<ToDoResponseDTO> toDoList = toDoService.findToDoListByEventDate(userDetails.getMember(), eventDate);
         return APIResponse.onSuccess(toDoList, ToDoSuccessCode.GET_TODO_SUCCESS);
+    }
+
+    @Operation(summary = "오늘의 할 일 자세히 보기")
+    @GetMapping("/today")
+    public APIResponse<List<String>> getToday(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        List<String> todayToDoList = toDoService.getTodayToDoList(userDetails.getMember());
+        return APIResponse.onSuccess(todayToDoList, ToDoSuccessCode.GET_TODO_SUCCESS);
+    }
+
+    @Operation(summary = "오늘의 할 일 브리핑")
+    @GetMapping("/briefing")
+    public APIResponse<String> getBriefing(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        long start = System.currentTimeMillis();
+        String briefing = toDoService.getBriefing(userDetails.getMember());
+        long end = System.currentTimeMillis();
+        log.info("챗지피티 소요시간: {} ms", end - start);
+        return APIResponse.onSuccess(briefing, ToDoSuccessCode.GET_TODO_SUCCESS);
     }
 }
