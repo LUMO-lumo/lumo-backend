@@ -26,6 +26,9 @@ public class Feedback extends BaseEntity {
     private Member member;
 
     @Column(nullable = false, length = 100)
+    private String email;
+
+    @Column(nullable = true, length = 100)
     private String title;
 
     @Column(nullable = false)

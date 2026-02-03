@@ -26,4 +26,12 @@ public class MemberDeviceCreateReqDTO {
             example = "iOS 26.1"
     )
     private String osVersion;
+
+
+
+    @Schema(
+            description = "기기 고유값",
+            example = "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0"
+    )
+    private String uuid;
 }

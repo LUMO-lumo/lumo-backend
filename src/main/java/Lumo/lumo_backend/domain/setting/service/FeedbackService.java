@@ -37,42 +37,43 @@ public class FeedbackService {
                 .member(member)
                 .title(request.getTitle())
                 .content(request.getContent())
+                .email(request.getEmail())
                 .build();
 
         return feedbackRepository.save(feedback).getId();
     }
 
-    @Transactional(readOnly = true)
-    public FeedbackResDTO get(Long memberId, Long feedbackId) {
-        Feedback feedback = feedbackRepository.findById(feedbackId)
-                .orElseThrow(
-                        () -> new SettingException(SettingErrorCode.FEEDBACK_NOT_FOUND)
-                );
-
-        // member 검증
-        if (feedback.getMember().getId() != memberId) {
-            throw new GeneralException(ErrorCode.BAD_REQUEST);
-        }
-
-        return FeedbackResDTO.from(feedback);
-    }
-
-    public void update(Long memberId, Long feedbackId, FeedbackUpdateReqDTO request) {
-        Feedback feedback = feedbackRepository.findById(feedbackId)
-                .orElseThrow(
-                        () -> new SettingException(SettingErrorCode.FEEDBACK_NOT_FOUND)
-                );
-
-
-        // member 검증
-        if (feedback.getMember().getId() != memberId) {
-            throw new GeneralException(ErrorCode.BAD_REQUEST);
-        }
-
-        feedback.update(request.getTitle(), request.getContent());
-    }
-
-    public void delete(Long feedbackId) {
-        feedbackRepository.deleteById(feedbackId);
-    }
+//    @Transactional(readOnly = true)
+//    public FeedbackResDTO get(Long memberId, Long feedbackId) {
+//        Feedback feedback = feedbackRepository.findById(feedbackId)
+//                .orElseThrow(
+//                        () -> new SettingException(SettingErrorCode.FEEDBACK_NOT_FOUND)
+//                );
+//
+//        // member 검증
+//        if (feedback.getMember().getId() != memberId) {
+//            throw new GeneralException(ErrorCode.BAD_REQUEST);
+//        }
+//
+//        return FeedbackResDTO.from(feedback);
+//    }
+//
+//    public void update(Long memberId, Long feedbackId, FeedbackUpdateReqDTO request) {
+//        Feedback feedback = feedbackRepository.findById(feedbackId)
+//                .orElseThrow(
+//                        () -> new SettingException(SettingErrorCode.FEEDBACK_NOT_FOUND)
+//                );
+//
+//
+//        // member 검증
+//        if (feedback.getMember().getId() != memberId) {
+//            throw new GeneralException(ErrorCode.BAD_REQUEST);
+//        }
+//
+//        feedback.update(request.getTitle(), request.getContent());
+//    }
+//
+//    public void delete(Long feedbackId) {
+//        feedbackRepository.deleteById(feedbackId);
+//    }
 }

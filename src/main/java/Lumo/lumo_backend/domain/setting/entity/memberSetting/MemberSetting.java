@@ -28,32 +28,32 @@ public class MemberSetting extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Theme theme;
+    private Theme theme = Theme.SYSTEM;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Language language;
+    private Language language = Language.KO;
 
     @Column(nullable = false)
-    private boolean batterySaving;
+    private boolean batterySaving = false;
 
     @Enumerated(EnumType.STRING)
     @Column
-    private AlarmOffMissionDefaultType alarmOffMissionDefaultType;
+    private AlarmOffMissionDefaultType alarmOffMissionDefaultType = AlarmOffMissionDefaultType.MATH;
 
     @Enumerated(EnumType.STRING)
     @Column
-    private AlarmOffMissionDefaultLevel alarmOffMissionDefaultLevel;
+    private AlarmOffMissionDefaultLevel alarmOffMissionDefaultLevel = AlarmOffMissionDefaultLevel.MEDIUM;
 
     @Column
-    private Integer alarmOffMissionDefaultDuration;
+    private Integer alarmOffMissionDefaultDuration = 10;
 
     @Column
-    private String briefingSentence;
+    private String briefingSentence = "";
 
     @Enumerated(EnumType.STRING)
     @Column(length = 500)
-    private BriefingVoiceDefaultType briefingVoiceDefaultType;
+    private BriefingVoiceDefaultType briefingVoiceDefaultType = BriefingVoiceDefaultType.WOMAN;
 
 
     public void update(

@@ -32,24 +32,24 @@ public class FeedbackController {
     }
 
 
-    @GetMapping("/{feedbackId}")
-    public APIResponse<FeedbackResDTO> get(
-            @AuthenticationPrincipal CustomUserDetails userDetail,
-            @PathVariable Long feedbackId
-    ) {
-
-        return APIResponse.onSuccess(feedbackService.get(userDetail.getMember().getId(), feedbackId), SuccessCode.OK);
-    }
-
-    @PatchMapping("/{feedbackId}")
-    public APIResponse<Void> update(
-            @AuthenticationPrincipal CustomUserDetails userDetail,
-            @PathVariable Long feedbackId,
-            @RequestBody FeedbackUpdateReqDTO request
-    ) {
-        feedbackService.update(userDetail.getMember().getId(), feedbackId, request);
-        return APIResponse.onSuccess(null, SuccessCode.OK);
-    }
+//    @GetMapping("/{feedbackId}")
+//    public APIResponse<FeedbackResDTO> get(
+//            @AuthenticationPrincipal CustomUserDetails userDetail,
+//            @PathVariable Long feedbackId
+//    ) {
+//
+//        return APIResponse.onSuccess(feedbackService.get(userDetail.getMember().getId(), feedbackId), SuccessCode.OK);
+//    }
+//
+//    @PatchMapping("/{feedbackId}")
+//    public APIResponse<Void> update(
+//            @AuthenticationPrincipal CustomUserDetails userDetail,
+//            @PathVariable Long feedbackId,
+//            @RequestBody FeedbackUpdateReqDTO request
+//    ) {
+//        feedbackService.update(userDetail.getMember().getId(), feedbackId, request);
+//        return APIResponse.onSuccess(null, SuccessCode.OK);
+//    }
 
 
 }
