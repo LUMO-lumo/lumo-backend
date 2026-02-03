@@ -75,15 +75,6 @@ public class ToDoController {
         return APIResponse.onSuccess(toDoList, ToDoSuccessCode.GET_TODO_SUCCESS);
     }
 
-    @Operation(summary = "오늘의 할 일 자세히 보기")
-    @GetMapping("/today")
-    public APIResponse<List<String>> getToday(
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ) {
-        List<String> todayToDoList = toDoService.getTodayToDoList(userDetails.getMember());
-        return APIResponse.onSuccess(todayToDoList, ToDoSuccessCode.GET_TODO_SUCCESS);
-    }
-
     @Operation(summary = "오늘의 할 일 브리핑")
     @GetMapping("/briefing")
     public APIResponse<String> getBriefing(
