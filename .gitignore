@@ -1,3 +1,12 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Redis TLS local certs
+redis-tls/
+
+
 # Created by https://www.toptal.com/developers/gitignore/api/intellij+all,gradle
 # Edit at https://www.toptal.com/developers/gitignore?templates=intellij+all,gradle
 
