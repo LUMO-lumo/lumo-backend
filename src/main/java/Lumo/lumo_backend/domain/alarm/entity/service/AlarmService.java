@@ -543,4 +543,106 @@ public class AlarmService {
         return alarmRepository.findByIdAndMemberWithDetails(alarmId, member)
                 .orElseThrow(() -> new AlarmException(AlarmErrorCode.ALARM_NOT_FOUND));
     }
+
+
+    @Transactional
+    public AlarmLogResponseDto dismissAlarm(Member member, Long alarmId, AlarmDismissRequestDto requestDto) {
+        // 1. 알람 조회
+        Alarm alarm = findAlarmByIdAndMember(alarmId, member);
+
+        // 2. 최근 울림 기록 찾기
+        List<AlarmLog> recentLogs = alarmLogRepository.findByAlarmOrderByTriggeredAtDesc(alarm);
+        AlarmLog recentLog = recentLogs.get(0);
+
+        // 3. AlarmLog 업데이트
+        AlarmLog updatedLog = AlarmLog.builder()
+                .logId(recentLog.getLogId())
+                .dismissedAt(LocalDateTime.now())
+                .dismissType(requestDto.getDismissType())
+                .snoozeCount(requestDto.getSnoozeCount())
+                .build();
+
+        AlarmLog savedLog = alarmLogRepository.save(updatedLog);
+
+        // 4. 미션으로 해제한 경우 Member 통계 업데이트
+        if (requestDto.getDismissType() == DismissType.MISSION) {
+            updateMemberStatistics(member);
+        }
+
+        return AlarmLogResponseDto.from(savedLog);
+    }
+
+    private void updateMemberStatistics(Member member) {
+        // 이번 달 시작일
+        LocalDateTime monthStart = LocalDateTime.now()
+                .withDayOfMonth(1)
+                .withHour(0).withMinute(0).withSecond(0).withNano(0);
+
+        // 이번 달 미션 총 시도 횟수
+        int totalAttempts = (int) missionHistoryRepository
+                .findByAlarm_Member_IdOrderByCompletedAtDesc(member.getId())
+                .stream()
+                .filter(mh -> mh.getCompletedAt().isAfter(monthStart))
+                .count();
+
+        // 이번 달 미션 성공 횟수
+        int totalSuccess = (int) missionHistoryRepository
+                .findByAlarm_Member_IdOrderByCompletedAtDesc(member.getId())
+                .stream()
+                .filter(mh -> mh.getCompletedAt().isAfter(monthStart) && mh.getIsSuccess())
+                .count();
+
+        // 오늘 미션 성공 확인
+        LocalDateTime todayStart = LocalDateTime.now()
+                .withHour(0).withMinute(0).withSecond(0).withNano(0);
+
+        boolean todaySuccess = missionHistoryRepository
+                .findByAlarm_Member_IdOrderByCompletedAtDesc(member.getId())
+                .stream()
+                .anyMatch(mh -> mh.getCompletedAt().isAfter(todayStart) && mh.getIsSuccess());
+
+        // 연속 성공 횟수 증가
+        if (todaySuccess) {
+            member.incrementConsecutiveSuccessCnt();
+        }
+
+        // 이번 달 달성률 업데이트
+        member.updateMissionSuccessRate(totalSuccess, totalAttempts);
+    }
+
+    /**
+     * 내 통계 조회
+     */
+    public MemberStatisticsResponseDto getMyStatistics(Member member) {
+        // 이번 달 시작일
+        LocalDateTime monthStart = LocalDateTime.now()
+                .withDayOfMonth(1)
+                .withHour(0)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
+
+        // 이번 달 미션 시도 횟수
+        int totalAttempts = (int) missionHistoryRepository
+                .findByAlarm_Member_IdOrderByCompletedAtDesc(member.getId())
+                .stream()
+                .filter(mh -> mh.getCompletedAt().isAfter(monthStart))
+                .count();
+
+        // 이번 달 미션 성공 횟수
+        int totalSuccess = (int) missionHistoryRepository
+                .findByAlarm_Member_IdOrderByCompletedAtDesc(member.getId())
+                .stream()
+                .filter(mh -> mh.getCompletedAt().isAfter(monthStart) && mh.getIsSuccess())
+                .count();
+
+        // 이번 달 알람 울림 횟수
+        int totalTriggered = (int) alarmLogRepository
+                .findByAlarm_Member_IdOrderByTriggeredAtDesc(member.getId())
+                .stream()
+                .filter(log -> log.getTriggeredAt().isAfter(monthStart))
+                .count();
+
+        return MemberStatisticsResponseDto.from(member, totalAttempts, totalSuccess, totalTriggered);
+    }
 }

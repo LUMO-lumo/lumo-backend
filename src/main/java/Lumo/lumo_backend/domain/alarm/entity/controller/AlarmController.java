@@ -328,4 +328,32 @@ public class AlarmController {
         AlarmLogResponseDto response = alarmService.triggerAlarm(userDetails.getMember(), alarmId);
         return APIResponse.onSuccess(response, AlarmSuccessCode.ALARM_TRIGGERED);
     }
+
+    /**
+     * 알람 해제 기록
+     * POST /api/alarms/{alarmId}/dismiss
+     */
+    @PostMapping("/{alarmId}/dismiss")
+    @Operation(summary = "알람 해제 기록 API", description = "알람을 해제했을 때 호출하는 API입니다. 해제 방식(미션/스누즈/수동)과 스누즈 횟수를 기록합니다.")
+    public APIResponse<AlarmLogResponseDto> dismissAlarm(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long alarmId,
+            @Valid @RequestBody AlarmDismissRequestDto requestDto
+    ) {
+        AlarmLogResponseDto response = alarmService.dismissAlarm(userDetails.getMember(), alarmId, requestDto);
+        return APIResponse.onSuccess(response, AlarmSuccessCode.ALARM_DISMISSED);
+    }
+
+    /**
+     * 내 통계 조회
+     * GET /api/members/me/statistics
+     */
+    @GetMapping("/members/me/statistics")
+    @Operation(summary = "내 통계 조회 API", description = "이번 달 미션 달성률, 연속 성공 일수, 알람 울림 횟수 등을 조회하는 API입니다.")
+    public APIResponse<MemberStatisticsResponseDto> getMyStatistics(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        MemberStatisticsResponseDto response = alarmService.getMyStatistics(userDetails.getMember());
+        return APIResponse.onSuccess(response, AlarmSuccessCode.STATISTICS_RETRIEVED);
+    }
 }
