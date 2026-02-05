@@ -63,8 +63,10 @@ public class MemberService {
     public Boolean checkEmailDuplicate(String email) {
         Optional<Member> byEmail = memberRepository.findByEmail(email);
         if (byEmail.isPresent()) {
+            log.info("[MemberService - checkEmailDuplicate] duplicate email {}", email);
             throw new MemberException(MemberErrorCode.EXIST_MEMBER);
         } else {
+            log.info("[MemberService - checkEmailDuplicate] Success to check duplicate {}", email);
             return true;
         }
     }
@@ -73,6 +75,7 @@ public class MemberService {
         String preCode = (String) redisTemplate.opsForValue().get(email);
 
         if (preCode != null){
+            log.info("[MemberService - requestVerificationCode] already send to {} with {}", email, preCode);
             throw new MemberException(MemberErrorCode.ALREADY_SEND); // 따닥 방지
         }
         else{
@@ -89,6 +92,7 @@ public class MemberService {
         } else if (!savedCode.equals(code)) {
             throw new MemberException(MemberErrorCode.WRONG_CODE);
         }
+        log.info("[MemberService - verifyCode] Success to verify code {} to {}", savedCode, email);
     }
 
     public void signIn(MemberReqDTO.SignInRequestDTO dto) {
@@ -99,6 +103,8 @@ public class MemberService {
         }
 
         memberRepository.save(Member.create(dto.getEmail(), dto.getUsername(), encoder.encode(dto.getPassword()), Login.NORMAL, MemberRole.USER));
+
+        log.info("[MemberService - signIn] Success to signIn -> {}, {}", dto.getEmail(), dto.getUsername());
     }
 
     public JWT login(MemberReqDTO.LoginReqDTO dto) {
@@ -113,12 +119,15 @@ public class MemberService {
 
         redisTemplate.opsForValue().set("refresh:"+dto.getEmail(), jwt.getRefreshToken());
 
+        log.info("[MemberService - login] Success to login -> {} - {}", dto.getEmail(), jwt.getRefreshToken());
+
         return jwt;
     }
 
     public void logout (Long memberId){
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
         redisTemplate.delete("refresh:"+member.getEmail());
+        log.info("[MemberService - logout] Success to logout -> {}", member.getEmail());
     }
 
     public MemberRespDTO.GetMissionRecordRespDTO getMissionRecord (Member persistedMember) {

@@ -155,6 +155,8 @@ public class EmailService {
         }
 
         redisTemplate.opsForValue().set(email, code, 180, TimeUnit.SECONDS);
+
+        log.info("[MemberService - requestVerificationCode] saved code {} to {}", redisTemplate.opsForValue().get(email), email);
     }
 
     public String generateVerificationCode() {

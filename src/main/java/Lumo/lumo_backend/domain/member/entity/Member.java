@@ -95,11 +95,8 @@ public class Member extends BaseEntity {
                 .role(role)
                 .build();
 
-        MemberSetting setting = MemberSetting.createDefault();
-        MemberStat stat = MemberStat.createDefault();
-
-        member.setting = setting;
-        member.stat = stat;
+        member.setting = MemberSetting.createDefault();
+        member.stat = MemberStat.createDefault();
 
         return member;
     }
