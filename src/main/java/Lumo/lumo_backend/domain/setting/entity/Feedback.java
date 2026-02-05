@@ -26,14 +26,18 @@ public class Feedback extends BaseEntity {
     private Member member;
 
     @Column(nullable = false, length = 100)
+    private String email;
+
+    @Column(nullable = true, length = 100)
     private String title;
 
     @Column(nullable = false)
     private String content;
 
-    public void update(String title, String content) {
+    public void update(String title, String content, String email) {
         this.title = title;
         this.content = content;
+        this.email = email;
     }
 
 }

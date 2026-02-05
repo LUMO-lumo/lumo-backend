@@ -35,6 +35,11 @@ public class MemberDeviceDTO {
     )
     private String osVersion;
 
+    @Schema(
+            description = "기기 고유값",
+            example = "E2C56DB5-DFFB-48D2-B060-D0F5A71096E0"
+    )
+    private String uuid;
 
 
     public static MemberDeviceDTO from(MemberDevice memberDevice) {
@@ -42,7 +47,8 @@ public class MemberDeviceDTO {
                 memberDevice.getId(),
                 memberDevice.getDeviceName(),
                 memberDevice.getModelName(),
-                memberDevice.getOsVersion()
+                memberDevice.getOsVersion(),
+                memberDevice.getUuid()
         );
     }
 }

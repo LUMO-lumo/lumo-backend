@@ -38,6 +38,7 @@ public class MemberDeviceService {
                 .deviceName(request.getDeviceName())
                 .modelName(request.getModelName())
                 .osVersion(request.getOsVersion())
+                .uuid(request.getUuid())
                 .build();
 
         member.getDeviceList().add(device);
@@ -70,7 +71,8 @@ public class MemberDeviceService {
         memberDevice.update(
                 request.getDeviceName(),
                 request.getModelName(),
-                request.getOsVersion()
+                request.getOsVersion(),
+                request.getUuid()
         );
     }
 

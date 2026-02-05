@@ -54,4 +54,7 @@ public class AlarmSnooze extends BaseEntity {
     @Column(name = "max_count")
     @Builder.Default
     private Integer maxCount = 3;
+
+
+
 }

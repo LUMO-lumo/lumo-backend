@@ -46,7 +46,9 @@ public enum AlarmSuccessCode implements BaseCode {
     MISSION_HISTORY_RETRIEVED(HttpStatus.OK, "ALARM_2049", "미션 기록 조회에 성공했습니다."),
 
     // 알람 사운드
-    ALARM_SOUNDS_RETRIEVED(HttpStatus.OK, "ALARM_2051", "알람 사운드 목록 조회에 성공했습니다.");
+    ALARM_SOUNDS_RETRIEVED(HttpStatus.OK, "ALARM_2051", "알람 사운드 목록 조회에 성공했습니다."),
+
+    STATISTICS_RETRIEVED(HttpStatus.OK, "ALARM_2051", "통계 조회에 성공했습니다.");
 
 
     private final HttpStatus httpStatus;

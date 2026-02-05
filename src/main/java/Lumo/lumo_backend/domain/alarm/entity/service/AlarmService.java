@@ -28,60 +28,56 @@ public class AlarmService {
     private final MissionContentRepository missionContentRepository;
     private final MissionHistoryRepository missionHistoryRepository;
     private final AlarmSoundService alarmSoundService;
+    private final AlarmSnoozeRepository alarmSnoozeRepository;
 
     /**
      * 알람 생성
      */
     @Transactional
     public AlarmResponseDto createAlarm(Member member, AlarmCreateRequestDto requestDto) {
-        // 사운드 타입 유효성 검증
-        String soundType = validateAndGetSoundType(requestDto.getSoundType());
-
-        // 알람 생성
+        // 1. 알람 생성 (먼저 저장하여 ID 발급)
         Alarm alarm = Alarm.builder()
                 .member(member)
                 .alarmTime(requestDto.getAlarmTime())
                 .label(requestDto.getLabel())
                 .isEnabled(requestDto.getIsEnabled())
-                .soundType(soundType)
+                .soundType(requestDto.getSoundType())
                 .vibration(requestDto.getVibration())
                 .volume(requestDto.getVolume())
                 .build();
 
-        // 반복 요일 설정
-        if (requestDto.getRepeatDays() != null && !requestDto.getRepeatDays().isEmpty()) {
-            List<AlarmRepeatDay> repeatDays = requestDto.getRepeatDays().stream()
-                    .map(dayOfWeek -> AlarmRepeatDay.builder()
-                            .dayOfWeek(dayOfWeek)
-                            .build())
-                    .collect(Collectors.toList());
-            alarm.getRepeatDays().addAll(repeatDays);
-        }
+        // 2. 알람 먼저 저장 (alarmId 발급받기)
+        Alarm savedAlarm = alarmRepository.save(alarm);
 
-        // 스누즈 설정
+        // 3. 스누즈 설정 (이제 savedAlarm에는 alarmId가 있음)
         if (requestDto.getSnoozeSetting() != null) {
             AlarmSnooze snooze = AlarmSnooze.builder()
-                    .alarm(alarm)
+                    .alarm(savedAlarm)
                     .isEnabled(requestDto.getSnoozeSetting().getIsEnabled())
                     .intervalSec(requestDto.getSnoozeSetting().getIntervalSec())
                     .maxCount(requestDto.getSnoozeSetting().getMaxCount())
                     .build();
-            alarm = Alarm.builder()
-                    .alarmId(alarm.getAlarmId())
-                    .member(alarm.getMember())
-                    .alarmTime(alarm.getAlarmTime())
-                    .label(alarm.getLabel())
-                    .isEnabled(alarm.getIsEnabled())
-                    .soundType(alarm.getSoundType())
-                    .vibration(alarm.getVibration())
-                    .volume(alarm.getVolume())
-                    .repeatDays(alarm.getRepeatDays())
-                    .alarmSnooze(snooze)
-                    .build();
+
+            // AlarmSnooze 저장
+            alarmSnoozeRepository.save(snooze);
         }
 
-        Alarm savedAlarm = alarmRepository.save(alarm);
-        return AlarmResponseDto.from(savedAlarm);
+        // 4. 반복 요일 설정 (알람이 저장된 후에 설정)
+        if (requestDto.getRepeatDays() != null && !requestDto.getRepeatDays().isEmpty()) {
+            List<AlarmRepeatDay> repeatDays = requestDto.getRepeatDays().stream()
+                    .map(dayOfWeek -> AlarmRepeatDay.builder()
+                            .alarm(savedAlarm)
+                            .dayOfWeek(dayOfWeek)
+                            .build())
+                    .collect(Collectors.toList());
+            repeatDayRepository.saveAll(repeatDays);
+        }
+
+        // 5. 최종 조회하여 반환 (모든 연관관계 포함)
+        Alarm finalAlarm = alarmRepository.findById(savedAlarm.getAlarmId())
+                .orElseThrow(() -> new AlarmException(AlarmErrorCode.ALARM_NOT_FOUND));
+
+        return AlarmResponseDto.from(finalAlarm);
     }
 
     /**
@@ -542,5 +538,107 @@ public class AlarmService {
     private Alarm findAlarmByIdAndMember(Long alarmId, Member member) {
         return alarmRepository.findByIdAndMemberWithDetails(alarmId, member)
                 .orElseThrow(() -> new AlarmException(AlarmErrorCode.ALARM_NOT_FOUND));
+    }
+
+
+    @Transactional
+    public AlarmLogResponseDto dismissAlarm(Member member, Long alarmId, AlarmDismissRequestDto requestDto) {
+        // 1. 알람 조회
+        Alarm alarm = findAlarmByIdAndMember(alarmId, member);
+
+        // 2. 최근 울림 기록 찾기
+        List<AlarmLog> recentLogs = alarmLogRepository.findByAlarmOrderByTriggeredAtDesc(alarm);
+        AlarmLog recentLog = recentLogs.get(0);
+
+        // 3. AlarmLog 업데이트
+        AlarmLog updatedLog = AlarmLog.builder()
+                .logId(recentLog.getLogId())
+                .dismissedAt(LocalDateTime.now())
+                .dismissType(requestDto.getDismissType())
+                .snoozeCount(requestDto.getSnoozeCount())
+                .build();
+
+        AlarmLog savedLog = alarmLogRepository.save(updatedLog);
+
+        // 4. 미션으로 해제한 경우 Member 통계 업데이트
+        if (requestDto.getDismissType() == DismissType.MISSION) {
+            updateMemberStatistics(member);
+        }
+
+        return AlarmLogResponseDto.from(savedLog);
+    }
+
+    private void updateMemberStatistics(Member member) {
+        // 이번 달 시작일
+        LocalDateTime monthStart = LocalDateTime.now()
+                .withDayOfMonth(1)
+                .withHour(0).withMinute(0).withSecond(0).withNano(0);
+
+        // 이번 달 미션 총 시도 횟수
+        int totalAttempts = (int) missionHistoryRepository
+                .findByAlarm_Member_IdOrderByCompletedAtDesc(member.getId())
+                .stream()
+                .filter(mh -> mh.getCompletedAt().isAfter(monthStart))
+                .count();
+
+        // 이번 달 미션 성공 횟수
+        int totalSuccess = (int) missionHistoryRepository
+                .findByAlarm_Member_IdOrderByCompletedAtDesc(member.getId())
+                .stream()
+                .filter(mh -> mh.getCompletedAt().isAfter(monthStart) && mh.getIsSuccess())
+                .count();
+
+        // 오늘 미션 성공 확인
+        LocalDateTime todayStart = LocalDateTime.now()
+                .withHour(0).withMinute(0).withSecond(0).withNano(0);
+
+        boolean todaySuccess = missionHistoryRepository
+                .findByAlarm_Member_IdOrderByCompletedAtDesc(member.getId())
+                .stream()
+                .anyMatch(mh -> mh.getCompletedAt().isAfter(todayStart) && mh.getIsSuccess());
+
+        // 연속 성공 횟수 증가
+        if (todaySuccess) {
+            member.incrementConsecutiveSuccessCnt();
+        }
+
+        // 이번 달 달성률 업데이트
+        member.updateMissionSuccessRate(totalSuccess, totalAttempts);
+    }
+
+    /**
+     * 내 통계 조회
+     */
+    public MemberStatisticsResponseDto getMyStatistics(Member member) {
+        // 이번 달 시작일
+        LocalDateTime monthStart = LocalDateTime.now()
+                .withDayOfMonth(1)
+                .withHour(0)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
+
+        // 이번 달 미션 시도 횟수
+        int totalAttempts = (int) missionHistoryRepository
+                .findByAlarm_Member_IdOrderByCompletedAtDesc(member.getId())
+                .stream()
+                .filter(mh -> mh.getCompletedAt().isAfter(monthStart))
+                .count();
+
+        // 이번 달 미션 성공 횟수
+        int totalSuccess = (int) missionHistoryRepository
+                .findByAlarm_Member_IdOrderByCompletedAtDesc(member.getId())
+                .stream()
+                .filter(mh -> mh.getCompletedAt().isAfter(monthStart) && mh.getIsSuccess())
+                .count();
+
+        // 이번 달 알람 울림 횟수
+        int totalTriggered = (int) alarmLogRepository
+                .findByAlarm_Member_IdOrderByTriggeredAtDesc(member.getId())
+                .stream()
+                .filter(log -> log.getTriggeredAt().isAfter(monthStart))
+                .count();
+
+        return MemberStatisticsResponseDto.from(member, totalAttempts, totalSuccess, totalTriggered);
     }
 }
