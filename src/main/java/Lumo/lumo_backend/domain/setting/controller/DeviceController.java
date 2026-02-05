@@ -59,14 +59,14 @@ public class DeviceController {
     }
 
 //    @DeleteMapping("/{deviceId}")
-//    public APIResponse<Void> delete(
-//            @AuthenticationPrincipal CustomUserDetails userDetails,
-//            @PathVariable Long deviceId
-//    ) {
-//
-//        memberDeviceService.delete(userDetails.getMember().getId(), deviceId);
-//        return APIResponse.onSuccess(null, SettingSuccessCode.DEVICE_DELETE_SUCCESS);
-//    }
+    public APIResponse<Void> delete(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long deviceId
+    ) {
+
+        memberDeviceService.delete(userDetails.getMember().getId(), deviceId);
+        return APIResponse.onSuccess(null, SettingSuccessCode.DEVICE_DELETE_SUCCESS);
+    }
 
 
 }

@@ -34,9 +34,10 @@ public class Feedback extends BaseEntity {
     @Column(nullable = false)
     private String content;
 
-    public void update(String title, String content) {
+    public void update(String title, String content, String email) {
         this.title = title;
         this.content = content;
+        this.email = email;
     }
 
 }

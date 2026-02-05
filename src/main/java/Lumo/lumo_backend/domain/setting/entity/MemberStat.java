@@ -39,7 +39,6 @@ public class MemberStat extends BaseEntity {
 
 //    @Column(nullable = false)
 //    private int activatedAlarmOffCount;
-
     public static MemberStat createDefault() {
         return MemberStat.builder()
 //                .member(member)

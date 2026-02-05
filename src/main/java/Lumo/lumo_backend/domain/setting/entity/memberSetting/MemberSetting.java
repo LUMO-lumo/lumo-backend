@@ -22,10 +22,6 @@ public class MemberSetting extends BaseEntity {
     @Column(name = "member_setting_id")
     private Long id;
 
-//    @OneToOne
-//    @JoinColumn(name = "member_id", nullable = false, unique = true)
-//    private Member member;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Theme theme = Theme.SYSTEM;
@@ -79,8 +75,7 @@ public class MemberSetting extends BaseEntity {
 
     public static MemberSetting createDefault() {
         return MemberSetting.builder()
-//                .member(member)
-                .theme(Theme.LIGHT)
+                .theme(Theme.SYSTEM)
                 .language(Language.KO)
                 .build();
     }
