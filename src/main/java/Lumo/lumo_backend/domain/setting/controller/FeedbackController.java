@@ -33,12 +33,13 @@ public class FeedbackController {
 
 
 //    @GetMapping("/{feedbackId}")
-    public APIResponse<FeedbackResDTO> get(
+    public APIResponse<Void> get(
             @AuthenticationPrincipal CustomUserDetails userDetail,
             @PathVariable Long feedbackId
     ) {
 
-        return APIResponse.onSuccess(feedbackService.get(userDetail.getMember().getId(), feedbackId), SuccessCode.OK);
+//        return APIResponse.onSuccess(feedbackService.get(userDetail.getMember().getId(), feedbackId), SuccessCode.OK);
+        return APIResponse.onSuccess(null, SuccessCode.OK);
     }
 
 //    @PatchMapping("/{feedbackId}")
@@ -47,7 +48,8 @@ public class FeedbackController {
             @PathVariable Long feedbackId,
             @RequestBody FeedbackUpdateReqDTO request
     ) {
-        feedbackService.update(userDetail.getMember().getId(), feedbackId, request);
+//        feedbackService.update(userDetail.getMember().getId(), feedbackId, request);
+
         return APIResponse.onSuccess(null, SuccessCode.OK);
     }
 
