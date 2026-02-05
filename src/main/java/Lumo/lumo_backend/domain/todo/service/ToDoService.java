@@ -90,12 +90,6 @@ public class ToDoService {
     }
 
     @Transactional(readOnly = true)
-    public List<String> getTodayToDoList(Member member) {
-        Member persistedMember = getPersistedMember(member);
-        return toDoRepository.findContentByMemberAndEventDate(persistedMember, LocalDate.now());
-    }
-
-    @Transactional(readOnly = true)
     public String getBriefing(Member member) {
         Member persistedMember = getPersistedMember(member);
 
