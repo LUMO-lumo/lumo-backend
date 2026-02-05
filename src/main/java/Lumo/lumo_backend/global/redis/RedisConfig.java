@@ -46,10 +46,13 @@ public class RedisConfig {
      *
      * */
 
-    /*@Bean
+    /*
+    @Bean
     public RedisConnectionFactory redisConnectionFactory (){
         return new LettuceConnectionFactory(host, port);
-    }*/
+    }
+
+     */
 
     @Bean
     public RedisTemplate<String, String> redisTemplate (){

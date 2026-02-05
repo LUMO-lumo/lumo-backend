@@ -34,11 +34,15 @@ public class MemberDevice extends BaseEntity {
     @Column(nullable = false)
     private String osVersion;
 
+    @Column(nullable = false)
+    private String uuid;
 
-    public void update(String deviceName, String modelName, String osVersion) {
+
+    public void update(String deviceName, String modelName, String osVersion, String uuid) {
         this.deviceName = deviceName;
         this.modelName = modelName;
         this.osVersion = osVersion;
+        this.uuid = uuid;
     }
 
 }

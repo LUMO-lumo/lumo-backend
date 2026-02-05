@@ -1,9 +1,27 @@
 package Lumo.lumo_backend.domain.setting.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 @Getter
 public class FeedbackUpdateReqDTO {
+
+    @Schema(
+            description = "피드백 제목",
+            example= "피드백 제목 테스트"
+    )
     private String title;
+
+
+    @Schema(
+            description = "피드백 내용",
+            example= "피드백 내용 테스트"
+    )
     private String content;
+
+    @Schema(
+            description = "피드백 답변 받을 이메일",
+            example= "lumo@example.com"
+    )
+    private String email;
 }

@@ -32,7 +32,7 @@ public class FeedbackController {
     }
 
 
-    @GetMapping("/{feedbackId}")
+//    @GetMapping("/{feedbackId}")
     public APIResponse<FeedbackResDTO> get(
             @AuthenticationPrincipal CustomUserDetails userDetail,
             @PathVariable Long feedbackId
@@ -41,7 +41,7 @@ public class FeedbackController {
         return APIResponse.onSuccess(feedbackService.get(userDetail.getMember().getId(), feedbackId), SuccessCode.OK);
     }
 
-    @PatchMapping("/{feedbackId}")
+//    @PatchMapping("/{feedbackId}")
     public APIResponse<Void> update(
             @AuthenticationPrincipal CustomUserDetails userDetail,
             @PathVariable Long feedbackId,
