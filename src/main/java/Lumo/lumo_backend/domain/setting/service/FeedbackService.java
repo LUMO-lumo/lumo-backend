@@ -18,6 +18,8 @@ import lombok.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,25 +57,25 @@ public class FeedbackService {
 //            throw new GeneralException(ErrorCode.BAD_REQUEST);
 //        }
 //
-//        return FeedbackResDTO.from(feedback);
+//        return FeedbackResDTO.from();
 //    }
-//
-//    public void update(Long memberId, Long feedbackId, FeedbackUpdateReqDTO request) {
-//        Feedback feedback = feedbackRepository.findById(feedbackId)
-//                .orElseThrow(
-//                        () -> new SettingException(SettingErrorCode.FEEDBACK_NOT_FOUND)
-//                );
-//
-//
-//        // member 검증
-//        if (feedback.getMember().getId() != memberId) {
-//            throw new GeneralException(ErrorCode.BAD_REQUEST);
-//        }
-//
-//        feedback.update(request.getTitle(), request.getContent());
-//    }
-//
-//    public void delete(Long feedbackId) {
-//        feedbackRepository.deleteById(feedbackId);
-//    }
+
+    public void update(Long memberId, Long feedbackId, FeedbackUpdateReqDTO request) {
+        Feedback feedback = feedbackRepository.findById(feedbackId)
+                .orElseThrow(
+                        () -> new SettingException(SettingErrorCode.FEEDBACK_NOT_FOUND)
+                );
+
+
+        // member 검증
+        if (feedback.getMember().getId() != memberId) {
+            throw new GeneralException(ErrorCode.BAD_REQUEST);
+        }
+
+        feedback.update(request.getTitle(), request.getContent(), request.getEmail());
+    }
+
+    public void delete(Long feedbackId) {
+        feedbackRepository.deleteById(feedbackId);
+    }
 }
