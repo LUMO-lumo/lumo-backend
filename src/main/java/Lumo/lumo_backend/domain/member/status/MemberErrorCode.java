@@ -18,6 +18,7 @@ public enum MemberErrorCode implements BaseErrorCode {
     CANT_FOUND_MEMBER(HttpStatus.BAD_REQUEST, "MEMBER4000", "알 수 없는 사용자입니다."),
     WRONG_CODE(HttpStatus.BAD_REQUEST, "MEMBER4001", "옳지 않은 인증 코드 입니다."),
     EXIST_MEMBER(HttpStatus.BAD_REQUEST, "MEMBER4002", "이미 존재하는 회원입니다."),
+    ALREADY_SEND(HttpStatus.BAD_REQUEST, "MEMBER4003", "이미 이메일을 보냈습니다, 3분 뒤 다시 요청해주세요."),
 
 
     CANT_SEND_EMAIL (HttpStatus.INTERNAL_SERVER_ERROR, "MEMBER4001", "해당 이메일로 메일을 보낼 수 없습니다. 관리자에게 연락해주시기 바랍니다")

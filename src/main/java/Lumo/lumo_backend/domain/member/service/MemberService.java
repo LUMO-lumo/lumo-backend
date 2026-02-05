@@ -80,6 +80,11 @@ public class MemberService {
 
     @Async
     public void requestVerificationCode(String email) {
+
+        if (redisTemplate.opsForValue().get(email) != null){
+            throw new MemberException(MemberErrorCode.ALREADY_SEND); // 따닥 방지
+        }
+
         MimeMessage msg = mailSender.createMimeMessage();
         MimeMessageHelper helper;
         String code;
@@ -224,6 +229,7 @@ public class MemberService {
 
     public void verifyCode(String email, String code) {
         String savedCode = (String) redisTemplate.opsForValue().get(email);
+        log.info("saved code {} to {}", savedCode, email);
 
         if (savedCode == null) {
             throw new MemberException(MemberErrorCode.WRONG_CODE);
