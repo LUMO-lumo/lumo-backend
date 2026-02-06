@@ -1,6 +1,7 @@
 package Lumo.lumo_backend.domain.alarm.entity.controller;
 
 import Lumo.lumo_backend.domain.alarm.entity.dto.*;
+import Lumo.lumo_backend.domain.alarm.entity.service.AlarmSoundService;
 import Lumo.lumo_backend.domain.alarm.entity.status.AlarmSuccessCode;
 import Lumo.lumo_backend.domain.alarm.entity.service.AlarmService;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
@@ -23,13 +24,25 @@ import java.util.List;
 public class AlarmController {
 
     private final AlarmService alarmService;
+    private final AlarmSoundService alarmSoundService;
+
+    /**
+     * 사용 가능한 알람 사운드 목록 조회
+     * GET /api/alarms/sounds
+     */
+    @GetMapping("/sounds")
+    @Operation(summary = "알람 사운드 목록 조회 API", description = "클라이언트에서 사용 가능한 알람 사운드 식별자 목록을 조회하는 API입니다.")
+    public APIResponse<List<AlarmSoundResponseDto>> getAvailableSounds() {
+        List<AlarmSoundResponseDto> response = alarmSoundService.getAvailableSounds();
+        return APIResponse.onSuccess(response, AlarmSuccessCode.ALARM_SOUNDS_RETRIEVED);
+    }
 
     /**
      * 알람 생성
      * POST /api/alarms
      */
     @PostMapping
-    @Operation(summary = "알람 생성 API", description = "새로운 알람을 생성하는 API입니다. 알람 시간, 라벨, 사운드, 반복 요일, 스누즈 설정을 포함할 수 있습니다.")
+    @Operation(summary = "알람 생성 API", description = "새로운 알람을 생성하는 API입니다. soundType에는 사운드 식별자를 전달해주세요.")
     public APIResponse<AlarmResponseDto> createAlarm(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @Valid @RequestBody AlarmCreateRequestDto requestDto
@@ -274,8 +287,6 @@ public class AlarmController {
         return APIResponse.onSuccess(response, AlarmSuccessCode.MISSION_HISTORY_RETRIEVED);
     }
 
-
-
     /**
      * 내 알람 울림 기록 조회
      * GET /api/members/me/alarm-logs
@@ -316,5 +327,33 @@ public class AlarmController {
     ) {
         AlarmLogResponseDto response = alarmService.triggerAlarm(userDetails.getMember(), alarmId);
         return APIResponse.onSuccess(response, AlarmSuccessCode.ALARM_TRIGGERED);
+    }
+
+    /**
+     * 알람 해제 기록
+     * POST /api/alarms/{alarmId}/dismiss
+     */
+    @PostMapping("/{alarmId}/dismiss")
+    @Operation(summary = "알람 해제 기록 API", description = "알람을 해제했을 때 호출하는 API입니다. 해제 방식(미션/스누즈/수동)과 스누즈 횟수를 기록합니다.")
+    public APIResponse<AlarmLogResponseDto> dismissAlarm(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long alarmId,
+            @Valid @RequestBody AlarmDismissRequestDto requestDto
+    ) {
+        AlarmLogResponseDto response = alarmService.dismissAlarm(userDetails.getMember(), alarmId, requestDto);
+        return APIResponse.onSuccess(response, AlarmSuccessCode.ALARM_DISMISSED);
+    }
+
+    /**
+     * 내 통계 조회
+     * GET /api/members/me/statistics
+     */
+    @GetMapping("/members/me/statistics")
+    @Operation(summary = "내 통계 조회 API", description = "이번 달 미션 달성률, 연속 성공 일수, 알람 울림 횟수 등을 조회하는 API입니다.")
+    public APIResponse<MemberStatisticsResponseDto> getMyStatistics(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        MemberStatisticsResponseDto response = alarmService.getMyStatistics(userDetails.getMember());
+        return APIResponse.onSuccess(response, AlarmSuccessCode.STATISTICS_RETRIEVED);
     }
 }

@@ -3,8 +3,8 @@ package Lumo.lumo_backend.domain.setting.controller.notice;
 import Lumo.lumo_backend.domain.setting.dto.NoticePreviewDTO;
 import Lumo.lumo_backend.domain.setting.dto.NoticeResponseDTO;
 import Lumo.lumo_backend.domain.setting.service.NoticeService;
+import Lumo.lumo_backend.domain.setting.status.SettingSuccessCode;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
-import Lumo.lumo_backend.global.apiResponse.status.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-//@RestController
+@RestController
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/notices")
@@ -30,7 +30,7 @@ public class NoticeController {
             String keyword
     ) {
         List<NoticePreviewDTO> list = noticeService.getList(keyword);
-        return APIResponse.onSuccess(list, SuccessCode.OK); //todo 성공코드 수정
+        return APIResponse.onSuccess(list, SettingSuccessCode.NOTICE_LIST_SUCCESS);
     }
 
     @Operation(summary = "공지사항 상세 조회")
@@ -39,6 +39,6 @@ public class NoticeController {
             @PathVariable Long noticeId
     ) {
         NoticeResponseDTO noticeResponseDTO = noticeService.get(noticeId);
-        return APIResponse.onSuccess(noticeResponseDTO, SuccessCode.OK); //todo 성공 코드 수정
+        return APIResponse.onSuccess(noticeResponseDTO, SettingSuccessCode.NOTICE_DETAIL_SUCCESS);
     }
 }

@@ -44,6 +44,9 @@ management:
     web:
       exposure:
         include: health, prometheus # health + prometheus 엔드포인트 노출
+      cors:
+        allowed-headers: "*"
+        allowed-methods: GET
   endpoint:
     health:
       show-details: always # 상세 상태 확인

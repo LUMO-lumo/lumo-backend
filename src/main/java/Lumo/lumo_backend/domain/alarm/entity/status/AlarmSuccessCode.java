@@ -43,7 +43,13 @@ public enum AlarmSuccessCode implements BaseCode {
     MISSION_STARTED(HttpStatus.OK, "ALARM_2046", "미션이 시작되었습니다."),
     MISSION_SUBMITTED(HttpStatus.OK, "ALARM_2047", "미션 답안이 제출되었습니다."),
     MISSION_WALK_UPDATED(HttpStatus.OK, "ALARM_2048", "걷기 미션 진행률이 업데이트되었습니다."),
-    MISSION_HISTORY_RETRIEVED(HttpStatus.OK, "ALARM_2049", "미션 기록 조회에 성공했습니다.");
+    MISSION_HISTORY_RETRIEVED(HttpStatus.OK, "ALARM_2049", "미션 기록 조회에 성공했습니다."),
+
+    // 알람 사운드
+    ALARM_SOUNDS_RETRIEVED(HttpStatus.OK, "ALARM_2051", "알람 사운드 목록 조회에 성공했습니다."),
+
+    STATISTICS_RETRIEVED(HttpStatus.OK, "ALARM_2051", "통계 조회에 성공했습니다.");
+
 
     private final HttpStatus httpStatus;
     private final String code;

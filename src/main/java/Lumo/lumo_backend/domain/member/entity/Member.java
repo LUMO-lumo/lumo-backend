@@ -51,7 +51,7 @@ public class Member extends BaseEntity {
 
     @Column (nullable = false)
     @ColumnDefault("0")
-    private Integer missionSuccessRate; // 이번 달 달성률, LocalDate.now().getDayOfMonth()/member.getConsecutiveSuccessCnt() 로 계산 가능
+    private Integer missionSuccessRate; // 이번 달 달성률
 
     @Column(nullable = false)
     @ColumnDefault("0")
@@ -95,13 +95,36 @@ public class Member extends BaseEntity {
                 .role(role)
                 .build();
 
-        MemberSetting setting = MemberSetting.createDefault();
-        MemberStat stat = MemberStat.createDefault();
-
-        member.setting = setting;
-        member.stat = stat;
+        member.setting = MemberSetting.createDefault();
+        member.stat = MemberStat.createDefault();
 
         return member;
     }
 
+    /**
+     * 미션 연속 성공 횟수 초기화
+     */
+    public void initConsecutiveSuccessCnt() {
+        this.consecutiveSuccessCnt = 0;
+    }
+
+    /**
+     * 미션 연속 성공 횟수 증가
+     */
+    public void incrementConsecutiveSuccessCnt() {
+        this.consecutiveSuccessCnt++;
+    }
+
+    /**
+     * 이번 달 미션 달성률 업데이트
+     * @param successCount 이번 달 성공 횟수
+     * @param totalCount 이번 달 시도 횟수
+     */
+    public void updateMissionSuccessRate(int successCount, int totalCount) {
+        if (totalCount == 0) {
+            this.missionSuccessRate = 0;
+        } else {
+            this.missionSuccessRate = (int) Math.round((double) successCount / totalCount * 100);
+        }
+    }
 }

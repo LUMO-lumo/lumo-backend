@@ -5,11 +5,13 @@ import Lumo.lumo_backend.domain.encouragement.repository.EncouragementRepository
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -17,11 +19,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class EncouragementTextLoader implements CommandLineRunner {
 
-    private final EncouragementRepository repository;
+    private final EncouragementRepository encouragementRepository;
+
+    @Getter
+    private Encouragement todayEncouragement;
 
     @Override
     public void run(String... args) throws IOException {
-        if (repository.count() > 0) {
+        if (encouragementRepository.count() > 0) {
+            loadTodayEncouragement();
             return;
         }
 
@@ -34,14 +40,21 @@ public class EncouragementTextLoader implements CommandLineRunner {
                 .filter(line -> !line.isEmpty())
                 .forEach(line -> {
                     try {
-                        repository.save(Encouragement.builder()
+                        encouragementRepository.save(Encouragement.builder()
                                 .content(line)
                                 .build());
                     } catch (DataIntegrityViolationException ignore) {
 
                     }
                 });
+
+        loadTodayEncouragement();
     }
 
+    @Scheduled(cron = "0 0 0 * * *")
+    public void loadTodayEncouragement() {
+        todayEncouragement =encouragementRepository.findRandomOne();
+        log.info("Today encouragement is {}", todayEncouragement.getContent());
+    }
 }
 
