@@ -31,7 +31,7 @@ spring:
   data:
     redis:
       host: ${REDIS_HOST}
-      port: 6379
+      port: ${REDIS_PORT}
       ssl:
         enabled: true
 
