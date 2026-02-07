@@ -31,9 +31,9 @@ spring:
   data:
     redis:
       host: ${REDIS_HOST}
-      port: 6379
-      ssl:
-        enabled: true
+      port: ${REDIS_PORT}
+#      ssl:
+#        enabled: true
 
   sql:
     init:
