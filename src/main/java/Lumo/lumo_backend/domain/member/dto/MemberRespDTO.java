@@ -41,4 +41,12 @@ public class MemberRespDTO {
         private Integer missionSuccessRate;
         private Integer consecutiveSuccessCnt;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FindEmailRespDTO{
+        private String email;
+    }
 }

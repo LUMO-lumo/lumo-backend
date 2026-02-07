@@ -24,7 +24,7 @@ public class RedisConfig {
     private Integer port;
 
 
-    @Bean
+    /*@Bean
     public RedisConnectionFactory redisConnectionFactory (){
 
         LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
@@ -36,7 +36,7 @@ public class RedisConfig {
         RedisStandaloneConfiguration serverConfig = new RedisStandaloneConfiguration(host, port);
 
         return new LettuceConnectionFactory(serverConfig, clientConfig);
-    }
+    }*/
 
     /**
      * 로컬에서 테스트 하실 경우 ↑ 위 메소드를 주석 처리해주시고, ↓ 아래 메서드를 활성화해주시면 됩니다.
@@ -46,12 +46,10 @@ public class RedisConfig {
      *
      * */
 
-    /*
     @Bean
     public RedisConnectionFactory redisConnectionFactory (){
         return new LettuceConnectionFactory(host, port);
     }
-     */
 
     @Bean
     public RedisTemplate<String, String> redisTemplate (){
