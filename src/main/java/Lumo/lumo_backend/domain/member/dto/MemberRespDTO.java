@@ -1,6 +1,7 @@
 package Lumo.lumo_backend.domain.member.dto;
 
 import Lumo.lumo_backend.domain.member.entity.memberEnum.Login;
+import Lumo.lumo_backend.global.security.jwt.JWT;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,6 +32,16 @@ public class MemberRespDTO {
     public static class LoginRespDTO {
         private Boolean isSuccess;
         private String accessToken;
+        private String username;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MemberInfoDTO {
+        private JWT jwt;
+        private String username;
     }
 
     @Getter

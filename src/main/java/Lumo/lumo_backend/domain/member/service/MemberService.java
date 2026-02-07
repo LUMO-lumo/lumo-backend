@@ -107,7 +107,7 @@ public class MemberService {
         log.info("[MemberService - signIn] Success to signIn -> {}, {}", dto.getEmail(), dto.getUsername());
     }
 
-    public JWT login(MemberReqDTO.LoginReqDTO dto) {
+    public MemberRespDTO.MemberInfoDTO login(MemberReqDTO.LoginReqDTO dto) {
         Member member = memberRepository.findByEmail(dto.getEmail()).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
         if (!encoder.matches(dto.getPassword(), member.getPassword())) {
             throw new MemberException(MemberErrorCode.CANT_FOUND_MEMBER);
@@ -121,7 +121,8 @@ public class MemberService {
 
         log.info("[MemberService - login] Success to login -> {} - {}", dto.getEmail(), jwt.getRefreshToken());
 
-        return jwt;
+
+        return MemberRespDTO.MemberInfoDTO.builder().jwt(jwt).username(member.getUsername()).build();
     }
 
     public void logout (Long memberId){
