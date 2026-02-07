@@ -2,11 +2,9 @@ package Lumo.lumo_backend.domain.member.controller;
 
 import Lumo.lumo_backend.domain.member.dto.MemberReqDTO;
 import Lumo.lumo_backend.domain.member.dto.MemberRespDTO;
-import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.domain.member.service.MemberService;
 import Lumo.lumo_backend.domain.member.status.MemberSuccessCode;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
-import Lumo.lumo_backend.global.security.jwt.JWT;
 import Lumo.lumo_backend.global.security.userDetails.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,9 +37,9 @@ public class MemberController {
     @Operation(summary = "로그인 API", description = "닉네임과 비밀번호로 로그인을 진행합니다. 성공 여부와 JWT accessToken을 반환합니다. 쿠키로는 RefreshToken를 설정하도록 하였습니다. ")
     public APIResponse<MemberRespDTO.LoginRespDTO> reqLogin (@RequestBody MemberReqDTO.LoginReqDTO dto, HttpServletResponse response){
 
-        JWT jwt = memberService.login(dto);
+        MemberRespDTO.MemberInfoDTO memberInfo = memberService.login(dto);
 
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", jwt.getRefreshToken())
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", memberInfo.getJwt().getRefreshToken())
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
@@ -50,7 +48,7 @@ public class MemberController {
                 .build();
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        MemberRespDTO.LoginRespDTO respDTO = MemberRespDTO.LoginRespDTO.builder().isSuccess(true).accessToken(jwt.getAccessToken()).build();
+        MemberRespDTO.LoginRespDTO respDTO = MemberRespDTO.LoginRespDTO.builder().username(memberInfo.getUsername()).isSuccess(true).accessToken(memberInfo.getJwt().getAccessToken()).build();
         return APIResponse.onSuccess(respDTO, MemberSuccessCode.LOGIN_SUCCESS);
     }
 
