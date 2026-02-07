@@ -17,7 +17,7 @@ else
         BEFORE_PORT=8081
 fi
 
-echo "${BEFORE_COLOR} is running! start deploying new ${TARGET_COLOR}"
+echo ">>> ${BEFORE_COLOR} is running! start deploying new ${TARGET_COLOR}"
 
 sudo docker compose up -d ${TARGET_COLOR}
 
@@ -48,10 +48,13 @@ echo ">>> Change Nginx port to ${TARGET_PORT}"
 echo "set \$service_url http://127.0.0.1:${TARGET_PORT};" | sudo tee /etc/nginx/conf.d/service-url.inc
 sudo nginx -s reload
 
-echo ">>> Cleaning up unused images..."
-sudo docker image prune -f
-
 echo ">>> Shutting down previous container (${BEFORE_COLOR})..."
 sudo docker compose stop ${BEFORE_COLOR}
 
-echo ">>> Deploy Success!!!!!!!!!!!!!!!!!!!"
+echo ">>> Removing previous container (${BEFORE_COLOR})..."
+sudo docker compose rm -f ${BEFORE_COLOR}
+
+echo ">>> Cleaning up unused images..."
+sudo docker image prune -f
+
+echo ">>> Deploy Success :) !!!!!!!!!!!!!!!!!!!"
