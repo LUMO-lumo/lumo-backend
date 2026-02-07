@@ -130,6 +130,17 @@ public class MemberService {
         log.info("[MemberService - logout] Success to logout -> {}", member.getEmail());
     }
 
+    public MemberRespDTO.FindEmailRespDTO findEmail(String email) {
+        boolean existsByEmail = memberRepository.existsByEmail(email);
+
+        if (existsByEmail) {
+            return MemberRespDTO.FindEmailRespDTO.builder().email(email).build();
+        }
+        else{
+            throw new MemberException(MemberErrorCode.CANT_FOUND_MEMBER);
+        }
+    }
+
     public MemberRespDTO.GetMissionRecordRespDTO getMissionRecord (Member persistedMember) {
 
         MissionStat missionStat = missionHistoryRepository.findMissionStatsByMember(persistedMember.getId(), LocalDate.now().withDayOfMonth(1).atStartOfDay());
@@ -151,4 +162,13 @@ public class MemberService {
         memberRepository.findAll().forEach(Member::initConsecutiveSuccessCnt);
     }
 
+    @Transactional
+    public MemberRespDTO.SimpleAPIRespDTO changePassword(String email, String newPassword) {
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
+
+        String encode = encoder.encode(newPassword);
+
+        member.updatePassword(encode);
+        return MemberRespDTO.SimpleAPIRespDTO.builder().isSuccess(true).build();
+    }
 }

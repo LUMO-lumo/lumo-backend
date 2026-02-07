@@ -20,6 +20,8 @@ public enum MemberSuccessCode implements BaseCode {
     GET_LOGIN_SUCCESS (HttpStatus.OK, "MEMBER_2005", "로그인 방식 조회 성공입니다."),
     LOGIN_SUCCESS (HttpStatus.OK, "MEMBER_2006", "로그인 요청 성공입니다."),
     LOGOUT_SUCCESS (HttpStatus.OK, "MEMBER_2007", "로그아웃 성공입니다."),
+    FIND_EMAIL_SUCCESS (HttpStatus.OK, "MEMBER_2007", "이메일 찾기 성공입니다."),
+    CHANGE_PW_SUCCESS (HttpStatus.OK, "MEMBER_2008", "비밀번호 재설정 성공입니다.")
 
     ;
 

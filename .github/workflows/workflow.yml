@@ -5,11 +5,11 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  build-and-push-to-docker:
     runs-on: ubuntu-latest
     steps:
       - name: checking repo...
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - uses: actions/checkout@v4
       - name: setting jdk...
@@ -17,9 +17,15 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+          cache: 'gradle' # 캐싱
+
+      - name: build with gradle # 배포 전 빌드 테스팅
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean build -x test 
 
       - name: logging in docker...
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{secrets.DOCKER_USERNAME}}
           password: ${{secrets.DOCKER_PASSWORD}}
@@ -30,6 +36,19 @@ jobs:
           docker build -t ${{secrets.DOCKER_USERNAME}}/lumo .
           docker push ${{secrets.DOCKER_USERNAME}}/lumo
 
+      - name: copy docker-compose and env...
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{secrets.EC2_HOST}}
+          username: ${{secrets.EC2_USERNAME}}
+          key: ${{secrets.EC2_PRIVATE_KEY}}
+          source: "docker-compose.yml, deploy.sh"
+          target: "~/lumo"
+
+  ec2-deploy:
+    needs: build-and-push-to-docker
+    runs-on: ubuntu-latest
+    steps:
       - name: working in ec2...
         uses: appleboy/ssh-action@master
         with:
@@ -37,14 +56,8 @@ jobs:
           username: ${{secrets.EC2_USERNAME}}
           key: ${{secrets.EC2_PRIVATE_KEY}}
           script: |
-            if [ ! -d "lumo-backend" ]; then
-               git clone https://github.com/LUMO-lumo/lumo-backend.git
-            fi
-            cd lumo-backend
-
-            sudo git fetch
-            sudo git checkout -f main
-            sudo git reset --hard origin/main
+            mkdir -p ~/lumo
+            cd ~/lumo
             
             echo "MYSQL_HOST=${{secrets.MYSQL_HOST}}" > .env 
             echo "MYSQL_NAME=${{secrets.MYSQL_NAME}}" >> .env
@@ -55,6 +68,7 @@ jobs:
             echo "MAIL_SENDER_USERNAME=${{secrets.MAIL_SENDER_USERNAME}}" >> .env
             echo "MAIL_SENDER_PASSWORD=${{secrets.MAIL_SENDER_PASSWORD}}" >> .env
             echo "REDIS_HOST=${{secrets.REDIS_HOST}}" >> .env
+            echo "REDIS_PORT=${{secrets.REDIS_PORT}}" >> .env
             echo "JWT_SECRET_KEY=${{secrets.JWT_SECRET_KEY}}" >> .env
             echo "OPENAI_API_KEY=${{secrets.OPENAI_API_KEY}}" >> .env
             

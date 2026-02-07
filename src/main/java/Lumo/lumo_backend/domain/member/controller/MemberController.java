@@ -95,7 +95,20 @@ public class MemberController {
         return APIResponse.onSuccess(MemberRespDTO.SimpleAPIRespDTO.builder().isSuccess(true).build(), MemberSuccessCode.SIGN_IN_SUCCESS); // bool 값 리턴,
     }
 
-//    @GetMapping("/mission-history")
+    @PostMapping("/find-email")
+    @Operation(summary = "비밀번호 재설정 대상 이메일 검색 API", description = "비밀번호를 재설정할 이메일을 찾는 API 입니다")
+    public APIResponse<MemberRespDTO.FindEmailRespDTO> findEmail(@RequestParam String email) {
+        return APIResponse.onSuccess(memberService.findEmail(email), MemberSuccessCode.FIND_EMAIL_SUCCESS);
+    }
+
+    @PatchMapping("/chacnge-pw")
+    @Operation(summary = "비밀번호 재설정 API", description = "비밀번호 재설정하는 API 입니다.")
+    public APIResponse<MemberRespDTO.SimpleAPIRespDTO> changePassword(@RequestParam String email, @RequestParam ("password") String newPassword){
+        return APIResponse.onSuccess(memberService.changePassword(email, newPassword), MemberSuccessCode.CHANGE_PW_SUCCESS);
+    }
+
+
+    //    @GetMapping("/mission-history")
 //    @Operation(summary = "내 미션 수행 기록 조회", description = "사용자가 진행했던 미션의 기록을 모두 확인하는 API 입니다.")
     public APIResponse<Object> getMissionHistory(@AuthenticationPrincipal CustomUserDetails userDetails) {
 //        return APIResponse.onSuccess(memberService.getMissionHistory(userDetails.getMember().getId()), MemberSuccessCode.TEST_SUCCESS);
