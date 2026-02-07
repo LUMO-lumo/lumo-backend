@@ -127,4 +127,8 @@ public class Member extends BaseEntity {
             this.missionSuccessRate = (int) Math.round((double) successCount / totalCount * 100);
         }
     }
+
+    public void updatePassword (String password){
+        this.password = password;
+    }
 }

@@ -162,4 +162,13 @@ public class MemberService {
         memberRepository.findAll().forEach(Member::initConsecutiveSuccessCnt);
     }
 
+    @Transactional
+    public MemberRespDTO.SimpleAPIRespDTO changePassword(String email, String newPassword) {
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
+
+        String encode = encoder.encode(newPassword);
+
+        member.updatePassword(encode);
+        return MemberRespDTO.SimpleAPIRespDTO.builder().isSuccess(true).build();
+    }
 }
