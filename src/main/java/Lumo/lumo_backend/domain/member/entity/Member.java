@@ -67,10 +67,10 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ToDo> toDoList = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL,  orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL,  orphanRemoval = true, fetch = FetchType.LAZY)
     private MemberSetting setting;
 
-    @OneToOne(cascade = CascadeType.ALL,  orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL,  orphanRemoval = true, fetch = FetchType.LAZY)
     private MemberStat stat;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
