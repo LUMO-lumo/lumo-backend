@@ -99,7 +99,7 @@ public class MemberController {
         return APIResponse.onSuccess(memberService.findEmail(email), MemberSuccessCode.FIND_EMAIL_SUCCESS);
     }
 
-    @PatchMapping("/chacnge-pw")
+    @PatchMapping("/change-pw")
     @Operation(summary = "비밀번호 재설정 API", description = "비밀번호 재설정하는 API 입니다.")
     public APIResponse<MemberRespDTO.SimpleAPIRespDTO> changePassword(@RequestParam String email, @RequestParam ("password") String newPassword){
         return APIResponse.onSuccess(memberService.changePassword(email, newPassword), MemberSuccessCode.CHANGE_PW_SUCCESS);
