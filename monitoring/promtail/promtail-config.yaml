@@ -16,7 +16,7 @@ scrape_configs:
 
     pipeline_stages:
       - regex:
-          expression: '^\S+\s+(?P<level>INFO|WARN|ERROR|DEBUG)\s+'
+          expression: '(?P<level>INFO|WARN|ERROR|DEBUG)'
       - labels:
           level:
 

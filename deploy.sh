@@ -1,5 +1,5 @@
 echo ">>> Updating Monitoring Tools ..."
-sudo docker compose up -d --no-recreate prometheus grafana loki promtail
+sudo docker compose restart promtail loki prometheus grafana
 
 EXIST_BLUE=$(sudo docker ps -q -f name=Lumo_Blue)
 
