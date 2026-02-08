@@ -101,12 +101,12 @@ public class JWTProvider {
 
         Object authClaimObject = claims.get("auth") != null ? claims.get("auth") : "";
 
-        log.info("authClaimObject: {}, ", authClaimObject.toString());
+//        log.info("authClaimObject: {}, ", authClaimObject.toString());
 
 
         String authoritiesString = (authClaimObject != null) ? authClaimObject.toString() : "";
 
-        log.info("authoritiesString: {}", authoritiesString);
+//        log.info("authoritiesString: {}", authoritiesString);
 
         if (authoritiesString.isEmpty() || claims.get("auth") == null) {
             ///  GenerationException 으로 수정하기
@@ -129,7 +129,7 @@ public class JWTProvider {
                     .parseSignedClaims(accessToken)
                     .getPayload();
 
-            log.info ("[JWTProvider - parseClaims()] claims 파싱 발생 -> {}, {}", claims.toString(), claims.getSubject());
+//            log.info ("[JWTProvider - parseClaims()] claims 파싱 발생 -> {}, {}", claims.toString(), claims.getSubject());
             return claims;
         }
         catch (Exception e){
