@@ -38,7 +38,7 @@ do
             exit 1
         fi
 
-        sleep 5
+        sleep 7
 done
 
 
