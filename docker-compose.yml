@@ -84,7 +84,7 @@ services:
     image: grafana/promtail:latest
     container_name: Lumo_Promtail
     volumes:
-      - ./monitoring/promtail/promtail-config.yaml:/etc/promtail/config.yaml
+      - ./monitoring/promtail/promtail-config.yaml:/etc/promtail/promtail-config.yaml
       - /var/run/docker.sock:/var/run/docker.sock
     command: -config.file=/etc/promtail/promtail-config.yaml
     networks:
