@@ -86,7 +86,7 @@ services:
     volumes:
       - ./monitoring/promtail/promtail-config.yaml:/etc/promtail/config.yaml
       - /var/run/docker.sock:/var/run/docker.sock
-    command: -config.file=/etc/promtail/config.yaml
+    command: -config.file=/etc/promtail/promtail-config.yaml
     networks:
       - my-network
     restart: always
