@@ -13,7 +13,24 @@ scrape_configs:
     docker_sd_configs:
       - host: unix:///var/run/docker.sock
         refresh_interval: 5s
+
+    pipeline_stages:
+      - multiline:
+          firstline: '^\d{4}-\d{2}-\d{2}' # 날짜로 시작하는 줄을 하나의 로그 단위로 인식 (StackTrace 방지)
+          max_wait_time: 3s
+      - regex:
+          expression: '(?P<time>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d{3})\s+(?P<level>[A-Z]{4,5})'
+      - labels:
+          level:
+
     relabel_configs:
       - source_labels: ['__meta_docker_container_name']
         regex: '/(.*)'
-        target_label: 'container'
+        target_label: container
+
+      - replacement: docker
+        target_label: job
+
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/(Lumo_Blue|Lumo_Green)'
+        target_label: service_name
