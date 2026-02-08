@@ -87,6 +87,7 @@ services:
     volumes:
       - ./monitoring/promtail/promtail-config.yaml:/etc/promtail/config.yaml
       - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro # 호스트 로그 경로 추가
     command:
       - -config.file=/etc/promtail/config.yaml
     networks:
