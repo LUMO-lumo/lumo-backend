@@ -74,8 +74,8 @@ services:
     ports:
       - "3100:3100"
     volumes:
-      - ./monitoring/loki/loki-config.yaml:/etc/loki/loki-config.yaml
-    command: -config.file=/etc/loki/loki-config.yaml
+      - ./monitoring/loki/local-config.yaml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
     networks:
       - my-network
     restart: always
