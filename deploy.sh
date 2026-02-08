@@ -8,13 +8,11 @@ if [ -z "$EXIST_BLUE" ]; then
         TARGET_PORT=8081
         BEFORE_COLOR="Green"
         BEFORE_PORT=8082
-        BEFORE_CONTAINER="Lumo_Green"
 else
         TARGET_COLOR="Green"
         TARGET_PORT=8082
         BEFORE_COLOR="Blue"
         BEFORE_PORT=8081
-        BEFORE_CONTAINER="Lumo_Blue"
 fi
 
 echo ">>> ${BEFORE_COLOR} is running! start deploying new ${TARGET_COLOR}"
@@ -40,7 +38,7 @@ do
             exit 1
         fi
 
-        sleep 5
+        sleep 7
 done
 
 
@@ -49,10 +47,10 @@ echo "set \$service_url http://127.0.0.1:${TARGET_PORT};" | sudo tee /etc/nginx/
 sudo nginx -s reload
 
 echo ">>> Shutting down previous container (${BEFORE_COLOR})..."
-sudo docker compose stop ${BEFORE_CONTAINER}
+sudo docker compose stop ${BEFORE_COLOR}
 
 echo ">>> Removing previous container (${BEFORE_COLOR})..."
-sudo docker compose rm -f ${BEFORE_CONTAINER}
+sudo docker compose rm -f ${BEFORE_COLOR}
 
 echo ">>> Cleaning up unused images..."
 sudo docker image prune -af
