@@ -75,7 +75,8 @@ services:
       - "3100:3100"
     volumes:
       - ./monitoring/loki/local-config.yaml:/etc/loki/local-config.yaml
-    command: -config.file=/etc/loki/local-config.yaml
+    command:
+      - -config.file=/etc/loki/local-config.yaml
     networks:
       - my-network
     restart: always
@@ -84,9 +85,10 @@ services:
     image: grafana/promtail:latest
     container_name: Lumo_Promtail
     volumes:
-      - ./monitoring/promtail/promtail-config.yaml:/etc/promtail/promtail-config.yaml
+      - ./monitoring/promtail/promtail-config.yaml:/etc/promtail/config.yaml
       - /var/run/docker.sock:/var/run/docker.sock
-    command: -config.file=/etc/promtail/promtail-config.yaml
+    command:
+      - -config.file=/etc/promtail/config.yaml
     networks:
       - my-network
     restart: always
