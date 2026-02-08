@@ -41,7 +41,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus.yaml:/etc/prometheus/prometheus.yaml
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -74,7 +74,7 @@ services:
     ports:
       - "3100:3100"
     volumes:
-      - ./monitoring/loki-config.yml:/etc/loki/local-config.yaml
+      - ./monitoring/loki-config.yaml:/etc/loki/local-config.yaml
     networks:
       - my-network
     restart: always
@@ -83,7 +83,7 @@ services:
     image: grafana/promtail:latest
     container_name: Lumo_Promtail
     volumes:
-      - ./monitoring/promtail-config.yml:/etc/promtail/config.yml
+      - ./monitoring/promtail-config.yaml:/etc/promtail/config.yaml
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - my-network
