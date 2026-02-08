@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   Blue:
     build: .
@@ -43,7 +41,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -66,6 +64,27 @@ services:
       - GF_USERS_ALLOW_SIGN_UP=false # 회원가입 비활성화
     depends_on:
       - prometheus
+    networks:
+      - my-network
+    restart: always
+
+  loki:
+    image: grafana/loki:latest
+    container_name: Lumo_Loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./monitoring/loki-config.yml:/etc/loki/local-config.yaml
+    networks:
+      - my-network
+    restart: always
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: Lumo_Promtail
+    volumes:
+      - ./monitoring/promtail-config.yml:/etc/promtail/config.yml
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - my-network
     restart: always

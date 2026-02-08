@@ -1,4 +1,4 @@
-sudo docker compose up -d prometheus grafana
+sudo docker compose up -d prometheus grafana loki promtail
 
 EXIST_BLUE=$(sudo docker ps -q -f name=Lumo_Blue)
 
