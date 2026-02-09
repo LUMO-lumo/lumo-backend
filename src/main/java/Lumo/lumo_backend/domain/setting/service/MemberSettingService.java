@@ -63,7 +63,8 @@ public class MemberSettingService {
                     request.getAlarmOffMissionDefaultLevel(),
                     request.getAlarmOffMissionDefaultDuration(),
                     request.getBriefingSentence(),
-                    request.getBriefingVoiceDefaultType()
+                    request.getBriefingVoiceDefaultType(),
+                    request.isSmartBriefing()
             );
         } catch (Exception e) {
             throw new GeneralException(INTERNAL_SERVER_ERROR);

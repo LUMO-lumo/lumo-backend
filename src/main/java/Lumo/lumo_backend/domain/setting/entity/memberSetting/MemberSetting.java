@@ -52,6 +52,10 @@ public class MemberSetting extends BaseEntity {
     private BriefingVoiceDefaultType briefingVoiceDefaultType = BriefingVoiceDefaultType.WOMAN;
 
 
+    @Column(nullable = false)
+    private boolean smartBriefing = false;
+
+
     public void update(
             Theme theme,
             Language language,
@@ -60,7 +64,8 @@ public class MemberSetting extends BaseEntity {
             AlarmOffMissionDefaultLevel alarmOffMissionDefaultLevel,
             Integer alarmOffMissionDefaultDuration,
             String briefingSentence,
-            BriefingVoiceDefaultType briefingVoiceDefaultType
+            BriefingVoiceDefaultType briefingVoiceDefaultType,
+            boolean smartBriefing
 
     ) {
         this.theme = theme;
@@ -71,6 +76,7 @@ public class MemberSetting extends BaseEntity {
         this.alarmOffMissionDefaultDuration = alarmOffMissionDefaultDuration;
         this.briefingSentence = briefingSentence;
         this.briefingVoiceDefaultType = briefingVoiceDefaultType;
+        this.smartBriefing = smartBriefing;
     }
 
     public static MemberSetting createDefault() {
