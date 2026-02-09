@@ -5,6 +5,7 @@ import Lumo.lumo_backend.domain.member.entity.Member;
 import Lumo.lumo_backend.global.BaseEntity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 /**
  * 설정 엔티티
@@ -53,7 +54,8 @@ public class MemberSetting extends BaseEntity {
 
 
     @Column(nullable = false)
-    private boolean smartBriefing = false;
+    @ColumnDefault("false")
+    private boolean smartBriefing;
 
 
     public void update(
