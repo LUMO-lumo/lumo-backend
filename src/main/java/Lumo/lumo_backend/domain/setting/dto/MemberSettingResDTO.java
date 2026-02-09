@@ -59,6 +59,13 @@ public class MemberSettingResDTO {
     )
     private BriefingVoiceDefaultType briefingVoiceDefaultType;
 
+
+    @Schema(
+            description = "스마트 브리핑",
+            example = "false"
+    )
+    private boolean smartBriefing;
+
     public static MemberSettingResDTO from(MemberSetting memberSetting) {
         return new MemberSettingResDTO(
                 memberSetting.getTheme(),
@@ -68,7 +75,8 @@ public class MemberSettingResDTO {
                 memberSetting.getAlarmOffMissionDefaultLevel(),
                 memberSetting.getAlarmOffMissionDefaultDuration(),
                 memberSetting.getBriefingSentence(),
-                memberSetting.getBriefingVoiceDefaultType()
+                memberSetting.getBriefingVoiceDefaultType(),
+                memberSetting.isSmartBriefing()
         );
     }
 }
