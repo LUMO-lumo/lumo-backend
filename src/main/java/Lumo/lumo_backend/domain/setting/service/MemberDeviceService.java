@@ -8,7 +8,6 @@ import Lumo.lumo_backend.domain.setting.dto.MemberDeviceResDTO;
 import Lumo.lumo_backend.domain.setting.dto.MemberDeviceUpdateReqDTO;
 import Lumo.lumo_backend.domain.setting.entity.MemberDevice;
 import Lumo.lumo_backend.domain.setting.exception.SettingException;
-import Lumo.lumo_backend.domain.setting.repository.MemberDeviceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,11 +21,11 @@ import static Lumo.lumo_backend.domain.setting.status.SettingErrorCode.DEVICE_NO
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class MemberDeviceService {
 
     private final MemberRepository memberRepository;
 
+    @Transactional
     public void create(Long memberId, MemberDeviceCreateReqDTO request) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(
@@ -43,6 +42,7 @@ public class MemberDeviceService {
         member.getDeviceList().add(device);
     }
 
+    @Transactional
     public MemberDeviceResDTO getList(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(
@@ -52,6 +52,7 @@ public class MemberDeviceService {
         return MemberDeviceResDTO.from(member.getDeviceList());
     }
 
+    @Transactional
     public void update(Long memberId, MemberDeviceUpdateReqDTO request, Long deviceId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(
@@ -75,6 +76,7 @@ public class MemberDeviceService {
         );
     }
 
+    @Transactional
     public void delete(Long memberId, Long deviceId) {
 
     }
