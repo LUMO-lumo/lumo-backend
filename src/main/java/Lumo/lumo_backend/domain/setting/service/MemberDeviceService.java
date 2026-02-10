@@ -26,7 +26,6 @@ import static Lumo.lumo_backend.domain.setting.status.SettingErrorCode.DEVICE_NO
 public class MemberDeviceService {
 
     private final MemberRepository memberRepository;
-    private final MemberDeviceRepository memberDeviceRepository;
 
     public void create(Long memberId, MemberDeviceCreateReqDTO request) {
         Member member = memberRepository.findById(memberId)

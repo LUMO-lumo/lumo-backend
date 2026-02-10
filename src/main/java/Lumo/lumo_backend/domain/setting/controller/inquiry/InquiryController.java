@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/inquiries")
 public class InquiryController {
 
-
     // 사용자 문의사항 조회
     @GetMapping("/{inquiryId}")
     public APIResponse<Object> get() {
