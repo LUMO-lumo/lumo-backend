@@ -29,13 +29,14 @@ public class AlarmService {
     private final MissionHistoryRepository missionHistoryRepository;
     private final AlarmSoundService alarmSoundService;
     private final AlarmSnoozeRepository alarmSnoozeRepository;
+    private final AlarmMissionRepository alarmMissionRepository;
 
     /**
      * 알람 생성
      */
     @Transactional
     public AlarmResponseDto createAlarm(Member member, AlarmCreateRequestDto requestDto) {
-        // 1. 알람 생성 (먼저 저장하여 ID 발급)
+        // 1. 알람 생성
         Alarm alarm = Alarm.builder()
                 .member(member)
                 .alarmTime(requestDto.getAlarmTime())
@@ -46,10 +47,9 @@ public class AlarmService {
                 .volume(requestDto.getVolume())
                 .build();
 
-        // 2. 알람 먼저 저장 (alarmId 발급받기)
         Alarm savedAlarm = alarmRepository.save(alarm);
 
-        // 3. 스누즈 설정 (이제 savedAlarm에는 alarmId가 있음)
+        // 2. 스누즈 설정
         if (requestDto.getSnoozeSetting() != null) {
             AlarmSnooze snooze = AlarmSnooze.builder()
                     .alarm(savedAlarm)
@@ -57,12 +57,23 @@ public class AlarmService {
                     .intervalSec(requestDto.getSnoozeSetting().getIntervalSec())
                     .maxCount(requestDto.getSnoozeSetting().getMaxCount())
                     .build();
-
-            // AlarmSnooze 저장
             alarmSnoozeRepository.save(snooze);
         }
 
-        // 4. 반복 요일 설정 (알람이 저장된 후에 설정)
+        // 3. 미션 설정 저장
+        if (requestDto.getMissionSetting() != null) {
+            AlarmMission mission = AlarmMission.builder()
+                    .alarm(savedAlarm)
+                    .missionType(requestDto.getMissionSetting().getMissionType())
+                    .difficulty(requestDto.getMissionSetting().getDifficulty())
+                    .walkGoalMeter(requestDto.getMissionSetting().getWalkGoalMeter())
+                    .questionCount(requestDto.getMissionSetting().getQuestionCount() != null
+                            ? requestDto.getMissionSetting().getQuestionCount() : 1)
+                    .build();
+            alarmMissionRepository.save(mission);
+        }
+
+        // 4. 반복 요일 설정
         if (requestDto.getRepeatDays() != null && !requestDto.getRepeatDays().isEmpty()) {
             List<AlarmRepeatDay> repeatDays = requestDto.getRepeatDays().stream()
                     .map(dayOfWeek -> AlarmRepeatDay.builder()
@@ -73,7 +84,7 @@ public class AlarmService {
             repeatDayRepository.saveAll(repeatDays);
         }
 
-        // 5. 최종 조회하여 반환 (모든 연관관계 포함)
+        // 5. 최종 조회하여 반환
         Alarm finalAlarm = alarmRepository.findById(savedAlarm.getAlarmId())
                 .orElseThrow(() -> new AlarmException(AlarmErrorCode.ALARM_NOT_FOUND));
 
@@ -110,7 +121,7 @@ public class AlarmService {
                 ? validateAndGetSoundType(requestDto.getSoundType())
                 : alarm.getSoundType();
 
-        // 빌더 패턴으로 업데이트 (불변 객체 패턴)
+        // 빌더 패턴으로 업데이트
         Alarm updatedAlarm = Alarm.builder()
                 .alarmId(alarm.getAlarmId())
                 .member(alarm.getMember())
@@ -154,6 +165,7 @@ public class AlarmService {
                             ? requestDto.getSnoozeSetting().getMaxCount()
                             : alarm.getAlarmSnooze().getMaxCount())
                     .build();
+            alarmSnoozeRepository.save(updatedSnooze);
         }
 
         Alarm savedAlarm = alarmRepository.save(updatedAlarm);
@@ -258,7 +270,6 @@ public class AlarmService {
 
         AlarmSnooze snooze = alarm.getAlarmSnooze();
         if (snooze == null) {
-            // 스누즈 설정이 없으면 생성
             snooze = AlarmSnooze.builder()
                     .alarm(alarm)
                     .isEnabled(requestDto.getIsEnabled())
@@ -266,7 +277,6 @@ public class AlarmService {
                     .maxCount(requestDto.getMaxCount())
                     .build();
         } else {
-            // 기존 스누즈 설정 업데이트
             snooze = AlarmSnooze.builder()
                     .snoozeId(snooze.getSnoozeId())
                     .alarm(alarm)
@@ -276,11 +286,13 @@ public class AlarmService {
                     .build();
         }
 
+        AlarmSnooze savedSnooze = alarmSnoozeRepository.save(snooze);
+
         return AlarmResponseDto.SnoozeSettingResponseDto.builder()
-                .snoozeId(snooze.getSnoozeId())
-                .isEnabled(snooze.getIsEnabled())
-                .intervalSec(snooze.getIntervalSec())
-                .maxCount(snooze.getMaxCount())
+                .snoozeId(savedSnooze.getSnoozeId())
+                .isEnabled(savedSnooze.getIsEnabled())
+                .intervalSec(savedSnooze.getIntervalSec())
+                .maxCount(savedSnooze.getMaxCount())
                 .build();
     }
 
@@ -304,11 +316,13 @@ public class AlarmService {
                 .maxCount(snooze.getMaxCount())
                 .build();
 
+        AlarmSnooze savedSnooze = alarmSnoozeRepository.save(toggledSnooze);
+
         return AlarmResponseDto.SnoozeSettingResponseDto.builder()
-                .snoozeId(toggledSnooze.getSnoozeId())
-                .isEnabled(toggledSnooze.getIsEnabled())
-                .intervalSec(toggledSnooze.getIntervalSec())
-                .maxCount(toggledSnooze.getMaxCount())
+                .snoozeId(savedSnooze.getSnoozeId())
+                .isEnabled(savedSnooze.getIsEnabled())
+                .intervalSec(savedSnooze.getIntervalSec())
+                .maxCount(savedSnooze.getMaxCount())
                 .build();
     }
 
@@ -329,32 +343,32 @@ public class AlarmService {
 
         AlarmMission mission = alarm.getAlarmMission();
         if (mission == null) {
-            // 미션 설정이 없으면 생성
             mission = AlarmMission.builder()
                     .alarm(alarm)
                     .missionType(requestDto.getMissionType())
                     .difficulty(requestDto.getDifficulty())
                     .walkGoalMeter(requestDto.getWalkGoalMeter())
-                    .questionCount(requestDto.getQuestionCount())
+                    .questionCount(requestDto.getQuestionCount() != null ? requestDto.getQuestionCount() : 1)
                     .build();
         } else {
-            // 기존 미션 설정 업데이트
             mission = AlarmMission.builder()
                     .missionId(mission.getMissionId())
                     .alarm(alarm)
                     .missionType(requestDto.getMissionType())
                     .difficulty(requestDto.getDifficulty())
                     .walkGoalMeter(requestDto.getWalkGoalMeter())
-                    .questionCount(requestDto.getQuestionCount())
+                    .questionCount(requestDto.getQuestionCount() != null ? requestDto.getQuestionCount() : 1)
                     .build();
         }
 
-        return MissionSettingDto.from(mission);
+        AlarmMission savedMission = alarmMissionRepository.save(mission);
+        return MissionSettingDto.from(savedMission);
     }
 
     /**
      * 미션 시작 (문제 발급)
      */
+    @Transactional(readOnly = true)
     public List<MissionContentResponseDto> startMission(Member member, Long alarmId) {
         Alarm alarm = findAlarmByIdAndMember(alarmId, member);
         AlarmMission mission = alarm.getAlarmMission();
@@ -368,7 +382,7 @@ public class AlarmService {
             return new ArrayList<>();
         }
 
-        // DB에서 랜덤 문제 조회 (이미 구현되어 있음)
+        // DB에서 랜덤 문제 조회
         List<MissionContent> contents = missionContentRepository.findRandomByTypeAndDifficulty(
                 mission.getMissionType().name(),
                 mission.getDifficulty().name(),
@@ -517,30 +531,8 @@ public class AlarmService {
     }
 
     /**
-     * 사운드 타입 유효성 검증 및 기본값 처리
+     * 알람 해제 기록
      */
-    private String validateAndGetSoundType(String soundType) {
-        if (soundType == null || soundType.trim().isEmpty()) {
-            return alarmSoundService.getDefaultSoundType();
-        }
-
-        if (!alarmSoundService.isValidSoundType(soundType)) {
-            log.warn("Invalid sound type provided: {}, using default", soundType);
-            return alarmSoundService.getDefaultSoundType();
-        }
-
-        return soundType.toUpperCase();
-    }
-
-    /**
-     * 알람 조회 헬퍼 메서드
-     */
-    private Alarm findAlarmByIdAndMember(Long alarmId, Member member) {
-        return alarmRepository.findByIdAndMemberWithDetails(alarmId, member)
-                .orElseThrow(() -> new AlarmException(AlarmErrorCode.ALARM_NOT_FOUND));
-    }
-
-
     @Transactional
     public AlarmLogResponseDto dismissAlarm(Member member, Long alarmId, AlarmDismissRequestDto requestDto) {
         // 1. 알람 조회
@@ -548,11 +540,19 @@ public class AlarmService {
 
         // 2. 최근 울림 기록 찾기
         List<AlarmLog> recentLogs = alarmLogRepository.findByAlarmOrderByTriggeredAtDesc(alarm);
+
+        // 빈 리스트 체크 추가
+        if (recentLogs.isEmpty()) {
+            throw new AlarmException(AlarmErrorCode.ALARM_LOG_NOT_FOUND);
+        }
+
         AlarmLog recentLog = recentLogs.get(0);
 
-        // 3. AlarmLog 업데이트
+        // 3. AlarmLog 업데이트 - 모든 필드 포함
         AlarmLog updatedLog = AlarmLog.builder()
                 .logId(recentLog.getLogId())
+                .alarm(alarm)  // 추가!
+                .triggeredAt(recentLog.getTriggeredAt())  // 추가!
                 .dismissedAt(LocalDateTime.now())
                 .dismissType(requestDto.getDismissType())
                 .snoozeCount(requestDto.getSnoozeCount())
@@ -566,44 +566,6 @@ public class AlarmService {
         }
 
         return AlarmLogResponseDto.from(savedLog);
-    }
-
-    private void updateMemberStatistics(Member member) {
-        // 이번 달 시작일
-        LocalDateTime monthStart = LocalDateTime.now()
-                .withDayOfMonth(1)
-                .withHour(0).withMinute(0).withSecond(0).withNano(0);
-
-        // 이번 달 미션 총 시도 횟수
-        int totalAttempts = (int) missionHistoryRepository
-                .findByAlarm_Member_IdOrderByCompletedAtDesc(member.getId())
-                .stream()
-                .filter(mh -> mh.getCompletedAt().isAfter(monthStart))
-                .count();
-
-        // 이번 달 미션 성공 횟수
-        int totalSuccess = (int) missionHistoryRepository
-                .findByAlarm_Member_IdOrderByCompletedAtDesc(member.getId())
-                .stream()
-                .filter(mh -> mh.getCompletedAt().isAfter(monthStart) && mh.getIsSuccess())
-                .count();
-
-        // 오늘 미션 성공 확인
-        LocalDateTime todayStart = LocalDateTime.now()
-                .withHour(0).withMinute(0).withSecond(0).withNano(0);
-
-        boolean todaySuccess = missionHistoryRepository
-                .findByAlarm_Member_IdOrderByCompletedAtDesc(member.getId())
-                .stream()
-                .anyMatch(mh -> mh.getCompletedAt().isAfter(todayStart) && mh.getIsSuccess());
-
-        // 연속 성공 횟수 증가
-        if (todaySuccess) {
-            member.incrementConsecutiveSuccessCnt();
-        }
-
-        // 이번 달 달성률 업데이트
-        member.updateMissionSuccessRate(totalSuccess, totalAttempts);
     }
 
     /**
@@ -640,5 +602,70 @@ public class AlarmService {
                 .count();
 
         return MemberStatisticsResponseDto.from(member, totalAttempts, totalSuccess, totalTriggered);
+    }
+
+    /**
+     * 사운드 타입 유효성 검증 및 기본값 처리
+     */
+    private String validateAndGetSoundType(String soundType) {
+        if (soundType == null || soundType.trim().isEmpty()) {
+            return alarmSoundService.getDefaultSoundType();
+        }
+
+        if (!alarmSoundService.isValidSoundType(soundType)) {
+            log.warn("Invalid sound type provided: {}, using default", soundType);
+            return alarmSoundService.getDefaultSoundType();
+        }
+
+        return soundType.toUpperCase();
+    }
+
+    /**
+     * 알람 조회 헬퍼 메서드
+     */
+    private Alarm findAlarmByIdAndMember(Long alarmId, Member member) {
+        return alarmRepository.findByIdAndMemberWithDetails(alarmId, member)
+                .orElseThrow(() -> new AlarmException(AlarmErrorCode.ALARM_NOT_FOUND));
+    }
+
+    /**
+     * 멤버 통계 업데이트
+     */
+    private void updateMemberStatistics(Member member) {
+        // 이번 달 시작일
+        LocalDateTime monthStart = LocalDateTime.now()
+                .withDayOfMonth(1)
+                .withHour(0).withMinute(0).withSecond(0).withNano(0);
+
+        // 이번 달 미션 총 시도 횟수
+        int totalAttempts = (int) missionHistoryRepository
+                .findByAlarm_Member_IdOrderByCompletedAtDesc(member.getId())
+                .stream()
+                .filter(mh -> mh.getCompletedAt().isAfter(monthStart))
+                .count();
+
+        // 이번 달 미션 성공 횟수
+        int totalSuccess = (int) missionHistoryRepository
+                .findByAlarm_Member_IdOrderByCompletedAtDesc(member.getId())
+                .stream()
+                .filter(mh -> mh.getCompletedAt().isAfter(monthStart) && mh.getIsSuccess())
+                .count();
+
+        // 오늘 미션 성공 확인
+        LocalDateTime todayStart = LocalDateTime.now()
+                .withHour(0).withMinute(0).withSecond(0).withNano(0);
+
+        boolean todaySuccess = missionHistoryRepository
+                .findByAlarm_Member_IdOrderByCompletedAtDesc(member.getId())
+                .stream()
+                .anyMatch(mh -> mh.getCompletedAt().isAfter(todayStart) && mh.getIsSuccess());
+
+        // 연속 성공 횟수 증가
+        if (todaySuccess) {
+            member.incrementConsecutiveSuccessCnt();
+        }
+
+        // 이번 달 달성률 업데이트
+        member.updateMissionSuccessRate(totalSuccess, totalAttempts);
     }
 }

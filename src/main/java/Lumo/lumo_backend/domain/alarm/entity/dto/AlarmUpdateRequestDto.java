@@ -1,8 +1,6 @@
 package Lumo.lumo_backend.domain.alarm.entity.dto;
 
 import Lumo.lumo_backend.domain.alarm.entity.DayOfWeek;
-import Lumo.lumo_backend.domain.alarm.entity.Difficulty;
-import Lumo.lumo_backend.domain.alarm.entity.MissionType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -37,4 +35,5 @@ public class AlarmUpdateRequestDto {
 
     private AlarmCreateRequestDto.SnoozeSettingDto snoozeSetting;
 
+    private AlarmCreateRequestDto.MissionSettingDto missionSetting;  // 추가!
 }
