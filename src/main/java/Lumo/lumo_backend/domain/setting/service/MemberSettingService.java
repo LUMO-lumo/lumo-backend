@@ -52,6 +52,12 @@ public class MemberSettingService {
         }
 
 
+        boolean smartBreifing = request.isSmartBriefing();
+        if (smartBreifing && !(member.getIsProUpgraded())) {
+            smartBreifing = false;
+        }
+
+
 
         // memberSetting 업데이트
         try {
@@ -63,7 +69,8 @@ public class MemberSettingService {
                     request.getAlarmOffMissionDefaultLevel(),
                     request.getAlarmOffMissionDefaultDuration(),
                     request.getBriefingSentence(),
-                    request.getBriefingVoiceDefaultType()
+                    request.getBriefingVoiceDefaultType(),
+                    smartBreifing
             );
         } catch (Exception e) {
             throw new GeneralException(INTERNAL_SERVER_ERROR);

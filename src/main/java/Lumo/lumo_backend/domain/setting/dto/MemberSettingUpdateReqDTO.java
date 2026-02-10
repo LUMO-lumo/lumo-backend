@@ -59,4 +59,11 @@ public class MemberSettingUpdateReqDTO {
     )
     private BriefingVoiceDefaultType briefingVoiceDefaultType;
 
+
+    @Schema(
+            description = "스마트 브리핑",
+            example = "false"
+    )
+    private boolean smartBriefing;
+
 }
