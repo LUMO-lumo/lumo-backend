@@ -3,6 +3,8 @@ package Lumo.lumo_backend.domain.setting.dto;
 import Lumo.lumo_backend.domain.setting.entity.Feedback;
 import Lumo.lumo_backend.domain.setting.entity.MemberStat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
