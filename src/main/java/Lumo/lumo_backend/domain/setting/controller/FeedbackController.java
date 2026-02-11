@@ -25,7 +25,6 @@ public class FeedbackController {
     private final FeedbackService feedbackService;
 
     @PostMapping
-    @Operation(summary = "피드백 생성 API", description = "사용자가 서비스에 대한 피드백을 남기는 API 입니다.")
     public APIResponse<Long> create(
             @AuthenticationPrincipal CustomUserDetails userDetail,
             @RequestBody FeedbackCreateReqDTO request
