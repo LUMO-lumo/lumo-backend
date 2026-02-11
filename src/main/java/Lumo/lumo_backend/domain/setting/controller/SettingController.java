@@ -6,6 +6,7 @@ import Lumo.lumo_backend.domain.setting.service.MemberSettingService;
 import Lumo.lumo_backend.domain.setting.status.SettingSuccessCode;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
 import Lumo.lumo_backend.global.security.userDetails.CustomUserDetails;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,6 +25,7 @@ public class SettingController {
     private final MemberSettingService memberSettingService;
 
     @GetMapping
+    @Operation(summary = "설정 조회 API", description = "사용자가 서비스 내에서의 설정을 조회하는 API 입니다.")
     public APIResponse<MemberSettingResDTO> get(
             @AuthenticationPrincipal CustomUserDetails userDetail
     ) {
@@ -33,6 +35,7 @@ public class SettingController {
 
 
     @PatchMapping
+    @Operation(summary = "설정 수정 API", description = "사용자가 서비스 내에서의 설정을 수정하는 API 입니다.")
     public APIResponse<Void> update(
             @AuthenticationPrincipal CustomUserDetails userDetail,
             @RequestBody MemberSettingUpdateReqDTO request
