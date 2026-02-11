@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
     private final MemberRepository memberRepository;
 
+    @Transactional
     public Long create(Long memberId, FeedbackCreateReqDTO request) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(
@@ -60,6 +60,7 @@ public class FeedbackService {
 //        return FeedbackResDTO.from();
 //    }
 
+    @Transactional
     public void update(Long memberId, Long feedbackId, FeedbackUpdateReqDTO request) {
         Feedback feedback = feedbackRepository.findById(feedbackId)
                 .orElseThrow(
@@ -75,6 +76,7 @@ public class FeedbackService {
         feedback.update(request.getTitle(), request.getContent(), request.getEmail());
     }
 
+    @Transactional
     public void delete(Long feedbackId) {
         feedbackRepository.deleteById(feedbackId);
     }

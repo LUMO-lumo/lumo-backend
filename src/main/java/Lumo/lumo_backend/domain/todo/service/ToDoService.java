@@ -27,13 +27,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class ToDoService {
 
     private final ToDoRepository toDoRepository;
     private final MemberRepository memberRepository;
     private final OpenAIClient openAIClient;
 
+    @Transactional
     public ToDoResponseDTO create(Member member, ToDoCreateRequestDTO toDoCreateRequestDTO) {
         Member persistedMember = getPersistedMember(member);
 
@@ -47,6 +47,7 @@ public class ToDoService {
         return ToDoResponseDTO.from(savedToDo);
     }
 
+    @Transactional
     public ToDoResponseDTO update(Member member, Long toDoId, ToDoUpdateRequestDTO toDoUpdateRequestDTO) {
         Member persistedMember = getPersistedMember(member);
 
@@ -63,6 +64,7 @@ public class ToDoService {
         return ToDoResponseDTO.from(toDo);
     }
 
+    @Transactional
     public void delete(Member member, Long toDoId) {
         Member persistedMember = getPersistedMember(member);
 

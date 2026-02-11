@@ -2,6 +2,7 @@ package Lumo.lumo_backend.domain.setting.dto;
 
 import Lumo.lumo_backend.domain.setting.entity.memberSetting.*;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -51,6 +52,7 @@ public class MemberSettingUpdateReqDTO {
             description = "브리핑 문장",
             example = "브리핑 문장 테스트"
     )
+    @Size(min = 1, max = 25565)
     private String briefingSentence;
 
     @Schema(
@@ -58,5 +60,12 @@ public class MemberSettingUpdateReqDTO {
             example = "WOMAN"
     )
     private BriefingVoiceDefaultType briefingVoiceDefaultType;
+
+
+    @Schema(
+            description = "스마트 브리핑",
+            example = "false"
+    )
+    private boolean smartBriefing;
 
 }

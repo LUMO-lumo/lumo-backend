@@ -18,7 +18,6 @@ import static Lumo.lumo_backend.global.apiResponse.status.ErrorCode.INTERNAL_SER
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class MemberSettingService {
 
     private final MemberRepository memberRepository;
@@ -39,6 +38,7 @@ public class MemberSettingService {
         return MemberSettingResDTO.from(memberSetting);
     }
 
+    @Transactional
     public void update(Long memberId, MemberSettingUpdateReqDTO request) {
 
         // member, memberSetting 획득
@@ -49,6 +49,12 @@ public class MemberSettingService {
         // 유효성 검사
         if (memberSetting == null) {
             throw new SettingException(SETTING_NOT_FOUND);
+        }
+
+
+        boolean smartBreifing = request.isSmartBriefing();
+        if (smartBreifing && !(member.getIsProUpgraded())) {
+            smartBreifing = false;
         }
 
 
@@ -63,7 +69,8 @@ public class MemberSettingService {
                     request.getAlarmOffMissionDefaultLevel(),
                     request.getAlarmOffMissionDefaultDuration(),
                     request.getBriefingSentence(),
-                    request.getBriefingVoiceDefaultType()
+                    request.getBriefingVoiceDefaultType(),
+                    smartBreifing
             );
         } catch (Exception e) {
             throw new GeneralException(INTERNAL_SERVER_ERROR);

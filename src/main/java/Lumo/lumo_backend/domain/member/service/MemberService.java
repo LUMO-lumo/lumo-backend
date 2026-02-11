@@ -146,8 +146,16 @@ public class MemberService {
 
         MissionStat missionStat = missionHistoryRepository.findMissionStatsByMember(persistedMember.getId(), LocalDate.now().withDayOfMonth(1).atStartOfDay());
 
+        int missionSuccessRate;
+        if (missionStat.getSuccess() == null){
+            missionSuccessRate = 0;
+        }
+        else{
+            missionSuccessRate = (int) (missionStat.getSuccess() / missionStat.getTotal() *100);
+        }
+
         return MemberRespDTO.GetMissionRecordRespDTO.builder()
-                .missionSuccessRate((int) (missionStat.getSuccess() / missionStat.getTotal() *100))
+                .missionSuccessRate(missionSuccessRate)
                 .consecutiveSuccessCnt(persistedMember.getConsecutiveSuccessCnt())
                 .build();
     }

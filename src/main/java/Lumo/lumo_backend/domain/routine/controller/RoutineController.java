@@ -40,15 +40,15 @@ public class RoutineController {
 
     @DeleteMapping
     @Operation(summary = "루틴 삭제 API", description = "사용자가 생성한 특정 루틴을 삭제하는 API 입니다. JWT 값과 routine id 값을 QueryParameter로 보내주시면 됩니다.")
-    public APIResponse<Object> deleteRoutine(@AuthenticationPrincipal Member member, @RequestParam("routineId") Long routineId){
-        routineService.deleteRoutine(member, routineId);
+    public APIResponse<Object> deleteRoutine(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam("routineId") Long routineId){
+        routineService.deleteRoutine(userDetails.getMember(), routineId);
         return APIResponse.onSuccess(null, RoutineSuccessCode.DELETE_ROUTINE_SUCCESS);
     }
 
     @PatchMapping
     @Operation(summary = "루틴 이름 변경 API", description = "사용자가 생성한 루틴의 이름을 변경하는 API 입니다. QueryParameter로 routineId, 새 이름 title을 보내주시면 됩니다.")
-    public APIResponse<Object> renameRoutine(@AuthenticationPrincipal Member member, @RequestParam("routineId") Long routineId, @RequestParam("title") String title) {
-        routineService.renameRoutine(member, routineId, title);
+    public APIResponse<Object> renameRoutine(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestParam("routineId") Long routineId, @RequestParam("title") String title) {
+        routineService.renameRoutine(userDetails.getMember(), routineId, title);
         return APIResponse.onSuccess(null, RoutineSuccessCode.RENAME_ROUTINE_SUCCESS);
     }
 

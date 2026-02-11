@@ -2,6 +2,7 @@ package Lumo.lumo_backend.domain.setting.dto;
 
 import Lumo.lumo_backend.domain.setting.entity.MemberDevice;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,6 +16,7 @@ public class MemberDeviceDTO {
             description = "기기 ID",
             example= "1"
     )
+    @Positive(message = "올바른 아이디가 아닙니다.")
     private Long id;
 
     @Schema(
