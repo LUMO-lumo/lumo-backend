@@ -1,5 +1,7 @@
 package Lumo.lumo_backend.global.security.filter;
 
+import Lumo.lumo_backend.global.apiResponse.status.ErrorCode;
+import Lumo.lumo_backend.global.exception.GeneralException;
 import Lumo.lumo_backend.global.security.jwt.JWTProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -41,9 +43,10 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 log.info("유효하지 않은 토큰입니다, 인증 정보를 저장하지 않습니다.");
             }
         }
-        /*else {
-            log.info("비로그인 사용자 요청입니다.");
-        }*/
+        else {
+            log.warn("토큰이 비어있는 요청입니다");
+//            throw new GeneralException(ErrorCode.AUTH_UNAUTHORIZED);
+        }
         filterChain.doFilter(request, response);
     }
 }
