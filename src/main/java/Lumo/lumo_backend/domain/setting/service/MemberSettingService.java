@@ -18,7 +18,6 @@ import static Lumo.lumo_backend.global.apiResponse.status.ErrorCode.INTERNAL_SER
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class MemberSettingService {
 
     private final MemberRepository memberRepository;
@@ -39,6 +38,7 @@ public class MemberSettingService {
         return MemberSettingResDTO.from(memberSetting);
     }
 
+    @Transactional
     public void update(Long memberId, MemberSettingUpdateReqDTO request) {
 
         // member, memberSetting 획득

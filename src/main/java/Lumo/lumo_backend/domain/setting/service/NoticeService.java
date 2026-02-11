@@ -16,10 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class NoticeService {
     private final NoticeRepository noticeRepository;
 
+    @Transactional
     public NoticeResponseDTO create(NoticeCreateRequestDTO noticeCreateRequestDTO) {
 
         Notice notice = Notice.builder()
@@ -34,6 +34,7 @@ public class NoticeService {
     }
 
 
+    @Transactional
     public NoticeResponseDTO update(Long noticeId, NoticeCreateRequestDTO noticeCreateRequestDTO) {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new SettingException(SettingErrorCode.NOTICE_NOT_FOUND));
@@ -48,6 +49,7 @@ public class NoticeService {
         return NoticeResponseDTO.from(notice);
     }
 
+    @Transactional
     public void softDelete(Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId)
                 .orElseThrow(() -> new SettingException(SettingErrorCode.NOTICE_NOT_FOUND));
@@ -55,6 +57,7 @@ public class NoticeService {
         notice.softDelete();
     }
 
+    @Transactional
     @Scheduled(cron = "0 0 0 * * *")
     public void hardDelete() {
         List<Notice> deleted = noticeRepository.findByDeletedAtBefore(LocalDateTime.now().minusMonths(1));
