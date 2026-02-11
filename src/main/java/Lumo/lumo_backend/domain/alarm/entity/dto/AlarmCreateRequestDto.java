@@ -44,6 +44,7 @@ public class AlarmCreateRequestDto {
 
     private SnoozeSettingDto snoozeSetting;
 
+    private MissionSettingDto missionSetting;  // 추가!
 
     @Getter
     @Builder
@@ -60,4 +61,19 @@ public class AlarmCreateRequestDto {
         private Integer maxCount = 3;
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MissionSettingDto {
+        @NotNull(message = "미션 타입은 필수입니다")
+        private MissionType missionType;
+
+        private Difficulty difficulty;
+
+        private Integer walkGoalMeter;
+
+        @Builder.Default
+        private Integer questionCount = 1;
+    }
 }
