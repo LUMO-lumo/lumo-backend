@@ -45,7 +45,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         }
         else {
             log.warn("토큰이 비어있는 요청입니다");
-            throw new GeneralException(ErrorCode.AUTH_UNAUTHORIZED);
+//            throw new GeneralException(ErrorCode.AUTH_UNAUTHORIZED);
         }
         filterChain.doFilter(request, response);
     }
