@@ -1,3 +1,6 @@
+<p align="center">
+  <img src="./.github/image/lumo-image.png" width="55%">
+</p>
 
 # **💡 Lumo**
 
