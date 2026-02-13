@@ -35,6 +35,8 @@ public class AlarmResponseDto {
 
     private SnoozeSettingResponseDto snoozeSetting;
 
+    private MissionSettingDto missionSetting;  // ← 추가
+
 
     @Getter
     @Builder
@@ -67,6 +69,7 @@ public class AlarmResponseDto {
                                 .intervalSec(alarm.getAlarmSnooze().getIntervalSec())
                                 .maxCount(alarm.getAlarmSnooze().getMaxCount())
                                 .build() : null)
+                .missionSetting(MissionSettingDto.from(alarm.getAlarmMission()))  // ← 추가
                 .build();
     }
 }
