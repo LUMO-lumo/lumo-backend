@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Prometheus 자체 메트릭
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # 로컬 IntelliJ에서 실행 중인 스프링 부트 메트릭
+  - job_name: 'lumo-backend-local'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s # 테스트 중이므로 빠른 모니터링을 위해 5초 설정
+    static_configs:
+      - targets: ['host.docker.internal:8080']
+        # 만약 IntelliJ에서 8081이나 8082로 포트를 지정해 실행 중이라면 해당 포트로 수정하세요.
