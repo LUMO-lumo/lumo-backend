@@ -1,0 +1,82 @@
+services:
+  # DB: MySQL (로컬 테스트용 데이터 분리)
+
+  spring:
+    build: .
+    image: jijysun/lumo:latest
+    container_name: Lumo_Blue
+    depends_on:
+      - mysql-local
+    ports:
+      - "8081:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=test
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-local:3306/lumo_test?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=password
+    env_file: .env
+    networks:
+      - lumo-test-network
+    restart: on-failure
+
+  mysql-local:
+    image: mysql:8.0
+    container_name: Lumo_MySQL_Local
+    environment:
+      - MYSQL_DATABASE=lumo_test
+      - MYSQL_ROOT_PASSWORD=password
+    ports:
+      - "3307:3306"
+    networks:
+      - lumo-test-network
+
+  # Cache: Redis
+  redis-local:
+    image: redis:alpine
+    container_name: Lumo_Redis_Local
+    ports:
+      - "6380:6379"
+    networks:
+      - lumo-test-network
+
+  # Mail: Mailhog (테스트의 핵심)
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: Lumo_Mailhog
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # UI
+    networks:
+      - lumo-test-network
+
+  # Metrics: Prometheus
+  prometheus-local:
+    image: prom/prometheus:latest
+    container_name: Lumo_Prometheus_Local
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus-local.yaml:/etc/prometheus/prometheus-local.yaml
+    command:
+      - '--config.file=/etc/prometheus/prometheus-local.yaml'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - lumo-test-network
+
+  # Visualization: Grafana
+  grafana-local:
+    image: grafana/grafana:latest
+    container_name: Lumo_Grafana_Local
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=0000
+    depends_on:
+      - prometheus-local
+    networks:
+      - lumo-test-network
+
+networks:
+  lumo-test-network:
+    driver: bridge
