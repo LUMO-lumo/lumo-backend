@@ -26,10 +26,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +45,9 @@ public class MemberService {
     private final RedisTemplate redisTemplate;
     private final JWTProvider jwtProvider;
     private final BCryptPasswordEncoder encoder;
+
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    private static final int CODE_LENGTH = 4;
 
 
     public MemberRespDTO.GetLoginDTO getLogin(Member member) {
@@ -72,15 +77,28 @@ public class MemberService {
     }
 
     public void requestVerificationCode(String email) {
-        String preCode = (String) redisTemplate.opsForValue().get(email);
+        String code = generateVerificationCode();
+        Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent(email, code, Duration.ofMinutes(3));
 
-        if (preCode != null){
-            log.info("[MemberService - requestVerificationCode] already send to {} with {}", email, preCode);
+        if (Boolean.FALSE.equals(ifAbsent)){
+            log.info("[MemberService - requestVerificationCode] already send to {} with {}", email, redisTemplate.opsForValue().get(email));
             throw new MemberException(MemberErrorCode.ALREADY_SEND); // 따닥 방지
         }
         else{
-            emailService.sendEmail(email);
+            emailService.sendEmail(email, code);
         }
+    }
+    public String generateVerificationCode() {
+        Random random = new Random();
+        StringBuilder code = new StringBuilder(CODE_LENGTH);
+
+        for (int i = 0; i < CODE_LENGTH; i++) {
+            int randomIndex = random.nextInt(CHARACTERS.length());
+
+            code.append(CHARACTERS.charAt(randomIndex));
+        }
+
+        return code.toString();
     }
 
 
