@@ -18,15 +18,12 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@EnableAsync
 @RequiredArgsConstructor
 @Slf4j
 public class EmailService {
 
     private final JavaMailSender mailSender;
     private final RedisTemplate redisTemplate;
-    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private static final int CODE_LENGTH = 4;
 
 
 /*    @Async
