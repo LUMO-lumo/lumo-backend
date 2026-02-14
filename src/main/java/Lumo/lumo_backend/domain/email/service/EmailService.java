@@ -156,7 +156,7 @@ public class EmailService {
         log.info("[MemberService - requestVerificationCode] saved code {} to {}", redisTemplate.opsForValue().get(email), email);
     }*/
 
-@Async
+@Async(value = "mailExecutor")
 public void sendEmail (String email, String code){
     MimeMessage msg = mailSender.createMimeMessage();
     MimeMessageHelper helper;
