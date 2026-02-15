@@ -44,6 +44,12 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         /// jwtProvider 에서 인증 조회 + 토큰 검증이 필요!
         try{
             if(accessToken != null && jwtProvider.validateToken(accessToken)){ // 비었거나, 올바르지 않거나
+
+                String isBlackListed = (String) redisTemplate.opsForValue().get("blacklist:" + accessToken);
+                if (isBlackListed != null){
+                    throw new GeneralException(ErrorCode.AUTH_TOKEN_INVALID);
+                }
+
                 Authentication authentication = jwtProvider.getAuthentication(accessToken);
                 if (authentication != null) {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
