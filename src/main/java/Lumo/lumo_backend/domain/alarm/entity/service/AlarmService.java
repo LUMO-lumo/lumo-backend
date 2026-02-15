@@ -84,8 +84,8 @@ public class AlarmService {
             repeatDayRepository.saveAll(repeatDays);
         }
 
-        // 5. 최종 조회하여 반환
-        Alarm finalAlarm = alarmRepository.findById(savedAlarm.getAlarmId())
+        // 5. 최종 조회하여 반환 (fetch join으로 조회)
+        Alarm finalAlarm = alarmRepository.findByIdAndMemberWithDetails(savedAlarm.getAlarmId(), member)
                 .orElseThrow(() -> new AlarmException(AlarmErrorCode.ALARM_NOT_FOUND));
 
         return AlarmResponseDto.from(finalAlarm);
