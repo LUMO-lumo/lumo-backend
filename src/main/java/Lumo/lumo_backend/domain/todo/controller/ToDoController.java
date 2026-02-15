@@ -78,12 +78,10 @@ public class ToDoController {
     @Operation(summary = "오늘의 할 일 브리핑")
     @GetMapping("/briefing")
     public APIResponse<String> getBriefing(
-            @AuthenticationPrincipal CustomUserDetails userDetails
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam LocalDate today
     ) {
-        long start = System.currentTimeMillis();
-        String briefing = toDoService.getBriefing(userDetails.getMember());
-        long end = System.currentTimeMillis();
-        log.info("챗지피티 소요시간: {} ms", end - start);
+        String briefing = toDoService.getBriefing(userDetails.getMember(), today);
         return APIResponse.onSuccess(briefing, ToDoSuccessCode.GET_TODO_SUCCESS);
     }
 }
