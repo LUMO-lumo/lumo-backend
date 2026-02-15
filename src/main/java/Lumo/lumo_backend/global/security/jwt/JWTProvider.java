@@ -138,4 +138,9 @@ public class JWTProvider {
             throw new RuntimeException("파싱이 잘못되었습니다.");
         }
     }
+
+    public Long getRemainingTime(String token) {
+        Claims claims = parseClaims(token);
+        return claims.getExpiration().getTime() - System.currentTimeMillis(); // 만료 시간 - 남은 시간
+    }
 }

@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -143,9 +144,18 @@ public class MemberService {
         return MemberRespDTO.MemberInfoDTO.builder().jwt(jwt).username(member.getUsername()).build();
     }
 
-    public void logout (Long memberId){
+    public void logout (String accessToken, Long memberId){
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
         redisTemplate.delete("refresh:"+member.getEmail());
+
+        Long remainingTime = jwtProvider.getRemainingTime(accessToken); // TTL 용 남은 시간 계산
+
+        if (remainingTime > 0) {
+            String key = "blacklist:" + accessToken;
+            redisTemplate.opsForValue().set(key, "logout", remainingTime, TimeUnit.MILLISECONDS);
+            log.info("[MemberService] - add AccessToken in BlackList! remainingTime: {}ms", remainingTime);
+        }
+
         log.info("[MemberService - logout] Success to logout -> {}", member.getEmail());
     }
 
