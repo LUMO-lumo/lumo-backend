@@ -86,6 +86,7 @@ public class JWTProvider {
         }
         catch (ExpiredJwtException e){ // 실패 응답을 통한 로그인 요청 로직
             log.warn("[JWTProvider-ValidateToken()] : 만료된 토큰입니다 ", e);
+            throw e;
         }
         catch (UnsupportedJwtException e) {
             log.warn("[JWTProvider-ValidateToken()] : 지원되지 않는 토큰 형식입니다 ", e);

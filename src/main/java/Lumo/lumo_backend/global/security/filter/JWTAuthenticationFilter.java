@@ -1,6 +1,8 @@
 package Lumo.lumo_backend.global.security.filter;
 
 import Lumo.lumo_backend.global.security.jwt.JWTProvider;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -47,19 +49,27 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         String accessToken = resolveAccessToken(request);
 
         /// jwtProvider 에서 인증 조회 + 토큰 검증이 필요!
-        if(accessToken != null && jwtProvider.validateToken(accessToken)){
-            // 비었거나, 올바르지 않거나
-            Authentication authentication = jwtProvider.getAuthentication(accessToken);
-            if (authentication != null) {
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            } else {
-                log.info("유효하지 않은 토큰입니다, 인증 정보를 저장하지 않습니다.");
+        try{
+            if(accessToken != null && jwtProvider.validateToken(accessToken)){ // 비었거나, 올바르지 않거나
+                Authentication authentication = jwtProvider.getAuthentication(accessToken);
+                if (authentication != null) {
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                } else {
+                    log.info("유효하지 않은 토큰입니다, 인증 정보를 저장하지 않습니다.");
+                }
+            }
+            else {
+                log.warn("토큰이 비어있는 요청입니다");
+//            throw new GeneralException(ErrorCode.AUTH_UNAUTHORIZED);
             }
         }
-        else {
-            log.warn("토큰이 비어있는 요청입니다");
-//            throw new GeneralException(ErrorCode.AUTH_UNAUTHORIZED);
+        catch (ExpiredJwtException e){
+            log.info("[JWTAuthenticationFilter] - AT expired, attempting to refresh token");
         }
+        catch(JwtException | IllegalArgumentException e){
+            log.info("[JWTAuthenticationFilter] - Invalid Refresh Token! ");
+        }
+
         filterChain.doFilter(request, response);
     }
 }
