@@ -7,6 +7,7 @@ import Lumo.lumo_backend.domain.setting.status.SettingSuccessCode;
 import Lumo.lumo_backend.global.apiResponse.APIResponse;
 import Lumo.lumo_backend.global.security.userDetails.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequestMapping("/api/stats")
 @RequiredArgsConstructor
+@Tag(name = "통계 API")
 public class StatController {
 
     private final MemberStatService memberStatService;

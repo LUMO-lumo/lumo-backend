@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
+
 /**
  * 설정 엔티티
  */
@@ -97,4 +98,6 @@ public class MemberSetting extends BaseEntity {
     public static MemberSetting createDefault() {
         return MemberSetting.builder().build();
     }
+
+
 }
