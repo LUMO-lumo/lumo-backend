@@ -1,10 +1,9 @@
 package Lumo.lumo_backend.global.security.filter;
 
-import Lumo.lumo_backend.global.apiResponse.status.ErrorCode;
-import Lumo.lumo_backend.global.exception.GeneralException;
 import Lumo.lumo_backend.global.security.jwt.JWTProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,7 +21,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     private final JWTProvider jwtProvider;
 
-    private String resolveToken(HttpServletRequest request){
+    private String resolveAccessToken(HttpServletRequest request){
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7).trim(); // 앞 뒤 공백 제거, "Bearer ~~~" 형식으로 통일
@@ -29,9 +29,22 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
+    private String resolveRefreshToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return null;
+        }
+
+        return Arrays.stream(cookies)
+                .filter(cookie -> "refreshToken".equals(cookie.getName()))
+                .findFirst()
+                .map(Cookie::getValue)
+                .orElse(null);
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String accessToken = resolveToken(request);
+        String accessToken = resolveAccessToken(request);
 
         /// jwtProvider 에서 인증 조회 + 토큰 검증이 필요!
         if(accessToken != null && jwtProvider.validateToken(accessToken)){
