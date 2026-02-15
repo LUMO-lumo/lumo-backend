@@ -1,7 +1,6 @@
 package Lumo.lumo_backend.global.security.config;
 
 import Lumo.lumo_backend.global.security.filter.JWTAuthenticationFilter;
-import Lumo.lumo_backend.global.security.jwt.JWTProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JWTProvider jwtProvider;
+    private final JWTAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -31,7 +30,7 @@ public class SecurityConfig {
         * */
 
         http
-                .addFilterBefore(new JWTAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class) // 해당 필터 전에 실행되어야 함
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // 해당 필터 전에 실행되어야 함
                 .sessionManagement(session -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })

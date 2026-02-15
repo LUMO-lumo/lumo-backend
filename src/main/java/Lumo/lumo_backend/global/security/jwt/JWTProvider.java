@@ -86,6 +86,7 @@ public class JWTProvider {
         }
         catch (ExpiredJwtException e){ // 실패 응답을 통한 로그인 요청 로직
             log.warn("[JWTProvider-ValidateToken()] : 만료된 토큰입니다 ", e);
+            throw e;
         }
         catch (UnsupportedJwtException e) {
             log.warn("[JWTProvider-ValidateToken()] : 지원되지 않는 토큰 형식입니다 ", e);
@@ -136,5 +137,10 @@ public class JWTProvider {
             ///  GenerationException 으로 수정하기
             throw new RuntimeException("파싱이 잘못되었습니다.");
         }
+    }
+
+    public Long getRemainingTime(String token) {
+        Claims claims = parseClaims(token);
+        return claims.getExpiration().getTime() - System.currentTimeMillis(); // 만료 시간 - 남은 시간
     }
 }

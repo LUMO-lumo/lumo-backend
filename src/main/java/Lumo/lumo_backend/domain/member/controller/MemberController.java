@@ -8,6 +8,7 @@ import Lumo.lumo_backend.global.apiResponse.APIResponse;
 import Lumo.lumo_backend.global.security.userDetails.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +36,7 @@ public class MemberController {
 
     @PostMapping("/login")
     @Operation(summary = "로그인 API", description = "닉네임과 비밀번호로 로그인을 진행합니다. 성공 여부와 JWT accessToken을 반환합니다. 쿠키로는 RefreshToken를 설정하도록 하였습니다. ")
-    public APIResponse<MemberRespDTO.LoginRespDTO> reqLogin (@RequestBody MemberReqDTO.LoginReqDTO dto, HttpServletResponse response){
+    public APIResponse<MemberRespDTO.LoginRespDTO> reqLogin(@RequestBody MemberReqDTO.LoginReqDTO dto, HttpServletResponse response) {
 
         MemberRespDTO.MemberInfoDTO memberInfo = memberService.login(dto);
 
@@ -54,8 +55,12 @@ public class MemberController {
 
     @PostMapping("/logout")
     @Operation(summary = "로그아웃 API", description = "로그인을 한 사용자에 한해, 로그아웃을 진행하는 API 입니다.")
-    public APIResponse<Object> logout(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        memberService.logout(userDetails.getMember().getId());
+    public APIResponse<Object> logout(HttpServletRequest request, @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            memberService.logout(bearerToken.substring(7).trim(), userDetails.getMember().getId());
+        }
         return null; // bool 값 리턴
     }
 
@@ -101,7 +106,7 @@ public class MemberController {
 
     @PatchMapping("/change-pw")
     @Operation(summary = "비밀번호 재설정 API", description = "비밀번호 재설정하는 API 입니다.")
-    public APIResponse<MemberRespDTO.SimpleAPIRespDTO> changePassword(@RequestParam String email, @RequestParam ("password") String newPassword){
+    public APIResponse<MemberRespDTO.SimpleAPIRespDTO> changePassword(@RequestParam String email, @RequestParam("password") String newPassword) {
         return APIResponse.onSuccess(memberService.changePassword(email, newPassword), MemberSuccessCode.CHANGE_PW_SUCCESS);
     }
 

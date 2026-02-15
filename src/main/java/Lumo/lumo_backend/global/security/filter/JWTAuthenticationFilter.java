@@ -2,26 +2,79 @@ package Lumo.lumo_backend.global.security.filter;
 
 import Lumo.lumo_backend.global.apiResponse.status.ErrorCode;
 import Lumo.lumo_backend.global.exception.GeneralException;
+import Lumo.lumo_backend.global.security.jwt.JWT;
 import Lumo.lumo_backend.global.security.jwt.JWTProvider;
+import Lumo.lumo_backend.global.security.userDetails.CustomUserDetailsService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Slf4j
 @RequiredArgsConstructor
+@Component
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     private final JWTProvider jwtProvider;
+    private final RedisTemplate redisTemplate;
+    private final CustomUserDetailsService customUserDetailsService;
 
-    private String resolveToken(HttpServletRequest request){
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String accessToken = resolveAccessToken(request);
+
+        /// jwtProvider 에서 인증 조회 + 토큰 검증이 필요!
+        try{
+            if(accessToken != null && jwtProvider.validateToken(accessToken)){ // 비었거나, 올바르지 않거나
+
+                String isBlackListed = (String) redisTemplate.opsForValue().get("blacklist:" + accessToken);
+                if (isBlackListed != null){
+                    log.warn("[JWTAuthenticationFilter] - Using BlackListed Token!");
+                    throw new GeneralException(ErrorCode.BLACKLISTED_TOKEN);
+                }
+
+                Authentication authentication = jwtProvider.getAuthentication(accessToken);
+                if (authentication != null) {
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                } else {
+                    log.info("[JWTAuthenticationFilter] - Invalid Token, Dont save authentication!");
+                }
+            }
+            else {
+                log.warn("[JWTAuthenticationFilter] - This is request with Empty or Invalid Token");
+//            throw new GeneralException(ErrorCode.AUTH_UNAUTHORIZED);
+            }
+        }
+        catch (ExpiredJwtException e){
+            log.warn("[JWTAuthenticationFilter] - AT expired, attempting to refresh token");
+            handleExpiredAccessToken(request, response, e);
+        }
+        catch(JwtException | IllegalArgumentException e){
+            log.info("[JWTAuthenticationFilter] - Invalid Refresh Token! ");
+        }
+
+        filterChain.doFilter(request, response);
+    }
+
+    private String resolveAccessToken(HttpServletRequest request){
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7).trim(); // 앞 뒤 공백 제거, "Bearer ~~~" 형식으로 통일
@@ -29,24 +82,58 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String accessToken = resolveToken(request);
+    private String resolveRefreshToken(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return null;
+        }
 
-        /// jwtProvider 에서 인증 조회 + 토큰 검증이 필요!
-        if(accessToken != null && jwtProvider.validateToken(accessToken)){
-            // 비었거나, 올바르지 않거나
-            Authentication authentication = jwtProvider.getAuthentication(accessToken);
-            if (authentication != null) {
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            } else {
-                log.info("유효하지 않은 토큰입니다, 인증 정보를 저장하지 않습니다.");
-            }
+        return Arrays.stream(cookies)
+                .filter(cookie -> "refreshToken".equals(cookie.getName()))
+                .findFirst()
+                .map(Cookie::getValue)
+                .orElse(null);
+    }
+
+    private void handleExpiredAccessToken (HttpServletRequest request, HttpServletResponse response, ExpiredJwtException e){
+
+        Claims claims = e.getClaims();
+        String username = claims.getSubject();
+        // String authorities = claims.get("auth").toString(); 어차피 userDetails에서 검색하니까 필요 X
+
+        String requestRT = resolveRefreshToken(request);
+        String savedRT = (String) redisTemplate.opsForValue().get("refresh:"+username); // 이메일
+
+        if (savedRT == null){
+            log.warn("[JWTAuthenticationFilter] - savedRT is null!");
+            throw new GeneralException(ErrorCode.CANNOT_FOUND_RT);
         }
-        else {
-            log.warn("토큰이 비어있는 요청입니다");
-//            throw new GeneralException(ErrorCode.AUTH_UNAUTHORIZED);
+
+        if (requestRT != null && requestRT.equals(savedRT)){
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            JWT newJWT = jwtProvider.generateToken(authentication);
+
+            // AT 덮어쓰기
+            response.setHeader("Authorization", "Bearer " + newJWT.getAccessToken());
+
+            // RT 덮어쓰기
+            ResponseCookie cookie = ResponseCookie.from("refreshToken", newJWT.getRefreshToken())
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(7 * 24 * 60 * 60) // 7일
+                    .sameSite("Strict")
+                    .build();
+            response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            redisTemplate.opsForValue().set("refresh:"+username, newJWT.getRefreshToken());
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.info("Successfully refreshed token and set security context for user: {}", username);
         }
-        filterChain.doFilter(request, response);
+        else{
+            log.warn("[JWTAuthenticationFilter] - requestRT is null! || requestRT is not equal to savedRT!");
+            throw new GeneralException(ErrorCode.CANNOT_FOUND_RT);
+        }
     }
 }

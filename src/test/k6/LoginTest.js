@@ -1,6 +1,8 @@
 import http from 'k6/http';
 import { check } from 'k6';
 
+
+// 테스트 파일 입니다.
 export const options = {
     vus: 1,           // 가상 사용자 1명
     iterations: 1,    // 총 실행 횟수 1회
