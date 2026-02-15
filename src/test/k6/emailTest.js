@@ -4,6 +4,8 @@ import { check, sleep } from 'k6';
 const USER_COUNT = __ENV.USER_COUNT || 10000;
 const BURST_COUNT = __ENV.BURST_COUNT || 3;
 
+// 테스트 파일 입니다.
+
 export const options = {
     vus: USER_COUNT,
     duration: '20s',
