@@ -1,6 +1,11 @@
 package Lumo.lumo_backend.global.security.filter;
 
+import Lumo.lumo_backend.global.apiResponse.status.ErrorCode;
+import Lumo.lumo_backend.global.exception.GeneralException;
+import Lumo.lumo_backend.global.security.jwt.JWT;
 import Lumo.lumo_backend.global.security.jwt.JWTProvider;
+import Lumo.lumo_backend.global.security.userDetails.CustomUserDetailsService;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -10,8 +15,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -22,6 +32,8 @@ import java.util.Arrays;
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     private final JWTProvider jwtProvider;
+    private final RedisTemplate redisTemplate;
+    private final CustomUserDetailsService customUserDetailsService;
 
     private String resolveAccessToken(HttpServletRequest request){
         String bearerToken = request.getHeader("Authorization");
@@ -64,12 +76,55 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         catch (ExpiredJwtException e){
-            log.info("[JWTAuthenticationFilter] - AT expired, attempting to refresh token");
+            log.warn("[JWTAuthenticationFilter] - AT expired, attempting to refresh token");
+            handleExpiredAccessToken(request, response, e);
         }
         catch(JwtException | IllegalArgumentException e){
             log.info("[JWTAuthenticationFilter] - Invalid Refresh Token! ");
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private void handleExpiredAccessToken (HttpServletRequest request, HttpServletResponse response, ExpiredJwtException e){
+
+        Claims claims = e.getClaims();
+        String username = claims.getSubject();
+        // String authorities = claims.get("auth").toString(); 어차피 userDetails에서 검색하니까 필요 X
+
+        String requestRT = resolveRefreshToken(request);
+        String savedRT = (String) redisTemplate.opsForValue().get("refresh:"+username); // 이메일
+
+        if (savedRT == null){
+            log.warn("[JWTAuthenticationFilter] - savedRT is null!");
+            throw new GeneralException(ErrorCode.AUTH_TOKEN_INVALID);
+        }
+
+        if (requestRT != null && requestRT.equals(savedRT)){
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            JWT newJWT = jwtProvider.generateToken(authentication);
+
+            // AT 덮어쓰기
+            response.setHeader("Authorization", "Bearer " + newJWT.getAccessToken());
+
+            // RT 덮어쓰기
+            ResponseCookie cookie = ResponseCookie.from("refreshToken", newJWT.getRefreshToken())
+                    .httpOnly(true)
+                    .secure(true)
+                    .path("/")
+                    .maxAge(7 * 24 * 60 * 60) // 7일
+                    .sameSite("Strict")
+                    .build();
+            response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            redisTemplate.opsForValue().set("refresh:"+username, newJWT.getRefreshToken());
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.info("Successfully refreshed token and set security context for user: {}", username);
+        }
+        else{
+            log.warn("[JWTAuthenticationFilter] - requestRT is null! || requestRT is not equal to savedRT!");
+            throw new GeneralException(ErrorCode.AUTH_TOKEN_INVALID);
+        }
     }
 }
