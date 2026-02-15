@@ -47,7 +47,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
                 String isBlackListed = (String) redisTemplate.opsForValue().get("blacklist:" + accessToken);
                 if (isBlackListed != null){
-                    throw new GeneralException(ErrorCode.AUTH_TOKEN_INVALID);
+                    log.warn("[JWTAuthenticationFilter] - Using BlackListed Token!");
+                    throw new GeneralException(ErrorCode.BLACKLISTED_TOKEN);
                 }
 
                 Authentication authentication = jwtProvider.getAuthentication(accessToken);
@@ -105,7 +106,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         if (savedRT == null){
             log.warn("[JWTAuthenticationFilter] - savedRT is null!");
-            throw new GeneralException(ErrorCode.AUTH_TOKEN_INVALID);
+            throw new GeneralException(ErrorCode.CANNOT_FOUND_RT);
         }
 
         if (requestRT != null && requestRT.equals(savedRT)){
@@ -132,7 +133,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         }
         else{
             log.warn("[JWTAuthenticationFilter] - requestRT is null! || requestRT is not equal to savedRT!");
-            throw new GeneralException(ErrorCode.AUTH_TOKEN_INVALID);
+            throw new GeneralException(ErrorCode.CANNOT_FOUND_RT);
         }
     }
 }
