@@ -7,6 +7,8 @@ import Lumo.lumo_backend.global.apiResponse.status.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -42,6 +44,12 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         ErrorCode errorCode = ErrorCode.INVALID_JSON;
         APIResponse<Object> body = APIResponse.onFailure(errorCode.getCodeName(), errorCode.getMessage(), null);
+        return super.handleExceptionInternal(ex, body, headers, status, request);
+    }
+
+    @Override
+    protected @Nullable ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        APIResponse<Object> body = APIResponse.onFailure("TYPE_MISMATCH", "형식이 올바르지 않습니다.", null);
         return super.handleExceptionInternal(ex, body, headers, status, request);
     }
 
