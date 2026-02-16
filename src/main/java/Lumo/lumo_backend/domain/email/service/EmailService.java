@@ -2,6 +2,7 @@ package Lumo.lumo_backend.domain.email.service;
 
 import Lumo.lumo_backend.domain.member.exception.MemberException;
 import Lumo.lumo_backend.domain.member.status.MemberErrorCode;
+import jakarta.annotation.PostConstruct;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class EmailService {
     private final RedisTemplate redisTemplate;
 
 
-    @Async(value = "mailExcutor")
+    /*@Async(value = "mailExcutor")
     public void startWork() {
         Boolean isRunning = redisTemplate.opsForValue().setIfAbsent("lock:email", "RUNNING", Duration.ofSeconds(15));
 
@@ -47,6 +48,29 @@ public class EmailService {
             throw new MemberException(MemberErrorCode.CANT_SEND_EMAIL);
         } finally {
             redisTemplate.delete("lock:email");
+        }
+    }*/
+
+    @Async("mailExecutor")
+    @PostConstruct
+    public void startMailWorker() {
+        log.info("[EmailService] - EmailWorker 메일 발송 워커 가동 시작");
+        while (true) {
+            try {
+                // BRPOP!
+                String task = (String) redisTemplate.opsForList().rightPop("email_queue", 5, TimeUnit.SECONDS);
+
+                if (task != null) {
+                    String[] data = task.split(":");
+                    sendEmail(data[0], data[1]);
+                }
+            } catch (Exception e) {
+                log.error("[EmailService] - EmailWorker 에러 발생, 1초 후 재시도", e);
+                try {
+                    Thread.sleep(1000);
+                }
+                catch (InterruptedException ignored) { }
+            }
         }
     }
 

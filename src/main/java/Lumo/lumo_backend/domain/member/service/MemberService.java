@@ -88,7 +88,7 @@ public class MemberService {
         else{
             redisTemplate.opsForList().leftPush("email_queue", email + ":" + code);
             log.info("[MemberService - requestVerificationCode] call EmailService with {} - {}", email, code);
-            emailService.startWork();
+//            emailService.startWork();
         }
     }
     public String generateVerificationCode() {
