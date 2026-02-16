@@ -2,7 +2,6 @@ package Lumo.lumo_backend.domain.email.service;
 
 import Lumo.lumo_backend.domain.member.exception.MemberException;
 import Lumo.lumo_backend.domain.member.status.MemberErrorCode;
-import jakarta.annotation.PostConstruct;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,6 @@ public class EmailService {
     private final RedisTemplate redisTemplate;
 
     @Async("mailExecutor")
-    @PostConstruct
     public void startMailWorker(int workerId) {
         log.info("[EmailService] - EmailWorker 메일 발송 워커 가동 시작");
         while (true) {
