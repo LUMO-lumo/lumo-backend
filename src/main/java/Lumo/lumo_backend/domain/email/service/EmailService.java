@@ -14,7 +14,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
-import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -25,35 +24,9 @@ public class EmailService {
     private final JavaMailSender mailSender;
     private final RedisTemplate redisTemplate;
 
-
-    /*@Async(value = "mailExcutor")
-    public void startWork() {
-        Boolean isRunning = redisTemplate.opsForValue().setIfAbsent("lock:email", "RUNNING", Duration.ofSeconds(15));
-
-        if (Boolean.FALSE.equals(isRunning)) {
-            return; // 일하는 중
-        }
-        try {
-            while (true) {
-                String task = (String) redisTemplate.opsForList().rightPop("email_queue", 5, TimeUnit.SECONDS);
-
-                if (task != null) {
-                    String[] data = task.split(":");
-                    sendEmail(data[0], data[1]);
-                }
-                redisTemplate.expire("lock:worker", Duration.ofSeconds(30)); // 연장
-            }
-        } catch (Exception e) {
-            log.error("[EmailService] - Worker Error!", e);
-            throw new MemberException(MemberErrorCode.CANT_SEND_EMAIL);
-        } finally {
-            redisTemplate.delete("lock:email");
-        }
-    }*/
-
     @Async("mailExecutor")
     @PostConstruct
-    public void startMailWorker() {
+    public void startMailWorker(int workerId) {
         log.info("[EmailService] - EmailWorker 메일 발송 워커 가동 시작");
         while (true) {
             try {
@@ -63,12 +36,11 @@ public class EmailService {
                 if (task != null) {
                     String[] data = task.split(":");
                     sendEmail(data[0], data[1]);
-                }
-                if (task == null){
-                    log.info("[EmailService] - no email to send!");
+                }if (task == null && workerId == 0) {
+                    log.info("[EmailService] (worker {}) - no email to send!",  workerId);
                 }
             } catch (Exception e) {
-                log.error("[EmailService] - EmailWorker Error, retry after 1s... ", e);
+                log.error("[EmailService] - EmailWorker {} Error, retry after 1s... ", workerId, e);
                 try {
                     Thread.sleep(1000);
                 }
