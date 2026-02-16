@@ -1,8 +1,6 @@
 package Lumo.lumo_backend.domain.alarm.entity.dto;
 
 import Lumo.lumo_backend.domain.alarm.entity.DayOfWeek;
-import Lumo.lumo_backend.domain.alarm.entity.Difficulty;
-import Lumo.lumo_backend.domain.alarm.entity.MissionType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -44,7 +42,7 @@ public class AlarmCreateRequestDto {
 
     private SnoozeSettingDto snoozeSetting;
 
-    private MissionSettingDto missionSetting;  // 추가!
+    private MissionSettingDto missionSetting;  // 별도 파일 MissionSettingDto 사용
 
     @Getter
     @Builder
@@ -61,19 +59,5 @@ public class AlarmCreateRequestDto {
         private Integer maxCount = 3;
     }
 
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class MissionSettingDto {
-        @NotNull(message = "미션 타입은 필수입니다")
-        private MissionType missionType;
 
-        private Difficulty difficulty;
-
-        private Integer walkGoalMeter;
-
-        @Builder.Default
-        private Integer questionCount = 1;
-    }
 }

@@ -35,6 +35,7 @@ public class AlarmResponseDto {
 
     private SnoozeSettingResponseDto snoozeSetting;
 
+    private MissionSettingDto missionSetting;
 
     @Getter
     @Builder
@@ -46,7 +47,6 @@ public class AlarmResponseDto {
         private Integer intervalSec;
         private Integer maxCount;
     }
-
 
     public static AlarmResponseDto from(Alarm alarm) {
         return AlarmResponseDto.builder()
@@ -67,6 +67,7 @@ public class AlarmResponseDto {
                                 .intervalSec(alarm.getAlarmSnooze().getIntervalSec())
                                 .maxCount(alarm.getAlarmSnooze().getMaxCount())
                                 .build() : null)
+                .missionSetting(MissionSettingDto.from(alarm.getAlarmMission()))
                 .build();
     }
 }

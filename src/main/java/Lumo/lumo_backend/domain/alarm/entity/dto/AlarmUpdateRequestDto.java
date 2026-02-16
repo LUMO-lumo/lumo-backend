@@ -35,5 +35,5 @@ public class AlarmUpdateRequestDto {
 
     private AlarmCreateRequestDto.SnoozeSettingDto snoozeSetting;
 
-    private AlarmCreateRequestDto.MissionSettingDto missionSetting;  // 추가!
+//    private AlarmCreateRequestDto.MissionSettingDto missionSetting;  // 추가!
 }
