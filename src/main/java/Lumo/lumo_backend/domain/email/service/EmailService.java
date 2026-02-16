@@ -64,8 +64,11 @@ public class EmailService {
                     String[] data = task.split(":");
                     sendEmail(data[0], data[1]);
                 }
+                if (task == null){
+                    log.info("[EmailService] - no email to send!");
+                }
             } catch (Exception e) {
-                log.error("[EmailService] - EmailWorker 에러 발생, 1초 후 재시도", e);
+                log.error("[EmailService] - EmailWorker Error, retry after 1s... ", e);
                 try {
                     Thread.sleep(1000);
                 }
