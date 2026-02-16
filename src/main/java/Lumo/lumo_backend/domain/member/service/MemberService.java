@@ -86,7 +86,8 @@ public class MemberService {
             throw new MemberException(MemberErrorCode.ALREADY_SEND); // 따닥 방지
         }
         else{
-            emailService.sendEmail(email, code);
+            redisTemplate.opsForList().leftPush("email_queue", email + ":" + code);
+            emailService.startWork();
         }
     }
     public String generateVerificationCode() {
