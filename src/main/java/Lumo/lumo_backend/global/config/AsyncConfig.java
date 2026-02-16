@@ -18,6 +18,8 @@ public class AsyncConfig {
         executor.setMaxPoolSize(50);
         executor.setQueueCapacity(100); // 큐가 꽉 차면 거절
         executor.setThreadNamePrefix("MailExecutor-");
+        executor.setWaitForTasksToCompleteOnShutdown(true); // Graceful Shutdown set
+        executor.setAwaitTerminationSeconds(60); // Graceful Shutdown set
         executor.initialize();
         return executor;
     }
