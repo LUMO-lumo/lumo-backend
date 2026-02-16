@@ -11,13 +11,15 @@ import java.util.concurrent.Executor;
 @EnableAsync
 public class AsyncConfig {
 
-    @Bean (name = "mailExcutor")
+    @Bean (name = "mailExecutor")
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
+        executor.setCorePoolSize(15);
         executor.setMaxPoolSize(50);
         executor.setQueueCapacity(100); // 큐가 꽉 차면 거절
         executor.setThreadNamePrefix("MailExecutor-");
+        executor.setWaitForTasksToCompleteOnShutdown(true); // Graceful Shutdown set
+        executor.setAwaitTerminationSeconds(5); // Graceful Shutdown set
         executor.initialize();
         return executor;
     }

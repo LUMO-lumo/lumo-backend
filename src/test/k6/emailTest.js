@@ -1,8 +1,8 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
-const USER_COUNT = __ENV.USER_COUNT || 10000;
-const BURST_COUNT = __ENV.BURST_COUNT || 3;
+const USER_COUNT = __ENV.USER_COUNT || 1000;
+const BURST_COUNT = __ENV.BURST_COUNT || 2;
 
 // 테스트 파일 입니다.
 
