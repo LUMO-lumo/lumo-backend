@@ -111,68 +111,6 @@ public class AlarmService {
         return AlarmResponseDto.from(alarm);
     }
 
-    /**
-     * 알람 수정
-     */
-    @Transactional
-    public AlarmResponseDto updateAlarm(Member member, Long alarmId, AlarmUpdateRequestDto requestDto) {
-        Alarm alarm = findAlarmByIdAndMember(alarmId, member);
-
-        // 사운드 타입 유효성 검증 (수정 요청에 포함된 경우만)
-        String soundType = requestDto.getSoundType() != null
-                ? validateAndGetSoundType(requestDto.getSoundType())
-                : alarm.getSoundType();
-
-        // 빌더 패턴으로 업데이트
-        Alarm updatedAlarm = Alarm.builder()
-                .alarmId(alarm.getAlarmId())
-                .member(alarm.getMember())
-                .alarmTime(requestDto.getAlarmTime() != null ? requestDto.getAlarmTime() : alarm.getAlarmTime())
-                .label(requestDto.getLabel() != null ? requestDto.getLabel() : alarm.getLabel())
-                .isEnabled(alarm.getIsEnabled())
-                .soundType(soundType)
-                .vibration(requestDto.getVibration() != null ? requestDto.getVibration() : alarm.getVibration())
-                .volume(requestDto.getVolume() != null ? requestDto.getVolume() : alarm.getVolume())
-                .repeatDays(alarm.getRepeatDays())
-                .alarmSnooze(alarm.getAlarmSnooze())
-                .alarmMission(alarm.getAlarmMission())
-                .build();
-
-        // 반복 요일 업데이트
-        if (requestDto.getRepeatDays() != null) {
-            repeatDayRepository.deleteByAlarm(alarm);
-            List<AlarmRepeatDay> newRepeatDays = requestDto.getRepeatDays().stream()
-                    .map(dayOfWeek -> AlarmRepeatDay.builder()
-                            .alarm(updatedAlarm)
-                            .dayOfWeek(dayOfWeek)
-                            .build())
-                    .collect(Collectors.toList());
-            repeatDayRepository.saveAll(newRepeatDays);
-            updatedAlarm.getRepeatDays().clear();
-            updatedAlarm.getRepeatDays().addAll(newRepeatDays);
-        }
-
-        // 스누즈 설정 업데이트
-        if (requestDto.getSnoozeSetting() != null && alarm.getAlarmSnooze() != null) {
-            AlarmSnooze updatedSnooze = AlarmSnooze.builder()
-                    .snoozeId(alarm.getAlarmSnooze().getSnoozeId())
-                    .alarm(updatedAlarm)
-                    .isEnabled(requestDto.getSnoozeSetting().getIsEnabled() != null
-                            ? requestDto.getSnoozeSetting().getIsEnabled()
-                            : alarm.getAlarmSnooze().getIsEnabled())
-                    .intervalSec(requestDto.getSnoozeSetting().getIntervalSec() != null
-                            ? requestDto.getSnoozeSetting().getIntervalSec()
-                            : alarm.getAlarmSnooze().getIntervalSec())
-                    .maxCount(requestDto.getSnoozeSetting().getMaxCount() != null
-                            ? requestDto.getSnoozeSetting().getMaxCount()
-                            : alarm.getAlarmSnooze().getMaxCount())
-                    .build();
-            alarmSnoozeRepository.save(updatedSnooze);
-        }
-
-        Alarm savedAlarm = alarmRepository.save(updatedAlarm);
-        return AlarmResponseDto.from(savedAlarm);
-    }
 
     /**
      * 알람 삭제

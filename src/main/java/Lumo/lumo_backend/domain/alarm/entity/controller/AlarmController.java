@@ -78,20 +78,7 @@ public class AlarmController {
         return APIResponse.onSuccess(response, AlarmSuccessCode.ALARM_RETRIEVED);
     }
 
-    /**
-     * 알람 수정 (시간, 라벨, 사운드, 음량 등)
-     * PUT /api/alarms/{alarmId}
-     */
-    @PutMapping("/{alarmId}")
-    @Operation(summary = "알람 수정 API", description = "알람의 시간, 라벨, 사운드, 음량, 진동 설정 등을 수정하는 API입니다.")
-    public APIResponse<AlarmResponseDto> updateAlarm(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @PathVariable Long alarmId,
-            @Valid @RequestBody AlarmUpdateRequestDto requestDto
-    ) {
-        AlarmResponseDto response = alarmService.updateAlarm(userDetails.getMember(), alarmId, requestDto);
-        return APIResponse.onSuccess(response, AlarmSuccessCode.ALARM_UPDATED);
-    }
+
 
     /**
      * 알람 삭제
