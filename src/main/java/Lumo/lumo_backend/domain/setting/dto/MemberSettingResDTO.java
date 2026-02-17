@@ -3,8 +3,12 @@ package Lumo.lumo_backend.domain.setting.dto;
 import Lumo.lumo_backend.domain.setting.entity.memberSetting.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
+import java.util.Map;
+
+@Builder
 @Getter
 @AllArgsConstructor
 public class MemberSettingResDTO {
@@ -79,4 +83,24 @@ public class MemberSettingResDTO {
                 memberSetting.isSmartBriefing()
         );
     }
+    public static MemberSettingResDTO fromMap(Map<Object, Object> map) {
+
+        return MemberSettingResDTO.builder()
+                .theme(Theme.valueOf((String) map.get("theme")))
+                .language(Language.valueOf((String) map.get("language")))
+                .batterySaving(Boolean.parseBoolean((String) map.get("batterySaving")))
+                .alarmOffMissionDefaultType(
+                        AlarmOffMissionDefaultType.valueOf((String) map.get("alarmOffMissionDefaultType")))
+                .alarmOffMissionDefaultLevel(
+                        AlarmOffMissionDefaultLevel.valueOf((String) map.get("alarmOffMissionDefaultLevel")))
+                .alarmOffMissionDefaultDuration(
+                        Integer.parseInt((String) map.get("alarmOffMissionDefaultDuration")))
+                .briefingSentence((String) map.get("briefingSentence"))
+                .briefingVoiceDefaultType(
+                        BriefingVoiceDefaultType.valueOf((String) map.get("briefingVoiceDefaultType")))
+                .smartBriefing(Boolean.parseBoolean((String) map.get("smartBriefing")))
+                .build();
+    }
+
+
 }

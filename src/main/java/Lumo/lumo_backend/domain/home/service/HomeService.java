@@ -10,6 +10,8 @@ import Lumo.lumo_backend.domain.member.repository.MemberRepository;
 import Lumo.lumo_backend.domain.member.service.MemberService;
 import Lumo.lumo_backend.domain.member.status.MemberErrorCode;
 import Lumo.lumo_backend.domain.todo.service.ToDoService;
+
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,11 +25,11 @@ public class HomeService {
     private final ToDoService toDoService;
     private final EncouragementTextLoader encouragementTextLoader;
 
-    public HomeResponseDTO get(Member member) {
+    public HomeResponseDTO get(Member member, LocalDate today) {
         Member persistedMember = getPersistedMember(member);
 
         Encouragement encouragement = encouragementTextLoader.getTodayEncouragement();
-        List<String> todo = toDoService.findTodayThreeToDo(persistedMember);
+        List<String> todo = toDoService.findTodayThreeToDo(persistedMember, today);
         GetMissionRecordRespDTO missionRecord = memberService.getMissionRecord(persistedMember);
 
         return HomeResponseDTO.builder()

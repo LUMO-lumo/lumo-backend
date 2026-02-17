@@ -26,10 +26,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +46,9 @@ public class MemberService {
     private final RedisTemplate redisTemplate;
     private final JWTProvider jwtProvider;
     private final BCryptPasswordEncoder encoder;
+
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    private static final int CODE_LENGTH = 4;
 
 
     public MemberRespDTO.GetLoginDTO getLogin(Member member) {
@@ -72,15 +78,30 @@ public class MemberService {
     }
 
     public void requestVerificationCode(String email) {
-        String preCode = (String) redisTemplate.opsForValue().get(email);
+        String code = generateVerificationCode();
+        Boolean ifAbsent = redisTemplate.opsForValue().setIfAbsent(email, code, Duration.ofMinutes(3));
 
-        if (preCode != null){
-            log.info("[MemberService - requestVerificationCode] already send to {} with {}", email, preCode);
+        if (Boolean.FALSE.equals(ifAbsent)){
+            log.info("[MemberService - requestVerificationCode] already send to {} with {}", email, redisTemplate.opsForValue().get(email));
             throw new MemberException(MemberErrorCode.ALREADY_SEND); // 따닥 방지
         }
         else{
-            emailService.sendEmail(email);
+            redisTemplate.opsForList().leftPush("email_queue", email + ":" + code);
+            log.info("[MemberService - requestVerificationCode] call EmailService with {} - {}", email, code);
+//            emailService.startWork();
         }
+    }
+    public String generateVerificationCode() {
+        Random random = new Random();
+        StringBuilder code = new StringBuilder(CODE_LENGTH);
+
+        for (int i = 0; i < CODE_LENGTH; i++) {
+            int randomIndex = random.nextInt(CHARACTERS.length());
+
+            code.append(CHARACTERS.charAt(randomIndex));
+        }
+
+        return code.toString();
     }
 
 
@@ -125,9 +146,18 @@ public class MemberService {
         return MemberRespDTO.MemberInfoDTO.builder().jwt(jwt).username(member.getUsername()).build();
     }
 
-    public void logout (Long memberId){
+    public void logout (String accessToken, Long memberId){
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberErrorCode.CANT_FOUND_MEMBER));
         redisTemplate.delete("refresh:"+member.getEmail());
+
+        Long remainingTime = jwtProvider.getRemainingTime(accessToken); // TTL 용 남은 시간 계산
+
+        if (remainingTime > 0) {
+            String key = "blacklist:" + accessToken;
+            redisTemplate.opsForValue().set(key, "logout", remainingTime, TimeUnit.MILLISECONDS);
+            log.info("[MemberService] - add AccessToken in BlackList! remainingTime: {}ms", remainingTime);
+        }
+
         log.info("[MemberService - logout] Success to logout -> {}", member.getEmail());
     }
 
@@ -146,8 +176,16 @@ public class MemberService {
 
         MissionStat missionStat = missionHistoryRepository.findMissionStatsByMember(persistedMember.getId(), LocalDate.now().withDayOfMonth(1).atStartOfDay());
 
+        int missionSuccessRate;
+        if (missionStat.getSuccess() == null){
+            missionSuccessRate = 0;
+        }
+        else{
+            missionSuccessRate = (int) (missionStat.getSuccess() / missionStat.getTotal() *100);
+        }
+
         return MemberRespDTO.GetMissionRecordRespDTO.builder()
-                .missionSuccessRate((int) (missionStat.getSuccess() / missionStat.getTotal() *100))
+                .missionSuccessRate(missionSuccessRate)
                 .consecutiveSuccessCnt(persistedMember.getConsecutiveSuccessCnt())
                 .build();
     }

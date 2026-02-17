@@ -86,6 +86,7 @@ public class JWTProvider {
         }
         catch (ExpiredJwtException e){ // 실패 응답을 통한 로그인 요청 로직
             log.warn("[JWTProvider-ValidateToken()] : 만료된 토큰입니다 ", e);
+            throw e;
         }
         catch (UnsupportedJwtException e) {
             log.warn("[JWTProvider-ValidateToken()] : 지원되지 않는 토큰 형식입니다 ", e);
@@ -101,12 +102,12 @@ public class JWTProvider {
 
         Object authClaimObject = claims.get("auth") != null ? claims.get("auth") : "";
 
-        log.info("authClaimObject: {}, ", authClaimObject.toString());
+//        log.info("authClaimObject: {}, ", authClaimObject.toString());
 
 
         String authoritiesString = (authClaimObject != null) ? authClaimObject.toString() : "";
 
-        log.info("authoritiesString: {}", authoritiesString);
+//        log.info("authoritiesString: {}", authoritiesString);
 
         if (authoritiesString.isEmpty() || claims.get("auth") == null) {
             ///  GenerationException 으로 수정하기
@@ -129,12 +130,17 @@ public class JWTProvider {
                     .parseSignedClaims(accessToken)
                     .getPayload();
 
-            log.info ("[JWTProvider - parseClaims()] claims 파싱 발생 -> {}, {}", claims.toString(), claims.getSubject());
+//            log.info ("[JWTProvider - parseClaims()] claims 파싱 발생 -> {}, {}", claims.toString(), claims.getSubject());
             return claims;
         }
         catch (Exception e){
             ///  GenerationException 으로 수정하기
             throw new RuntimeException("파싱이 잘못되었습니다.");
         }
+    }
+
+    public Long getRemainingTime(String token) {
+        Claims claims = parseClaims(token);
+        return claims.getExpiration().getTime() - System.currentTimeMillis(); // 만료 시간 - 남은 시간
     }
 }

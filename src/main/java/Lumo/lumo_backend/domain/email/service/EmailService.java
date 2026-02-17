@@ -10,33 +10,48 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@EnableAsync
 @RequiredArgsConstructor
 @Slf4j
 public class EmailService {
 
     private final JavaMailSender mailSender;
     private final RedisTemplate redisTemplate;
-    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private static final int CODE_LENGTH = 4;
 
+    @Async("mailExecutor")
+    public void startMailWorker(int workerId) {
+        log.info("[EmailService] - EmailWorker 메일 발송 워커 가동 시작");
+        while (true) {
+            try {
+                // BRPOP!
+                String task = (String) redisTemplate.opsForList().rightPop("email_queue", 5, TimeUnit.SECONDS);
 
-    @Async
-    public void sendEmail (String email){
+                if (task != null) {
+                    String[] data = task.split(":");
+                    sendEmail(data[0], data[1]);
+                }if (task == null && workerId == 0) {
+                    log.info("[EmailService] (worker {}) - no email to send!",  workerId);
+                }
+            } catch (Exception e) {
+                log.error("[EmailService] - EmailWorker {} Error, retry after 1s... ", workerId, e);
+                try {
+                    Thread.sleep(1000);
+                }
+                catch (InterruptedException ignored) { }
+            }
+        }
+    }
+
+    public void sendEmail(String email, String code) {
         MimeMessage msg = mailSender.createMimeMessage();
         MimeMessageHelper helper;
-        String code;
 
         try {
-            code = generateVerificationCode();
             helper = new MimeMessageHelper(msg, true, "utf-8");
             helper.setTo(email);
             helper.setFrom("no-reply@mail.com", "no-reply@mail.com");
@@ -154,21 +169,6 @@ public class EmailService {
             throw new RuntimeException(e);
         }
 
-        redisTemplate.opsForValue().set(email, code, 180, TimeUnit.SECONDS);
-
-        log.info("[MemberService - requestVerificationCode] saved code {} to {}", redisTemplate.opsForValue().get(email), email);
-    }
-
-    public String generateVerificationCode() {
-        Random random = new Random();
-        StringBuilder code = new StringBuilder(CODE_LENGTH);
-
-        for (int i = 0; i < CODE_LENGTH; i++) {
-            int randomIndex = random.nextInt(CHARACTERS.length());
-
-            code.append(CHARACTERS.charAt(randomIndex));
-        }
-
-        return code.toString();
+        log.info("[EmailService - requestVerificationCode] saved code {} to {}", redisTemplate.opsForValue().get(email), email);
     }
 }

@@ -39,7 +39,7 @@ public class DeviceController {
     }
 
     @GetMapping
-    @Operation(summary = "기기 목록 조회", description = "사용자의 기기 목록를 DB에서 조회합니다.")
+    @Operation(summary = "기기 목록 조회", description = "사용자의 기기 목록을 조회합니다.")
     public APIResponse<MemberDeviceResDTO> getList(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
@@ -47,7 +47,7 @@ public class DeviceController {
     }
 
     @PatchMapping("/{deviceId}")
-    @Operation(summary = "기기 수정", description = "사용자의 기기 정보를 DB에서 수정합니다.")
+    @Operation(summary = "기기 수정", description = "사용자의 기기 정보를 수정합니다.")
     public APIResponse<Void> update(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable Long deviceId,
