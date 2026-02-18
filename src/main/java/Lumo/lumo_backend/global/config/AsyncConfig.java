@@ -24,4 +24,17 @@ public class AsyncConfig {
         return executor;
     }
 
+    @Bean(name = "alarmTaskExecutor")
+    public Executor alarmTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(5);
+        executor.setQueueCapacity(50);
+        executor.setThreadNamePrefix("alarm-async-");
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setAwaitTerminationSeconds(5);
+        executor.initialize();
+        return executor;
+    }
+
 }
